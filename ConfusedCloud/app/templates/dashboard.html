@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<!-- Secure enterprise cloud management dashboard with encrypted data transmission -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusCloud - Secure Enterprise Cloud Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #1e293b;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+            --hover-bg: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .code-font {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .navbar {
+            background: var(--secondary-color) !important;
+            border-bottom: 2px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--accent-color) !important;
+            text-transform: none;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand i {
+            color: var(--success-color);
+            margin-right: 0.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: var(--text-secondary) !important;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--text-primary) !important;
+            background: var(--hover-bg);
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            background: var(--secondary-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0 !important;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.9rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-color);
+            color: var(--text-primary);
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--card-bg), var(--primary-color));
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            transform: translate(20px, -20px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+        }
+
+        .table {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-color: var(--border-color);
+            vertical-align: middle;
+            color: var(--text-secondary);
+        }
+
+        .table tbody tr:hover {
+            background: var(--hover-bg);
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+        }
+
+        .form-control, .form-select {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--card-bg);
+            border-color: var(--accent-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .dropdown-menu {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .dropdown-item {
+            color: var(--text-secondary);
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        .display-6 {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-group-sm .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .alert {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+        }
+
+        .alert-success {
+            border-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .alert-danger {
+            border-color: var(--danger-color);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .alert-warning {
+            border-color: var(--warning-color);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .alert-info {
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube"></i>
+                NexusCloud
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">
+                            <i class="fas fa-server me-1"></i>Infrastructure
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/billing">
+                            <i class="fas fa-credit-card me-1"></i>Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/support">
+                            <i class="fas fa-headset me-1"></i>Support
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                    <span class="text-white fw-bold">{{ user.name[0]|upper }}</span>
+                                </div>
+                                <div class="d-none d-md-block">
+                                    <div class="fw-bold text-white">{{ user.name|safe }}</div>
+                                    <div class="small text-light">{{ user.email|safe }}</div>
+                                </div>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <span class="badge bg-success status-badge">{{ tenant.plan|safe }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="main-container fade-in">
+            <!-- Header Section -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h1 class="display-6 fw-bold mb-2">{{ tenant.name|safe }}</h1>
+                    <p class="text-muted mb-0">
+                        <span class="code-font">Tenant ID:</span> <code class="text-info">{{ tenant.id|safe }}</code> | 
+                        Status: 
+                        <span class="badge {% if tenant.status == 'active' %}bg-success{% else %}bg-danger{% endif %} status-badge">
+                            {{ tenant.status|safe }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-secondary me-2" onclick="refreshData()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-outline-secondary me-2" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                    <button class="btn btn-primary" onclick="showNewResourceModal()">
+                        <i class="fas fa-plus me-2"></i>Deploy Resource
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics Cards -->
+            <div class="row mb-5">
+                <div class="col-md-3 mb-4">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="metric-value">{{ metrics.storage_used if metrics.storage_used else "2.4TB" }}</div>
+                                <div class="metric-label">Storage Used</div>
+                            </div>
+                            <div class="ms-3">
+                                <i class="fas fa-hdd fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="metric-value">{{ metrics.api_requests if metrics.api_requests else "1.2M" }}</div>
+                                <div class="metric-label">API Requests</div>
+                            </div>
+                            <div class="ms-3">
+                                <i class="fas fa-network-wired fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="metric-value">${{ metrics.monthly_cost if metrics.monthly_cost else "8,450" }}</div>
+                                <div class="metric-label">Monthly Cost</div>
+                            </div>
+                            <div class="ms-3">
+                                <i class="fas fa-dollar-sign fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="metric-value">{{ metrics.uptime if metrics.uptime else "99.97%" }}</div>
+                                <div class="metric-label">Uptime</div>
+                            </div>
+                            <div class="ms-3">
+                                <i class="fas fa-chart-line fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-5">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-2"></i>Resource Utilization (24h)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="usageChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-2"></i>Service Distribution
+                        </div>
+                        <div class="card-body">
+                            <canvas id="serviceChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infrastructure and Services -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-server me-2"></i>Active Instances
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Instance</th>
+                                            <th>Status</th>
+                                            <th>Type</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for instance in instances %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">{{ instance.name|safe }}</div>
+                                                <small class="text-muted code-font">{{ instance.id|safe }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge {% if instance.status == 'running' %}bg-success{% elif instance.status == 'stopped' %}bg-danger{% else %}bg-warning{% endif %}">
+                                                    {{ instance.status|safe }}
+                                                </span>
+                                            </td>
+                                            <td><span class="code-font">{{ instance.type|safe }}</span></td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="viewInstance('{{ instance.id|safe }}')" title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="controlInstance('{{ instance.id|safe }}', 'start')" title="Start">
+                                                        <i class="fas fa-play"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-warning btn-sm" onclick="controlInstance('{{ instance.id|safe }}', 'pause')" title="Pause">
+                                                        <i class="fas fa-pause"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="controlInstance('{{ instance.id|safe }}', 'stop')" title="Stop">
+                                                        <i class="fas fa-stop"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteInstance('{{ instance.id|safe }}')" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-database me-2"></i>Storage Services
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Size</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for storage in storage_services %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">{{ storage.name|safe }}</div>
+                                                <small class="text-muted code-font">{{ storage.type|safe }}</small>
+                                            </td>
+                                            <td><span class="code-font">{{ storage.size|safe }}</span></td>
+                                            <td>
+                                                <span class="badge {% if storage.status == 'active' %}bg-success{% else %}bg-warning{% endif %}">
+                                                    {{ storage.status|safe }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="viewStorage('{{ storage.id|safe }}')">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-warning btn-sm" onclick="editStorage('{{ storage.id|safe }}')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteStorage('{{ storage.id|safe }}')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-history me-2"></i>Recent Activity
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Resource</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for activity in recent_activity %}
+                                        <tr>
+                                            <td><span class="code-font">{{ activity.timestamp|safe }}</span></td>
+                                            <td>{{ activity.user|safe }}</td>
+                                            <td>{{ activity.action|safe }}</td>
+                                            <td><span class="code-font">{{ activity.resource|safe }}</span></td>
+                                            <td>
+                                                <span class="badge {% if activity.status == 'success' %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {{ activity.status|safe }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Resource Modal -->
+    <div class="modal fade" id="newResourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Deploy New Resource
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newResourceForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Resource Name</label>
+                                <input type="text" class="form-control" name="name" required placeholder="my-production-server">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Resource Type</label>
+                                <select class="form-select" name="type" required id="resourceType">
+                                    <option value="">Select Type</option>
+                                    <option value="instance">Compute Instance</option>
+                                    <option value="storage">Storage Volume</option>
+                                    <option value="database">Database</option>
+                                    <option value="loadbalancer">Load Balancer</option>
+                                    <option value="kubernetes">Kubernetes Cluster</option>
+                                    <option value="network">Virtual Network</option>
+                                    <option value="security_group">Security Group</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Region</label>
+                                <select class="form-select" name="region" required>
+                                    <option value="">Select Region</option>
+                                    <option value="us-east-1">US East (N. Virginia)</option>
+                                    <option value="us-west-2">US West (Oregon)</option>
+                                    <option value="eu-west-1">Europe (Ireland)</option>
+                                    <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" id="sizeLabel">Size</label>
+                                <select class="form-select" name="size" required id="sizeField">
+                                    <option value="">Select Size</option>
+                                    <option value="small">Small (1 vCPU, 2GB RAM)</option>
+                                    <option value="medium">Medium (2 vCPU, 4GB RAM)</option>
+                                    <option value="large">Large (4 vCPU, 8GB RAM)</option>
+                                    <option value="xlarge">Extra Large (8 vCPU, 16GB RAM)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Describe the purpose of this resource..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="newResourceForm" class="btn btn-primary">
+                        <i class="fas fa-rocket me-2"></i>Deploy Resource
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Usage Chart
+        const usageCtx = document.getElementById('usageChart').getContext('2d');
+        new Chart(usageCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [{
+                    label: 'CPU Usage',
+                    data: [45, 52, 38, 65, 72, 58, 48],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 2
+                }, {
+                    label: 'Memory Usage',
+                    data: [62, 58, 65, 72, 68, 75, 70],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 2
+                }, {
+                    label: 'Network I/O',
+                    data: [35, 42, 38, 55, 62, 48, 38],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#f8fafc'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: '#334155'
+                        },
+                        ticks: {
+                            color: '#cbd5e1'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#334155'
+                        },
+                        ticks: {
+                            color: '#cbd5e1'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Service Distribution Chart
+        const serviceCtx = document.getElementById('serviceChart').getContext('2d');
+        new Chart(serviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Compute', 'Storage', 'Database', 'Network', 'Security'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        });
+
+        function showNewResourceModal() {
+            const modal = new bootstrap.Modal(document.getElementById('newResourceModal'));
+            modal.show();
+        }
+
+        function refreshData() {
+            showNotification('Refreshing data...', 'info');
+            location.reload();
+        }
+
+        async function viewInstance(instanceId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const instance = data.instances.find(i => i.id === instanceId);
+                
+                if (instance) {
+                    showNotification(`Instance: ${instance.name} (${instance.type}) - Status: ${instance.status}`, 'info');
+                } else {
+                    showNotification('Instance not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view instance', 'error');
+            }
+        }
+
+        async function deleteInstance(instanceId) {
+            if (confirm('Are you sure you want to delete this instance? This action cannot be undone.')) {
+                showNotification(`Deleting instance ${instanceId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/instance/${instanceId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete instance', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete instance', 'error');
+                }
+            }
+        }
+
+        async function controlInstance(instanceId, action) {
+            const actions = {
+                'start': 'Starting',
+                'pause': 'Pausing', 
+                'stop': 'Stopping'
+            };
+            
+            showNotification(`${actions[action]} instance ${instanceId}...`, 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', action);
+                
+                const response = await fetch(`/tenant/{{ tenant.id }}/instance/${instanceId}/control`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    // Refresh the page to show updated status
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification(result.error || 'Failed to control instance', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to control instance', 'error');
+            }
+        }
+
+        async function viewStorage(storageId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const storage = data.storage.find(s => s.id === storageId);
+                
+                if (storage) {
+                    showNotification(`Storage: ${storage.name} (${storage.size})`, 'info');
+                } else {
+                    showNotification('Storage not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view storage', 'error');
+            }
+        }
+
+        async function editStorage(storageId) {
+            showNotification(`Editing storage ${storageId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteStorage(storageId) {
+            if (confirm('Are you sure you want to delete this storage resource?')) {
+                showNotification(`Deleting storage ${storageId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/storage/${storageId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete storage', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete storage', 'error');
+                }
+            }
+        }
+
+        // Database functions
+        async function viewDatabase(databaseId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const database = data.databases.find(d => d.id === databaseId);
+                
+                if (database) {
+                    showNotification(`Database: ${database.name} (${database.type}) - Status: ${database.status}`, 'info');
+                } else {
+                    showNotification('Database not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view database', 'error');
+            }
+        }
+
+        async function editDatabase(databaseId) {
+            showNotification(`Editing database ${databaseId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteDatabase(databaseId) {
+            if (confirm('Are you sure you want to delete this database?')) {
+                showNotification(`Deleting database ${databaseId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/database/${databaseId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete database', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete database', 'error');
+                }
+            }
+        }
+
+        // Load Balancer functions
+        async function viewLoadBalancer(loadBalancerId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const loadBalancer = data.loadbalancers.find(lb => lb.id === loadBalancerId);
+                
+                if (loadBalancer) {
+                    showNotification(`Load Balancer: ${loadBalancer.name} (${loadBalancer.type}) - Status: ${loadBalancer.status}`, 'info');
+                } else {
+                    showNotification('Load Balancer not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view load balancer', 'error');
+            }
+        }
+
+        async function editLoadBalancer(loadBalancerId) {
+            showNotification(`Editing load balancer ${loadBalancerId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteLoadBalancer(loadBalancerId) {
+            if (confirm('Are you sure you want to delete this load balancer?')) {
+                showNotification(`Deleting load balancer ${loadBalancerId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/loadbalancer/${loadBalancerId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete load balancer', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete load balancer', 'error');
+                }
+            }
+        }
+
+        // Kubernetes functions
+        async function viewKubernetes(clusterId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const cluster = data.kubernetes.find(k => k.id === clusterId);
+                
+                if (cluster) {
+                    showNotification(`Kubernetes Cluster: ${cluster.name} (${cluster.version}) - Status: ${cluster.status}`, 'info');
+                } else {
+                    showNotification('Kubernetes cluster not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view kubernetes cluster', 'error');
+            }
+        }
+
+        async function editKubernetes(clusterId) {
+            showNotification(`Editing kubernetes cluster ${clusterId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteKubernetes(clusterId) {
+            if (confirm('Are you sure you want to delete this kubernetes cluster?')) {
+                showNotification(`Deleting kubernetes cluster ${clusterId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/kubernetes/${clusterId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete kubernetes cluster', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete kubernetes cluster', 'error');
+                }
+            }
+        }
+
+        // Network functions
+        async function viewNetwork(networkId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const network = data.networks.find(n => n.id === networkId);
+                
+                if (network) {
+                    showNotification(`Network: ${network.name} (${network.cidr}) - Status: ${network.status}`, 'info');
+                } else {
+                    showNotification('Network not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view network', 'error');
+            }
+        }
+
+        async function editNetwork(networkId) {
+            showNotification(`Editing network ${networkId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteNetwork(networkId) {
+            if (confirm('Are you sure you want to delete this network?')) {
+                showNotification(`Deleting network ${networkId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/network/${networkId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete network', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete network', 'error');
+                }
+            }
+        }
+
+        // Security Group functions
+        async function viewSecurityGroup(securityGroupId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const securityGroup = data.security_groups.find(sg => sg.id === securityGroupId);
+                
+                if (securityGroup) {
+                    showNotification(`Security Group: ${securityGroup.name} - Status: ${securityGroup.status}`, 'info');
+                } else {
+                    showNotification('Security Group not found', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to view security group', 'error');
+            }
+        }
+
+        async function editSecurityGroup(securityGroupId) {
+            showNotification(`Editing security group ${securityGroupId}`, 'info');
+            // TODO: Implement edit modal
+        }
+
+        async function deleteSecurityGroup(securityGroupId) {
+            if (confirm('Are you sure you want to delete this security group?')) {
+                showNotification(`Deleting security group ${securityGroupId}...`, 'warning');
+                
+                try {
+                    const response = await fetch(`/tenant/{{ tenant.id }}/resource/security_group/${securityGroupId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(result.error || 'Failed to delete security group', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Failed to delete security group', 'error');
+                }
+            }
+        }
+
+        async function exportData() {
+            showNotification('Exporting dashboard data...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('format', 'json');
+                
+                const response = await fetch(`/tenant/{{ tenant.id }}/export`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `tenant_{{ tenant.id }}_data.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showNotification('Dashboard data exported successfully', 'success');
+                } else {
+                    showNotification('Failed to export data', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to export data', 'error');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                min-width: 300px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Form submission
+        document.getElementById('newResourceForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const type = formData.get('type');
+            
+            showNotification(`Deploying ${type} resource: ${name}...`, 'info');
+            
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resource/create`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('newResourceModal'));
+                    modal.hide();
+                    e.target.reset();
+                    // Refresh the page to show new resource
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification(result.error || 'Failed to create resource', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to create resource', 'error');
+            }
+        });
+
+        // Add fade-in animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card, .metric-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        });
+
+        // Add slideOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Dynamic form fields based on resource type
+        document.getElementById('resourceType').addEventListener('change', function() {
+            const resourceType = this.value;
+            const sizeLabel = document.getElementById('sizeLabel');
+            const sizeField = document.getElementById('sizeField');
+            
+            // Clear existing options
+            sizeField.innerHTML = '<option value="">Select...</option>';
+            
+            switch(resourceType) {
+                case 'instance':
+                    sizeLabel.textContent = 'Instance Size';
+                    sizeField.innerHTML = `
+                        <option value="">Select Size</option>
+                        <option value="small">Small (1 vCPU, 2GB RAM)</option>
+                        <option value="medium">Medium (2 vCPU, 4GB RAM)</option>
+                        <option value="large">Large (4 vCPU, 8GB RAM)</option>
+                        <option value="xlarge">Extra Large (8 vCPU, 16GB RAM)</option>
+                    `;
+                    break;
+                case 'storage':
+                    sizeLabel.textContent = 'Storage Size';
+                    sizeField.innerHTML = `
+                        <option value="">Select Size</option>
+                        <option value="100GB">100 GB</option>
+                        <option value="500GB">500 GB</option>
+                        <option value="1TB">1 TB</option>
+                        <option value="5TB">5 TB</option>
+                        <option value="10TB">10 TB</option>
+                    `;
+                    break;
+                case 'database':
+                    sizeLabel.textContent = 'Database Size';
+                    sizeField.innerHTML = `
+                        <option value="">Select Size</option>
+                        <option value="db.t3.micro">Micro (1 vCPU, 1GB RAM)</option>
+                        <option value="db.t3.small">Small (1 vCPU, 2GB RAM)</option>
+                        <option value="db.t3.medium">Medium (2 vCPU, 4GB RAM)</option>
+                        <option value="db.r5.large">Large (2 vCPU, 16GB RAM)</option>
+                        <option value="db.r5.xlarge">Extra Large (4 vCPU, 32GB RAM)</option>
+                    `;
+                    break;
+                case 'loadbalancer':
+                    sizeLabel.textContent = 'Load Balancer Type';
+                    sizeField.innerHTML = `
+                        <option value="">Select Type</option>
+                        <option value="application">Application Load Balancer</option>
+                        <option value="network">Network Load Balancer</option>
+                        <option value="gateway">Gateway Load Balancer</option>
+                    `;
+                    break;
+                case 'kubernetes':
+                    sizeLabel.textContent = 'Kubernetes Version';
+                    sizeField.innerHTML = `
+                        <option value="">Select Version</option>
+                        <option value="1.28">Kubernetes 1.28</option>
+                        <option value="1.27">Kubernetes 1.27</option>
+                        <option value="1.26">Kubernetes 1.26</option>
+                        <option value="1.25">Kubernetes 1.25</option>
+                        <option value="1.24">Kubernetes 1.24</option>
+                    `;
+                    break;
+                case 'network':
+                    sizeLabel.textContent = 'CIDR Block';
+                    sizeField.innerHTML = `
+                        <option value="">Select CIDR</option>
+                        <option value="10.0.0.0/16">10.0.0.0/16 (65,536 IPs)</option>
+                        <option value="172.16.0.0/16">172.16.0.0/16 (65,536 IPs)</option>
+                        <option value="192.168.0.0/16">192.168.0.0/16 (65,536 IPs)</option>
+                        <option value="10.0.0.0/24">10.0.0.0/24 (256 IPs)</option>
+                        <option value="172.16.0.0/24">172.16.0.0/24 (256 IPs)</option>
+                    `;
+                    break;
+                case 'security_group':
+                    sizeLabel.textContent = 'Security Group Type';
+                    sizeField.innerHTML = `
+                        <option value="">Select Type</option>
+                        <option value="web">Web Server</option>
+                        <option value="database">Database</option>
+                        <option value="application">Application</option>
+                        <option value="custom">Custom</option>
+                    `;
+                    break;
+                default:
+                    sizeLabel.textContent = 'Size';
+                    sizeField.innerHTML = '<option value="">Select Size</option>';
+            }
+        });
+    </script>
+</body>
+</html> 
