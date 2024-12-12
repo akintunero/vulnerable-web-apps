@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudForge - Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --dark-bg: #1e293b;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(30, 64, 175, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary-color) !important;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.02);
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 600;
+            color: var(--text-primary) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 0.75rem 1.25rem !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--accent-color) !important;
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--accent-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(30, 64, 175, 0.1);
+            margin: 2rem auto;
+            padding: 3rem;
+            max-width: 1400px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 16px 16px 0 0 !important;
+            font-weight: 700;
+            padding: 1.5rem 2rem;
+            font-size: 1.25rem;
+        }
+
+        .btn {
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 0.85rem 1.8rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color), #fbbf24);
+            border: none;
+            color: var(--text-primary) !important;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            border: none;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            border: none;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            border: none;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 0.875rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        }
+
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 700;
+            border: none;
+            padding: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 1.2rem;
+            border-color: var(--border-color);
+            vertical-align: middle;
+        }
+
+        .badge {
+            border-radius: 8px;
+            font-weight: 700;
+            padding: 0.6rem 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-cloud me-2 floating"></i>
+                CloudForge
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/services">
+                            <i class="fas fa-server me-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/billing">
+                            <i class="fas fa-credit-card me-1"></i>Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/support">
+                            <i class="fas fa-headset me-1"></i>Support
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>{{ user.name }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-container fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-server me-2"></i>Cloud Services
+                    </h1>
+                    <p class="text-muted mb-0">Manage your compute, storage, and networking resources</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <button onclick="showCreateServiceModal()" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create Service
+                    </button>
+                </div>
+            </div>
+
+            <!-- Service Statistics -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Compute Instances
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-server fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Databases
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-database fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Storage (TB)
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">2.4</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-hdd fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Load Balancers
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Management Tabs -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <ul class="nav nav-tabs card-header-tabs" id="serviceTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="instances-tab" data-bs-toggle="tab" data-bs-target="#instances" type="button" role="tab">
+                                <i class="fas fa-server me-2"></i>Instances
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="databases-tab" data-bs-toggle="tab" data-bs-target="#databases" type="button" role="tab">
+                                <i class="fas fa-database me-2"></i>Databases
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab">
+                                <i class="fas fa-hdd me-2"></i>Storage
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="loadbalancers-tab" data-bs-toggle="tab" data-bs-target="#loadbalancers" type="button" role="tab">
+                                <i class="fas fa-balance-scale me-2"></i>Load Balancers
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="kubernetes-tab" data-bs-toggle="tab" data-bs-target="#kubernetes" type="button" role="tab">
+                                <i class="fas fa-cube me-2"></i>Kubernetes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="networks-tab" data-bs-toggle="tab" data-bs-target="#networks" type="button" role="tab">
+                                <i class="fas fa-network-wired me-2"></i>Networks
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="securitygroups-tab" data-bs-toggle="tab" data-bs-target="#securitygroups" type="button" role="tab">
+                                <i class="fas fa-shield-alt me-2"></i>Security Groups
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="serviceTabsContent">
+                        <!-- Instances Tab -->
+                        <div class="tab-pane fade show active" id="instances" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Compute Instances</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateInstanceModal()">
+                                    <i class="fas fa-plus me-1"></i>New Instance
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if instances %}
+                                            {% for instance in instances %}
+                                            <tr>
+                                                <td><strong>{{ instance.name }}</strong></td>
+                                                <td>{{ instance.type }}</td>
+                                                <td><span class="badge bg-{{ 'success' if instance.status == 'running' else 'warning' if instance.status == 'stopped' else 'danger' }}">{{ instance.status.title() }}</span></td>
+                                                <td>{{ instance.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="controlInstance('{{ instance.id }}', 'start')" title="Start"><i class="fas fa-play"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="controlInstance('{{ instance.id }}', 'stop')" title="Stop"><i class="fas fa-pause"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="controlInstance('{{ instance.id }}', 'terminate')" title="Terminate"><i class="fas fa-stop"></i></button>
+                                                        <button class="btn btn-outline-info" onclick="deleteResource('instance', '{{ instance.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No instances found. Create your first instance to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Databases Tab -->
+                        <div class="tab-pane fade" id="databases" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Database Instances</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateDatabaseModal()">
+                                    <i class="fas fa-plus me-1"></i>New Database
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Engine</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if databases %}
+                                            {% for database in databases %}
+                                            <tr>
+                                                <td><strong>{{ database.name }}</strong></td>
+                                                <td>{{ database.type }}</td>
+                                                <td><span class="badge bg-{{ 'success' if database.status == 'available' else 'warning' if database.status == 'creating' else 'danger' }}">{{ database.status.title() }}</span></td>
+                                                <td>{{ database.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewDatabase('{{ database.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editDatabase('{{ database.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('database', '{{ database.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No databases found. Create your first database to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Storage Tab -->
+                        <div class="tab-pane fade" id="storage" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Storage Volumes</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateStorageModal()">
+                                    <i class="fas fa-plus me-1"></i>New Volume
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Size</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if storage %}
+                                            {% for volume in storage %}
+                                            <tr>
+                                                <td><strong>{{ volume.name }}</strong></td>
+                                                <td>{{ volume.size }} GB</td>
+                                                <td>{{ volume.type }}</td>
+                                                <td><span class="badge bg-{{ 'success' if volume.status == 'in use' else 'warning' if volume.status == 'available' else 'danger' }}">{{ volume.status.title() }}</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewStorage('{{ volume.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editStorage('{{ volume.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('storage', '{{ volume.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No storage volumes found. Create your first volume to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Load Balancers Tab -->
+                        <div class="tab-pane fade" id="loadbalancers" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Load Balancers</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateLoadBalancerModal()">
+                                    <i class="fas fa-plus me-1"></i>New Load Balancer
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if loadbalancers %}
+                                            {% for lb in loadbalancers %}
+                                            <tr>
+                                                <td><strong>{{ lb.name }}</strong></td>
+                                                <td>{{ lb.type }}</td>
+                                                <td><span class="badge bg-{{ 'success' if lb.status == 'active' else 'warning' if lb.status == 'creating' else 'danger' }}">{{ lb.status.title() }}</span></td>
+                                                <td>{{ lb.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewLoadBalancer('{{ lb.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editLoadBalancer('{{ lb.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('loadbalancer', '{{ lb.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">No load balancers found. Create your first load balancer to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Kubernetes Tab -->
+                        <div class="tab-pane fade" id="kubernetes" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Kubernetes Clusters</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateKubernetesModal()">
+                                    <i class="fas fa-plus me-1"></i>New Cluster
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Version</th>
+                                            <th>Nodes</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if kubernetes %}
+                                            {% for cluster in kubernetes %}
+                                            <tr>
+                                                <td><strong>{{ cluster.name }}</strong></td>
+                                                <td>{{ cluster.version }}</td>
+                                                <td>{{ cluster.nodes }}</td>
+                                                <td><span class="badge bg-{{ 'success' if cluster.status == 'active' else 'warning' if cluster.status == 'creating' else 'danger' }}">{{ cluster.status.title() }}</span></td>
+                                                <td>{{ cluster.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewKubernetes('{{ cluster.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editKubernetes('{{ cluster.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('kubernetes', '{{ cluster.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No Kubernetes clusters found. Create your first cluster to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Networks Tab -->
+                        <div class="tab-pane fade" id="networks" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Virtual Networks</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateNetworkModal()">
+                                    <i class="fas fa-plus me-1"></i>New Network
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>CIDR</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if networks %}
+                                            {% for network in networks %}
+                                            <tr>
+                                                <td><strong>{{ network.name }}</strong></td>
+                                                <td>{{ network.cidr }}</td>
+                                                <td>{{ network.type }}</td>
+                                                <td><span class="badge bg-{{ 'success' if network.status == 'available' else 'warning' if network.status == 'creating' else 'danger' }}">{{ network.status.title() }}</span></td>
+                                                <td>{{ network.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewNetwork('{{ network.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editNetwork('{{ network.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('network', '{{ network.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No virtual networks found. Create your first network to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Security Groups Tab -->
+                        <div class="tab-pane fade" id="securitygroups" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Security Groups</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showCreateSecurityGroupModal()">
+                                    <i class="fas fa-plus me-1"></i>New Security Group
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Rules</th>
+                                            <th>Status</th>
+                                            <th>Region</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if security_groups %}
+                                            {% for sg in security_groups %}
+                                            <tr>
+                                                <td><strong>{{ sg.name }}</strong></td>
+                                                <td>{{ sg.description }}</td>
+                                                <td>{{ sg.rules|length if sg.rules else 0 }}</td>
+                                                <td><span class="badge bg-{{ 'success' if sg.status == 'active' else 'warning' if sg.status == 'creating' else 'danger' }}">{{ sg.status.title() }}</span></td>
+                                                <td>{{ sg.region }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <button class="btn btn-outline-primary" onclick="viewSecurityGroup('{{ sg.id }}')" title="View"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-outline-warning" onclick="editSecurityGroup('{{ sg.id }}')" title="Edit"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-outline-danger" onclick="deleteResource('security_group', '{{ sg.id }}')" title="Delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No security groups found. Create your first security group to get started.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Create Service Modal -->
+    <div class="modal fade" id="createServiceModal" tabindex="-1" aria-labelledby="createServiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="createServiceModalLabel">
+                        <i class="fas fa-plus me-2"></i>Create New Service
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="serviceForm">
+                        <div class="mb-3">
+                            <label for="serviceName" class="form-label">Service Name</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="serviceName" placeholder="my-service-01">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="serviceType" class="form-label">Service Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="serviceType" onchange="updateServiceOptions()">
+                                        <option value="compute">Compute Instance</option>
+                                        <option value="database">Database</option>
+                                        <option value="storage">Storage Volume</option>
+                                        <option value="loadbalancer">Load Balancer</option>
+                                        <option value="kubernetes">Kubernetes Cluster</option>
+                                        <option value="network">Virtual Network</option>
+                                        <option value="security_group">Security Group</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="serviceRegion" class="form-label">Region</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="serviceRegion">
+                                        <option value="us-east-1">US East (N. Virginia)</option>
+                                        <option value="us-west-2">US West (Oregon)</option>
+                                        <option value="eu-west-1">Europe (Ireland)</option>
+                                        <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="serviceSpecificOptions">
+                            <!-- Dynamic options based on service type -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="serviceDescription" class="form-label">Description</label>
+                            <textarea class="form-control bg-dark text-light border-secondary" id="serviceDescription" rows="3" placeholder="Optional description for this service"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="autoStart" checked>
+                            <label class="form-check-label" for="autoStart">
+                                Start service immediately after creation
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="createService()">
+                        <i class="fas fa-plus me-2"></i>Create Service
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCreateServiceModal() {
+            const modal = new bootstrap.Modal(document.getElementById('createServiceModal'));
+            modal.show();
+            updateServiceOptions();
+        }
+
+        function updateServiceOptions() {
+            const serviceType = document.getElementById('serviceType').value;
+            const optionsContainer = document.getElementById('serviceSpecificOptions');
+            
+            let optionsHTML = '';
+            
+            switch(serviceType) {
+                case 'compute':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="instanceType" class="form-label">Instance Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="instanceType">
+                                        <option value="t2.micro">t2.micro (1 vCPU, 1 GB RAM)</option>
+                                        <option value="t2.small">t2.small (1 vCPU, 2 GB RAM)</option>
+                                        <option value="t2.medium">t2.medium (2 vCPU, 4 GB RAM)</option>
+                                        <option value="m5.large">m5.large (2 vCPU, 8 GB RAM)</option>
+                                        <option value="c5.xlarge">c5.xlarge (4 vCPU, 8 GB RAM)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="osType" class="form-label">Operating System</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="osType">
+                                        <option value="ubuntu">Ubuntu 22.04 LTS</option>
+                                        <option value="centos">CentOS 8</option>
+                                        <option value="amazon-linux">Amazon Linux 2</option>
+                                        <option value="windows">Windows Server 2019</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'database':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dbEngine" class="form-label">Database Engine</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="dbEngine">
+                                        <option value="mysql">MySQL 8.0</option>
+                                        <option value="postgresql">PostgreSQL 14</option>
+                                        <option value="mongodb">MongoDB 5.0</option>
+                                        <option value="redis">Redis 6.2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dbSize" class="form-label">Storage Size (GB)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="dbSize" value="20" min="5" max="1000">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'storage':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="volumeSize" class="form-label">Volume Size (GB)</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="volumeSize" value="100" min="1" max="10000">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="volumeType" class="form-label">Volume Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="volumeType">
+                                        <option value="gp2">General Purpose SSD (gp2)</option>
+                                        <option value="io1">Provisioned IOPS SSD (io1)</option>
+                                        <option value="st1">Throughput Optimized HDD (st1)</option>
+                                        <option value="sc1">Cold HDD (sc1)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'loadbalancer':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lbType" class="form-label">Load Balancer Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="lbType">
+                                        <option value="application">Application Load Balancer</option>
+                                        <option value="network">Network Load Balancer</option>
+                                        <option value="classic">Classic Load Balancer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lbScheme" class="form-label">Scheme</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="lbScheme">
+                                        <option value="internet-facing">Internet-facing</option>
+                                        <option value="internal">Internal</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'kubernetes':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="k8sVersion" class="form-label">Kubernetes Version</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="k8sVersion">
+                                        <option value="1.28">1.28 (Latest)</option>
+                                        <option value="1.27">1.27</option>
+                                        <option value="1.26">1.26</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nodeCount" class="form-label">Number of Nodes</label>
+                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="nodeCount" value="3" min="1" max="20">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'network':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cidrBlock" class="form-label">CIDR Block</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="cidrBlock" value="10.0.0.0/16" placeholder="10.0.0.0/16">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="networkType" class="form-label">Network Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="networkType">
+                                        <option value="vpc">VPC</option>
+                                        <option value="subnet">Subnet</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'security_group':
+                    optionsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="sgDescription" class="form-label">Description</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="sgDescription" placeholder="Security group description">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="sgVpc" class="form-label">VPC</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="sgVpc">
+                                        <option value="vpc-12345678">Default VPC</option>
+                                        <option value="vpc-87654321">Custom VPC</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            optionsContainer.innerHTML = optionsHTML;
+        }
+
+        function createService() {
+            const serviceName = document.getElementById('serviceName').value;
+            const serviceType = document.getElementById('serviceType').value;
+            const serviceRegion = document.getElementById('serviceRegion').value;
+            const serviceDescription = document.getElementById('serviceDescription').value;
+            const autoStart = document.getElementById('autoStart').checked;
+
+            if (!serviceName) {
+                alert('Please enter a service name');
+                return;
+            }
+
+            // Collect service-specific options
+            const serviceOptions = {};
+            switch(serviceType) {
+                case 'compute':
+                    serviceOptions.instanceType = document.getElementById('instanceType').value;
+                    serviceOptions.osType = document.getElementById('osType').value;
+                    break;
+                case 'database':
+                    serviceOptions.dbEngine = document.getElementById('dbEngine').value;
+                    serviceOptions.dbSize = document.getElementById('dbSize').value;
+                    break;
+                case 'storage':
+                    serviceOptions.volumeSize = document.getElementById('volumeSize').value;
+                    serviceOptions.volumeType = document.getElementById('volumeType').value;
+                    break;
+                case 'loadbalancer':
+                    serviceOptions.lbType = document.getElementById('lbType').value;
+                    serviceOptions.lbScheme = document.getElementById('lbScheme').value;
+                    break;
+                case 'kubernetes':
+                    serviceOptions.k8sVersion = document.getElementById('k8sVersion').value;
+                    serviceOptions.nodeCount = document.getElementById('nodeCount').value;
+                    break;
+                case 'network':
+                    serviceOptions.cidrBlock = document.getElementById('cidrBlock').value;
+                    serviceOptions.networkType = document.getElementById('networkType').value;
+                    break;
+                case 'security_group':
+                    serviceOptions.sgDescription = document.getElementById('sgDescription').value;
+                    serviceOptions.sgVpc = document.getElementById('sgVpc').value;
+                    break;
+            }
+
+            // Create form data for API call
+            const formData = new FormData();
+            formData.append('name', serviceName);
+            formData.append('type', serviceType);
+            formData.append('region', serviceRegion);
+            formData.append('description', serviceDescription);
+            formData.append('auto_start', autoStart);
+            
+            // Add service-specific options
+            Object.keys(serviceOptions).forEach(key => {
+                formData.append(key, serviceOptions[key]);
+            });
+
+            // Make real API call to create service
+            fetch('/tenant/{{ tenant.id }}/resource/create', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Service "${serviceName}" created successfully!`);
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('createServiceModal'));
+                    modal.hide();
+                    
+                    // Reset form
+                    document.getElementById('serviceForm').reset();
+                    
+                    // Refresh the page to show new service
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Error creating service: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating service. Please try again.');
+            });
+        }
+
+        function showCreateInstanceModal() {
+            document.getElementById('serviceType').value = 'compute';
+            showCreateServiceModal();
+        }
+
+        function showCreateDatabaseModal() {
+            document.getElementById('serviceType').value = 'database';
+            showCreateServiceModal();
+        }
+
+        function showCreateStorageModal() {
+            document.getElementById('serviceType').value = 'storage';
+            showCreateServiceModal();
+        }
+
+        function showCreateLoadBalancerModal() {
+            document.getElementById('serviceType').value = 'loadbalancer';
+            showCreateServiceModal();
+        }
+
+        function showCreateKubernetesModal() {
+            document.getElementById('serviceType').value = 'kubernetes';
+            showCreateServiceModal();
+        }
+
+        function showCreateNetworkModal() {
+            document.getElementById('serviceType').value = 'network';
+            showCreateServiceModal();
+        }
+
+        function showCreateSecurityGroupModal() {
+            document.getElementById('serviceType').value = 'security_group';
+            showCreateServiceModal();
+        }
+
+        function controlInstance(instanceId, action) {
+            const formData = new FormData();
+            formData.append('action', action);
+
+            fetch(`/tenant/{{ tenant.id }}/instance/${instanceId}/control`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Instance ${action} operation completed successfully!`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Error controlling instance: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error controlling instance. Please try again.');
+            });
+        }
+
+        // View and Edit functions for all resource types
+        async function viewDatabase(databaseId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const database = data.databases.find(d => d.id === databaseId);
+                
+                if (database) {
+                    alert(`Database: ${database.name} (${database.type}) - Status: ${database.status}`);
+                } else {
+                    alert('Database not found');
+                }
+            } catch (error) {
+                alert('Failed to view database');
+            }
+        }
+
+        async function editDatabase(databaseId) {
+            alert(`Editing database ${databaseId} - Feature coming soon!`);
+        }
+
+        async function viewStorage(storageId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const storage = data.storage.find(s => s.id === storageId);
+                
+                if (storage) {
+                    alert(`Storage: ${storage.name} (${storage.size}) - Status: ${storage.status}`);
+                } else {
+                    alert('Storage not found');
+                }
+            } catch (error) {
+                alert('Failed to view storage');
+            }
+        }
+
+        async function editStorage(storageId) {
+            alert(`Editing storage ${storageId} - Feature coming soon!`);
+        }
+
+        async function viewLoadBalancer(loadBalancerId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const loadBalancer = data.loadbalancers.find(lb => lb.id === loadBalancerId);
+                
+                if (loadBalancer) {
+                    alert(`Load Balancer: ${loadBalancer.name} (${loadBalancer.type}) - Status: ${loadBalancer.status}`);
+                } else {
+                    alert('Load Balancer not found');
+                }
+            } catch (error) {
+                alert('Failed to view load balancer');
+            }
+        }
+
+        async function editLoadBalancer(loadBalancerId) {
+            alert(`Editing load balancer ${loadBalancerId} - Feature coming soon!`);
+        }
+
+        async function viewKubernetes(clusterId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const cluster = data.kubernetes.find(k => k.id === clusterId);
+                
+                if (cluster) {
+                    alert(`Kubernetes Cluster: ${cluster.name} (${cluster.version}) - Status: ${cluster.status}`);
+                } else {
+                    alert('Kubernetes cluster not found');
+                }
+            } catch (error) {
+                alert('Failed to view kubernetes cluster');
+            }
+        }
+
+        async function editKubernetes(clusterId) {
+            alert(`Editing kubernetes cluster ${clusterId} - Feature coming soon!`);
+        }
+
+        async function viewNetwork(networkId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const network = data.networks.find(n => n.id === networkId);
+                
+                if (network) {
+                    alert(`Network: ${network.name} (${network.cidr}) - Status: ${network.status}`);
+                } else {
+                    alert('Network not found');
+                }
+            } catch (error) {
+                alert('Failed to view network');
+            }
+        }
+
+        async function editNetwork(networkId) {
+            alert(`Editing network ${networkId} - Feature coming soon!`);
+        }
+
+        async function viewSecurityGroup(securityGroupId) {
+            try {
+                const response = await fetch(`/tenant/{{ tenant.id }}/resources`);
+                const data = await response.json();
+                const securityGroup = data.security_groups.find(sg => sg.id === securityGroupId);
+                
+                if (securityGroup) {
+                    alert(`Security Group: ${securityGroup.name} - Status: ${securityGroup.status}`);
+                } else {
+                    alert('Security Group not found');
+                }
+            } catch (error) {
+                alert('Failed to view security group');
+            }
+        }
+
+        async function editSecurityGroup(securityGroupId) {
+            alert(`Editing security group ${securityGroupId} - Feature coming soon!`);
+        }
+
+        function deleteResource(resourceType, resourceId) {
+            if (!confirm(`Are you sure you want to delete this ${resourceType}? This action cannot be undone.`)) {
+                return;
+            }
+
+            fetch(`/tenant/{{ tenant.id }}/resource/${resourceType}/${resourceId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`${resourceType.charAt(0).toUpperCase() + resourceType.slice(1)} deleted successfully!`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Error deleting resource: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting resource. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html> 
