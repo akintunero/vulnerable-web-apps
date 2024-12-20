@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --dark-bg: #1e293b;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        body {
+            background: var(--light-bg);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 16px rgba(30, 64, 175, 0.15);
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .settings-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .settings-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 0.875rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color), #fbbf24);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 0.875rem 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6);
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-cloud me-2"></i>CloudForge
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/settings">
+                            <i class="fas fa-cog me-1"></i>Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <h2 class="mb-2">
+                            <i class="fas fa-cog me-2"></i>Account Settings
+                        </h2>
+                        <p class="mb-0 opacity-75">Manage your account preferences and security</p>
+                    </div>
+                    
+                    <div class="settings-body">
+                        <form method="post">
+                            <!-- Account Information -->
+                            <div class="settings-section">
+                                <h4 class="mb-4 fw-bold text-dark">
+                                    <i class="fas fa-user me-2"></i>Account Information
+                                </h4>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               value="{{ user.email if user else 'user@example.com' }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tenant_id" class="form-label">Tenant ID</label>
+                                        <input type="text" class="form-control" id="tenant_id" name="tenant_id" 
+                                               value="{{ user.tenant_id if user else 'tenant1' }}" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="first_name" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" 
+                                               value="John">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="last_name" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" 
+                                               value="Doe">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Security Settings -->
+                            <div class="settings-section">
+                                <h4 class="mb-4 fw-bold text-dark">
+                                    <i class="fas fa-shield-alt me-2"></i>Security Settings
+                                </h4>
+                                
+                                <div class="mb-3">
+                                    <label for="current_password" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="current_password" name="current_password">
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="new_password" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="new_password" name="new_password">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="two_factor" name="two_factor">
+                                    <label class="form-check-label" for="two_factor">
+                                        Enable Two-Factor Authentication
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Notification Settings -->
+                            <div class="settings-section">
+                                <h4 class="mb-4 fw-bold text-dark">
+                                    <i class="fas fa-bell me-2"></i>Notification Settings
+                                </h4>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" checked>
+                                    <label class="form-check-label" for="email_notifications">
+                                        Email Notifications
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="sms_notifications" name="sms_notifications">
+                                    <label class="form-check-label" for="sms_notifications">
+                                        SMS Notifications
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="security_alerts" name="security_alerts" checked>
+                                    <label class="form-check-label" for="security_alerts">
+                                        Security Alerts
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="billing_notifications" name="billing_notifications" checked>
+                                    <label class="form-check-label" for="billing_notifications">
+                                        Billing Notifications
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- API Settings -->
+                            <div class="settings-section">
+                                <h4 class="mb-4 fw-bold text-dark">
+                                    <i class="fas fa-key me-2"></i>API Settings
+                                </h4>
+                                
+                                <div class="mb-3">
+                                    <label for="api_key" class="form-label">API Key</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="api_key" name="api_key" 
+                                               value="sk-1234567890abcdef" readonly>
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="api_secret" class="form-label">API Secret</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="api_secret" name="api_secret" 
+                                               value="••••••••••••••••" readonly>
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn btn-outline-primary">
+                                    <i class="fas fa-refresh me-2"></i>Regenerate API Keys
+                                </button>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary me-3">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                                <a href="/profile" class="btn btn-outline-primary">
+                                    <i class="fas fa-user me-2"></i>Back to Profile
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
