@@ -1,0 +1,63 @@
+# Docker Compose file for FakeCryptoX - Educational Vulnerable Application
+version: '3.8'
+
+services:
+  app:
+    # Build the image from the Dockerfile
+    build: .
+    # Name the container
+    container_name: fakecryptox_app
+    # Map host port 7004 to container port 8000 (changed for security)
+    ports:
+      - "7004:8000"
+    # Mount only necessary volumes for data persistence
+    volumes:
+      # Persistent data storage (isolated from host)
+      - fakecryptox_data:/app/data
+      - fakecryptox_logs:/app/logs
+    # Automatically restart unless stopped
+    restart: unless-stopped
+    # Environment variables for Python optimization
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONPATH=/app
+    # Network isolation
+    networks:
+      - fakecryptox-network
+    # Resource limits for security
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    # Health check to ensure application is ready
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Security: Read-only root filesystem except for data volumes
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+
+# Isolated network for the application
+networks:
+  fakecryptox-network:
+    driver: bridge
+    # Network isolation
+    internal: false
+    # Custom subnet for better isolation
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
+
+# Persistent volumes for data storage
+volumes:
+  fakecryptox_data:
+    driver: local
+  fakecryptox_logs:
+    driver: local 
