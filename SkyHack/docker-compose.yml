@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  vuln-airline:
+    build: .
+    ports:
+      - "8080:5000"
+    volumes:
+      - ./:/app
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+      - ./templates:/app/templates
+      - ./static:/app/static
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    container_name: vuln-airline-app
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./static:/usr/share/nginx/html
+    depends_on:
+      - vuln-airline
+    container_name: vuln-airline-nginx
+    profiles:
+      - nginx 
