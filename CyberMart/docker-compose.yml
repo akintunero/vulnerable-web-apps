@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  shopcart:
+    build: .
+    container_name: shopcart-app
+    ports:
+      - "5002:5001"
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
