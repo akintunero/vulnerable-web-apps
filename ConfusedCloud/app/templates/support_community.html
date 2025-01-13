@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfusedCloud - Community</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="icon" href="/static/icons/cloud.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/static/js/theme-toggle.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="cc-bg cc-text min-h-screen">
+    <nav class="cc-navbar">
+        <div class="cc-navbar-container">
+            <div class="cc-navbar-brand">
+                <span class="cc-app-title">ConfusedCloud</span>
+            </div>
+            <div class="cc-navbar-links">
+                <a href="/dashboard" class="cc-nav-link">Dashboard</a>
+                <a href="/services" class="cc-nav-link">Services</a>
+                <a href="/billing" class="cc-nav-link">Billing</a>
+                <a href="/support" class="cc-nav-link cc-nav-link-active">Support</a>
+            </div>
+            <div class="cc-navbar-user">
+                <div class="cc-user-info">
+                    <div class="cc-user-avatar">{{ user.name[0] }}</div>
+                    <div class="cc-user-details">
+                        <div class="cc-user-name">{{ user.name }}</div>
+                        <div class="cc-user-email">{{ user.email }}</div>
+                    </div>
+                </div>
+                <a href="/logout" class="cc-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cc-main-container">
+        <div class="cc-content">
+            <div class="cc-page-header">
+                <div>
+                    <h1 class="cc-page-title">Community Forum</h1>
+                    <p class="cc-page-subtitle">Connect with other developers and share knowledge</p>
+                </div>
+                <div class="cc-page-actions">
+                    <button class="cc-btn cc-btn-primary">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Post
+                    </button>
+                    <a href="/support" class="cc-btn cc-btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Support
+                    </a>
+                </div>
+            </div>
+
+            <div class="cc-grid cc-grid-cols-1 lg:cc-grid-cols-4 cc-gap-6">
+                <!-- Sidebar -->
+                <div class="lg:cc-col-span-1">
+                    <div class="cc-card">
+                        <div class="cc-card-header">
+                            <h3 class="cc-card-title">Categories</h3>
+                        </div>
+                        <div class="cc-card-body">
+                            <nav class="cc-community-nav">
+                                <a href="#" class="cc-community-nav-link cc-community-nav-active">
+                                    <i class="fas fa-fire"></i>
+                                    Trending
+                                </a>
+                                <a href="#" class="cc-community-nav-link">
+                                    <i class="fas fa-question-circle"></i>
+                                    Questions
+                                </a>
+                                <a href="#" class="cc-community-nav-link">
+                                    <i class="fas fa-lightbulb"></i>
+                                    Tips & Tricks
+                                </a>
+                                <a href="#" class="cc-community-nav-link">
+                                    <i class="fas fa-code"></i>
+                                    Code Examples
+                                </a>
+                                <a href="#" class="cc-community-nav-link">
+                                    <i class="fas fa-bug"></i>
+                                    Troubleshooting
+                                </a>
+                                <a href="#" class="cc-community-nav-link">
+                                    <i class="fas fa-users"></i>
+                                    General Discussion
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="cc-card cc-mt-6">
+                        <div class="cc-card-header">
+                            <h3 class="cc-card-title">Top Contributors</h3>
+                        </div>
+                        <div class="cc-card-body">
+                            <div class="cc-contributors">
+                                <div class="cc-contributor">
+                                    <div class="cc-contributor-avatar">JD</div>
+                                    <div class="cc-contributor-info">
+                                        <div class="cc-contributor-name">John Developer</div>
+                                        <div class="cc-contributor-stats">1.2k posts</div>
+                                    </div>
+                                </div>
+                                <div class="cc-contributor">
+                                    <div class="cc-contributor-avatar">SC</div>
+                                    <div class="cc-contributor-info">
+                                        <div class="cc-contributor-name">Sarah Cloud</div>
+                                        <div class="cc-contributor-stats">856 posts</div>
+                                    </div>
+                                </div>
+                                <div class="cc-contributor">
+                                    <div class="cc-contributor-avatar">MC</div>
+                                    <div class="cc-contributor-info">
+                                        <div class="cc-contributor-name">Mike Code</div>
+                                        <div class="cc-contributor-stats">723 posts</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:cc-col-span-3">
+                    <div class="cc-card">
+                        <div class="cc-card-header">
+                            <div class="cc-forum-header">
+                                <h3 class="cc-card-title">Recent Discussions</h3>
+                                <div class="cc-forum-filters">
+                                    <select class="cc-select">
+                                        <option>Most Recent</option>
+                                        <option>Most Popular</option>
+                                        <option>Most Answered</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cc-card-body">
+                            <div class="cc-forum-posts">
+                                <div class="cc-forum-post">
+                                    <div class="cc-post-stats">
+                                        <div class="cc-post-votes">
+                                            <div class="cc-vote-count">42</div>
+                                            <div class="cc-vote-label">votes</div>
+                                        </div>
+                                        <div class="cc-post-answers">
+                                            <div class="cc-answer-count">8</div>
+                                            <div class="cc-answer-label">answers</div>
+                                        </div>
+                                    </div>
+                                    <div class="cc-post-content">
+                                        <h4 class="cc-post-title">
+                                            <a href="#">Best practices for auto-scaling compute instances?</a>
+                                        </h4>
+                                        <p class="cc-post-excerpt">
+                                            I'm setting up auto-scaling for my web application and looking for recommendations on the best practices for configuring scaling policies...
+                                        </p>
+                                        <div class="cc-post-meta">
+                                            <div class="cc-post-tags">
+                                                <span class="cc-tag">compute</span>
+                                                <span class="cc-tag">auto-scaling</span>
+                                                <span class="cc-tag">best-practices</span>
+                                            </div>
+                                            <div class="cc-post-author">
+                                                <span class="cc-author-name">by John Developer</span>
+                                                <span class="cc-post-time">2 hours ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cc-forum-post">
+                                    <div class="cc-post-stats">
+                                        <div class="cc-post-votes">
+                                            <div class="cc-vote-count">28</div>
+                                            <div class="cc-vote-label">votes</div>
+                                        </div>
+                                        <div class="cc-post-answers">
+                                            <div class="cc-answer-count">5</div>
+                                            <div class="cc-answer-label">answers</div>
+                                        </div>
+                                    </div>
+                                    <div class="cc-post-content">
+                                        <h4 class="cc-post-title">
+                                            <a href="#">How to optimize database performance for high-traffic applications?</a>
+                                        </h4>
+                                        <p class="cc-post-excerpt">
+                                            My application is experiencing slow database queries during peak hours. What are the best strategies for optimizing database performance...
+                                        </p>
+                                        <div class="cc-post-meta">
+                                            <div class="cc-post-tags">
+                                                <span class="cc-tag">database</span>
+                                                <span class="cc-tag">performance</span>
+                                                <span class="cc-tag">optimization</span>
+                                            </div>
+                                            <div class="cc-post-author">
+                                                <span class="cc-author-name">by Sarah Cloud</span>
+                                                <span class="cc-post-time">5 hours ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cc-forum-post">
+                                    <div class="cc-post-stats">
+                                        <div class="cc-post-votes">
+                                            <div class="cc-vote-count">15</div>
+                                            <div class="cc-vote-label">votes</div>
+                                        </div>
+                                        <div class="cc-post-answers">
+                                            <div class="cc-answer-count">3</div>
+                                            <div class="cc-answer-label">answers</div>
+                                        </div>
+                                    </div>
+                                    <div class="cc-post-content">
+                                        <h4 class="cc-post-title">
+                                            <a href="#">Terraform configuration for multi-region deployment</a>
+                                        </h4>
+                                        <p class="cc-post-excerpt">
+                                            I'm trying to set up a multi-region deployment using Terraform. Can anyone share their configuration examples for managing resources across regions...
+                                        </p>
+                                        <div class="cc-post-meta">
+                                            <div class="cc-post-tags">
+                                                <span class="cc-tag">terraform</span>
+                                                <span class="cc-tag">multi-region</span>
+                                                <span class="cc-tag">iac</span>
+                                            </div>
+                                            <div class="cc-post-author">
+                                                <span class="cc-author-name">by Mike Code</span>
+                                                <span class="cc-post-time">1 day ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="cc-forum-post">
+                                    <div class="cc-post-stats">
+                                        <div class="cc-post-votes">
+                                            <div class="cc-vote-count">8</div>
+                                            <div class="cc-vote-label">votes</div>
+                                        </div>
+                                        <div class="cc-post-answers">
+                                            <div class="cc-answer-count">1</div>
+                                            <div class="cc-answer-label">answer</div>
+                                        </div>
+                                    </div>
+                                    <div class="cc-post-content">
+                                        <h4 class="cc-post-title">
+                                            <a href="#">Setting up monitoring alerts for cost optimization</a>
+                                        </h4>
+                                        <p class="cc-post-excerpt">
+                                            I want to set up alerts to monitor my cloud spending and get notified when costs exceed certain thresholds. What's the best approach...
+                                        </p>
+                                        <div class="cc-post-meta">
+                                            <div class="cc-post-tags">
+                                                <span class="cc-tag">monitoring</span>
+                                                <span class="cc-tag">cost-optimization</span>
+                                                <span class="cc-tag">alerts</span>
+                                            </div>
+                                            <div class="cc-post-author">
+                                                <span class="cc-author-name">by Alex Admin</span>
+                                                <span class="cc-post-time">2 days ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cc-forum-pagination">
+                                <button class="cc-pagination-btn cc-pagination-prev">
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
+                                </button>
+                                <div class="cc-pagination-pages">
+                                    <span class="cc-pagination-page cc-pagination-active">1</span>
+                                    <span class="cc-pagination-page">2</span>
+                                    <span class="cc-pagination-page">3</span>
+                                    <span class="cc-pagination-ellipsis">...</span>
+                                    <span class="cc-pagination-page">10</span>
+                                </div>
+                                <button class="cc-pagination-btn cc-pagination-next">
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
