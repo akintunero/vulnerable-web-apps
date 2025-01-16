@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfusedCloud - Documentation</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="icon" href="/static/icons/cloud.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/static/js/theme-toggle.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="cc-bg cc-text min-h-screen">
+    <nav class="cc-navbar">
+        <div class="cc-navbar-container">
+            <div class="cc-navbar-brand">
+                <span class="cc-app-title">ConfusedCloud</span>
+            </div>
+            <div class="cc-navbar-links">
+                <a href="/dashboard" class="cc-nav-link">Dashboard</a>
+                <a href="/services" class="cc-nav-link">Services</a>
+                <a href="/billing" class="cc-nav-link">Billing</a>
+                <a href="/support" class="cc-nav-link cc-nav-link-active">Support</a>
+            </div>
+            <div class="cc-navbar-user">
+                <div class="cc-user-info">
+                    <div class="cc-user-avatar">{{ user.name[0] }}</div>
+                    <div class="cc-user-details">
+                        <div class="cc-user-name">{{ user.name }}</div>
+                        <div class="cc-user-email">{{ user.email }}</div>
+                    </div>
+                </div>
+                <a href="/logout" class="cc-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cc-main-container">
+        <div class="cc-content">
+            <div class="cc-page-header">
+                <div>
+                    <h1 class="cc-page-title">Documentation</h1>
+                    <p class="cc-page-subtitle">API guides, tutorials, and reference materials</p>
+                </div>
+                <a href="/support" class="cc-btn cc-btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Support
+                </a>
+            </div>
+
+            <div class="cc-grid cc-grid-cols-1 lg:cc-grid-cols-4 cc-gap-6">
+                <!-- Sidebar Navigation -->
+                <div class="lg:cc-col-span-1">
+                    <div class="cc-card">
+                        <div class="cc-card-header">
+                            <h3 class="cc-card-title">Quick Navigation</h3>
+                        </div>
+                        <div class="cc-card-body">
+                            <nav class="cc-doc-nav">
+                                <a href="#getting-started" class="cc-doc-nav-link">Getting Started</a>
+                                <a href="#api-reference" class="cc-doc-nav-link">API Reference</a>
+                                <a href="#authentication" class="cc-doc-nav-link">Authentication</a>
+                                <a href="#compute" class="cc-doc-nav-link">Compute Services</a>
+                                <a href="#storage" class="cc-doc-nav-link">Storage Services</a>
+                                <a href="#database" class="cc-doc-nav-link">Database Services</a>
+                                <a href="#networking" class="cc-doc-nav-link">Networking</a>
+                                <a href="#billing" class="cc-doc-nav-link">Billing & Pricing</a>
+                                <a href="#sdk" class="cc-doc-nav-link">SDKs & Tools</a>
+                                <a href="#examples" class="cc-doc-nav-link">Code Examples</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:cc-col-span-3">
+                    <div class="cc-card">
+                        <div class="cc-card-body">
+                            <section id="getting-started" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Getting Started</h2>
+                                <p class="cc-doc-text">
+                                    Welcome to ConfusedCloud! This guide will help you get started with our cloud platform.
+                                </p>
+                                
+                                <h3 class="cc-doc-subtitle">Quick Setup</h3>
+                                <div class="cc-code-block">
+                                    <div class="cc-code-header">
+                                        <span>Install ConfusedCloud CLI</span>
+                                        <button class="cc-copy-btn" onclick="copyCode('install-cli')">Copy</button>
+                                    </div>
+                                    <pre id="install-cli" class="cc-code"><code>curl -sSL https://get.confusedcloud.com/cli | bash
+cc configure --api-key YOUR_API_KEY</code></pre>
+                                </div>
+
+                                <h3 class="cc-doc-subtitle">Your First Instance</h3>
+                                <div class="cc-code-block">
+                                    <div class="cc-code-header">
+                                        <span>Create a compute instance</span>
+                                        <button class="cc-copy-btn" onclick="copyCode('create-instance')">Copy</button>
+                                    </div>
+                                    <pre id="create-instance" class="cc-code"><code>cc compute create \
+  --name my-first-instance \
+  --type t2.micro \
+  --image ubuntu-20.04 \
+  --region us-east-1</code></pre>
+                                </div>
+                            </section>
+
+                            <section id="api-reference" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">API Reference</h2>
+                                <p class="cc-doc-text">
+                                    Our REST API provides programmatic access to all ConfusedCloud services.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Base URL</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>https://api.confusedcloud.com/v1</code></pre>
+                                </div>
+
+                                <h3 class="cc-doc-subtitle">Authentication</h3>
+                                <p class="cc-doc-text">
+                                    All API requests require authentication using your API key in the Authorization header.
+                                </p>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+                                </div>
+                            </section>
+
+                            <section id="authentication" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Authentication</h2>
+                                <p class="cc-doc-text">
+                                    ConfusedCloud uses API key-based authentication for secure access to your resources.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Generating API Keys</h3>
+                                <ol class="cc-doc-list">
+                                    <li>Navigate to your Dashboard</li>
+                                    <li>Go to API Keys section</li>
+                                    <li>Click "Generate New Key"</li>
+                                    <li>Copy and securely store your key</li>
+                                </ol>
+
+                                <div class="cc-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <strong>Security Note:</strong> Keep your API keys secure and never commit them to version control.
+                                </div>
+                            </section>
+
+                            <section id="compute" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Compute Services</h2>
+                                <p class="cc-doc-text">
+                                    Deploy and manage virtual machines, containers, and serverless functions.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Instance Types</h3>
+                                <div class="cc-table-container">
+                                    <table class="cc-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>vCPU</th>
+                                                <th>Memory</th>
+                                                <th>Storage</th>
+                                                <th>Price/Hour</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>t2.micro</td>
+                                                <td>1</td>
+                                                <td>1 GB</td>
+                                                <td>20 GB</td>
+                                                <td>$0.008</td>
+                                            </tr>
+                                            <tr>
+                                                <td>t2.small</td>
+                                                <td>1</td>
+                                                <td>2 GB</td>
+                                                <td>40 GB</td>
+                                                <td>$0.016</td>
+                                            </tr>
+                                            <tr>
+                                                <td>t2.medium</td>
+                                                <td>2</td>
+                                                <td>4 GB</td>
+                                                <td>80 GB</td>
+                                                <td>$0.032</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <section id="storage" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Storage Services</h2>
+                                <p class="cc-doc-text">
+                                    Scalable object storage, block storage, and file systems for your applications.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Object Storage</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code># Upload a file
+cc storage upload my-bucket my-file.txt
+
+# Download a file
+cc storage download my-bucket my-file.txt
+
+# List objects
+cc storage list my-bucket</code></pre>
+                                </div>
+                            </section>
+
+                            <section id="database" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Database Services</h2>
+                                <p class="cc-doc-text">
+                                    Managed database services including MySQL, PostgreSQL, and MongoDB.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Creating a Database</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>cc database create \
+  --name my-database \
+  --engine mysql \
+  --version 8.0 \
+  --size 20</code></pre>
+                                </div>
+                            </section>
+
+                            <section id="networking" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Networking</h2>
+                                <p class="cc-doc-text">
+                                    Virtual networks, load balancers, and DNS management.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Load Balancer</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>cc loadbalancer create \
+  --name my-lb \
+  --type application \
+  --protocol http \
+  --port 80</code></pre>
+                                </div>
+                            </section>
+
+                            <section id="billing" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Billing & Pricing</h2>
+                                <p class="cc-doc-text">
+                                    Understand our pricing model and manage your billing.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Pricing Model</h3>
+                                <ul class="cc-doc-list">
+                                    <li><strong>Pay-as-you-go:</strong> Only pay for what you use</li>
+                                    <li><strong>Reserved instances:</strong> Save up to 60% with 1-3 year commitments</li>
+                                    <li><strong>Volume discounts:</strong> Automatic discounts for high usage</li>
+                                </ul>
+                            </section>
+
+                            <section id="sdk" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">SDKs & Tools</h2>
+                                <p class="cc-doc-text">
+                                    Official SDKs and tools for popular programming languages.
+                                </p>
+
+                                <div class="cc-grid cc-grid-cols-1 md:cc-grid-cols-2 cc-gap-4">
+                                    <div class="cc-sdk-card">
+                                        <h4>Python SDK</h4>
+                                        <div class="cc-code-block">
+                                            <pre class="cc-code"><code>pip install confusedcloud-sdk</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="cc-sdk-card">
+                                        <h4>Node.js SDK</h4>
+                                        <div class="cc-code-block">
+                                            <pre class="cc-code"><code>npm install @confusedcloud/sdk</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="cc-sdk-card">
+                                        <h4>Go SDK</h4>
+                                        <div class="cc-code-block">
+                                            <pre class="cc-code"><code>go get github.com/confusedcloud/sdk-go</code></pre>
+                                        </div>
+                                    </div>
+                                    <div class="cc-sdk-card">
+                                        <h4>Java SDK</h4>
+                                        <div class="cc-code-block">
+                                            <pre class="cc-code"><code>&lt;dependency&gt;
+  &lt;groupId&gt;com.confusedcloud&lt;/groupId&gt;
+  &lt;artifactId&gt;sdk-java&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="examples" class="cc-doc-section">
+                                <h2 class="cc-doc-section-title">Code Examples</h2>
+                                <p class="cc-doc-text">
+                                    Practical examples for common use cases.
+                                </p>
+
+                                <h3 class="cc-doc-subtitle">Python Example</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>import confusedcloud
+
+# Initialize client
+client = confusedcloud.Client(api_key='your-api-key')
+
+# Create an instance
+instance = client.compute.create_instance(
+    name='web-server',
+    type='t2.micro',
+    image='ubuntu-20.04'
+)
+
+print(f"Instance created: {instance.id}")</code></pre>
+                                </div>
+
+                                <h3 class="cc-doc-subtitle">Node.js Example</h3>
+                                <div class="cc-code-block">
+                                    <pre class="cc-code"><code>const { ConfusedCloud } = require('@confusedcloud/sdk');
+
+const client = new ConfusedCloud({
+  apiKey: 'your-api-key'
+});
+
+// Create storage bucket
+const bucket = await client.storage.createBucket({
+  name: 'my-bucket',
+  region: 'us-east-1'
+});
+
+console.log(`Bucket created: ${bucket.name}`);</code></pre>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#22c55e';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.cc-doc-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
