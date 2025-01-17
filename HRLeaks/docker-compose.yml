@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  hrleaks:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./temp:/app/temp
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    container_name: hrleaks-app
+    
+  # Optional: Add a simple web server for static files (if needed)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./static:/usr/share/nginx/html
+    depends_on:
+      - hrleaks
+    container_name: hrleaks-nginx
+    profiles:
+      - nginx 
