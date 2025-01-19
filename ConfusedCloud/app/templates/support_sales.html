@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfusedCloud - Contact Sales</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="icon" href="/static/icons/cloud.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/static/js/theme-toggle.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="cc-bg cc-text min-h-screen">
+    <nav class="cc-navbar">
+        <div class="cc-navbar-container">
+            <div class="cc-navbar-brand">
+                <span class="cc-app-title">ConfusedCloud</span>
+            </div>
+            <div class="cc-navbar-links">
+                <a href="/dashboard" class="cc-nav-link">Dashboard</a>
+                <a href="/services" class="cc-nav-link">Services</a>
+                <a href="/billing" class="cc-nav-link">Billing</a>
+                <a href="/support" class="cc-nav-link cc-nav-link-active">Support</a>
+            </div>
+            <div class="cc-navbar-user">
+                <div class="cc-user-info">
+                    <div class="cc-user-avatar">{{ user.name[0] }}</div>
+                    <div class="cc-user-details">
+                        <div class="cc-user-name">{{ user.name }}</div>
+                        <div class="cc-user-email">{{ user.email }}</div>
+                    </div>
+                </div>
+                <a href="/logout" class="cc-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cc-main-container">
+        <div class="cc-content">
+            <div class="cc-page-header">
+                <div>
+                    <h1 class="cc-page-title">Enterprise Solutions</h1>
+                    <p class="cc-page-subtitle">Scale your business with our enterprise-grade cloud solutions</p>
+                </div>
+                <a href="/support" class="cc-btn cc-btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Support
+                </a>
+            </div>
+
+            <div class="cc-sales-hero">
+                <h2>Ready to Scale Your Infrastructure?</h2>
+                <p>Get personalized solutions, dedicated support, and enterprise-grade features to power your business growth.</p>
+            </div>
+
+            <div class="cc-pricing-cards">
+                <div class="cc-pricing-card">
+                    <div class="cc-pricing-header">
+                        <h3 class="cc-pricing-name">Starter</h3>
+                        <div class="cc-pricing-price">$99</div>
+                        <p class="cc-pricing-period">per month</p>
+                    </div>
+                    <ul class="cc-pricing-features">
+                        <li><i class="fas fa-check"></i>Up to 10 instances</li>
+                        <li><i class="fas fa-check"></i>100 GB storage</li>
+                        <li><i class="fas fa-check"></i>Basic support</li>
+                        <li><i class="fas fa-check"></i>Standard SLA</li>
+                        <li><i class="fas fa-check"></i>Email support</li>
+                    </ul>
+                    <button class="cc-btn cc-btn-primary">Get Started</button>
+                </div>
+
+                <div class="cc-pricing-card featured">
+                    <div class="cc-pricing-header">
+                        <h3 class="cc-pricing-name">Professional</h3>
+                        <div class="cc-pricing-price">$299</div>
+                        <p class="cc-pricing-period">per month</p>
+                    </div>
+                    <ul class="cc-pricing-features">
+                        <li><i class="fas fa-check"></i>Up to 50 instances</li>
+                        <li><i class="fas fa-check"></i>500 GB storage</li>
+                        <li><i class="fas fa-check"></i>Priority support</li>
+                        <li><i class="fas fa-check"></i>99.9% SLA</li>
+                        <li><i class="fas fa-check"></i>Phone & email support</li>
+                        <li><i class="fas fa-check"></i>Advanced monitoring</li>
+                    </ul>
+                    <button class="cc-btn cc-btn-primary">Get Started</button>
+                </div>
+
+                <div class="cc-pricing-card">
+                    <div class="cc-pricing-header">
+                        <h3 class="cc-pricing-name">Enterprise</h3>
+                        <div class="cc-pricing-price">Custom</div>
+                        <p class="cc-pricing-period">contact sales</p>
+                    </div>
+                    <ul class="cc-pricing-features">
+                        <li><i class="fas fa-check"></i>Unlimited instances</li>
+                        <li><i class="fas fa-check"></i>Unlimited storage</li>
+                        <li><i class="fas fa-check"></i>24/7 dedicated support</li>
+                        <li><i class="fas fa-check"></i>99.99% SLA</li>
+                        <li><i class="fas fa-check"></i>Dedicated account manager</li>
+                        <li><i class="fas fa-check"></i>Custom integrations</li>
+                        <li><i class="fas fa-check"></i>On-premise options</li>
+                    </ul>
+                    <button class="cc-btn cc-btn-primary">Contact Sales</button>
+                </div>
+            </div>
+
+            <div class="cc-grid cc-grid-cols-1 lg:cc-grid-cols-2 cc-gap-6">
+                <div class="cc-contact-form">
+                    <h3>Contact Our Sales Team</h3>
+                    <form>
+                        <div class="cc-form-row">
+                            <div class="cc-form-group">
+                                <label class="cc-label">First Name</label>
+                                <input type="text" class="cc-input" required>
+                            </div>
+                            <div class="cc-form-group">
+                                <label class="cc-label">Last Name</label>
+                                <input type="text" class="cc-input" required>
+                            </div>
+                        </div>
+                        <div class="cc-form-row">
+                            <div class="cc-form-group">
+                                <label class="cc-label">Company</label>
+                                <input type="text" class="cc-input" required>
+                            </div>
+                            <div class="cc-form-group">
+                                <label class="cc-label">Job Title</label>
+                                <input type="text" class="cc-input" required>
+                            </div>
+                        </div>
+                        <div class="cc-form-row">
+                            <div class="cc-form-group">
+                                <label class="cc-label">Email</label>
+                                <input type="email" class="cc-input" required>
+                            </div>
+                            <div class="cc-form-group">
+                                <label class="cc-label">Phone</label>
+                                <input type="tel" class="cc-input">
+                            </div>
+                        </div>
+                        <div class="cc-form-row full">
+                            <div class="cc-form-group">
+                                <label class="cc-label">Company Size</label>
+                                <select class="cc-input">
+                                    <option>1-10 employees</option>
+                                    <option>11-50 employees</option>
+                                    <option>51-200 employees</option>
+                                    <option>201-1000 employees</option>
+                                    <option>1000+ employees</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="cc-form-row full">
+                            <div class="cc-form-group">
+                                <label class="cc-label">Tell us about your needs</label>
+                                <textarea class="cc-textarea" placeholder="Describe your current infrastructure, challenges, and goals..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="cc-btn cc-btn-primary">Send Message</button>
+                    </form>
+                </div>
+
+                <div class="cc-card">
+                    <div class="cc-card-header">
+                        <h3 class="cc-card-title">Why Choose ConfusedCloud Enterprise?</h3>
+                    </div>
+                    <div class="cc-card-body">
+                        <div class="cc-space-y-4">
+                            <div class="cc-feature-item">
+                                <i class="fas fa-shield-alt cc-feature-icon"></i>
+                                <div>
+                                    <h4 class="cc-feature-title">Enterprise Security</h4>
+                                    <p class="cc-feature-description">SOC 2 Type II certified, GDPR, NDPR, HIPAA, CCPA, and PIPEDA compliant with enterprise-grade security controls.</p>
+                                </div>
+                            </div>
+                            <div class="cc-feature-item">
+                                <i class="fas fa-headset cc-feature-icon"></i>
+                                <div>
+                                    <h4 class="cc-feature-title">24/7 Support</h4>
+                                    <p class="cc-feature-description">Round-the-clock technical support with dedicated account managers.</p>
+                                </div>
+                            </div>
+                            <div class="cc-feature-item">
+                                <i class="fas fa-chart-line cc-feature-icon"></i>
+                                <div>
+                                    <h4 class="cc-feature-title">Performance Guarantee</h4>
+                                    <p class="cc-feature-description">99.99% uptime SLA with performance monitoring and optimization.</p>
+                                </div>
+                            </div>
+                            <div class="cc-feature-item">
+                                <i class="fas fa-cogs cc-feature-icon"></i>
+                                <div>
+                                    <h4 class="cc-feature-title">Custom Solutions</h4>
+                                    <p class="cc-feature-description">Tailored infrastructure solutions to meet your specific requirements.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
