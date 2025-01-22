@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfusedCloud - API Authentication Errors</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="icon" href="/static/icons/cloud.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/static/js/theme-toggle.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="cc-bg cc-text min-h-screen">
+    <nav class="cc-navbar">
+        <div class="cc-navbar-container">
+            <div class="cc-navbar-brand">
+                <span class="cc-app-title">ConfusedCloud</span>
+            </div>
+            <div class="cc-navbar-links">
+                <a href="/dashboard" class="cc-nav-link">Dashboard</a>
+                <a href="/services" class="cc-nav-link">Services</a>
+                <a href="/billing" class="cc-nav-link">Billing</a>
+                <a href="/support" class="cc-nav-link cc-nav-link-active">Support</a>
+            </div>
+            <div class="cc-navbar-user">
+                <div class="cc-user-info">
+                    <div class="cc-user-avatar">{{ user.name[0] }}</div>
+                    <div class="cc-user-details">
+                        <div class="cc-user-name">{{ user.name }}</div>
+                        <div class="cc-user-email">{{ user.email }}</div>
+                    </div>
+                </div>
+                <a href="/logout" class="cc-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cc-main-container">
+        <div class="cc-content">
+            <div class="cc-page-header">
+                <div>
+                    <h1 class="cc-page-title">API Authentication Errors</h1>
+                    <p class="cc-page-subtitle">Troubleshoot and resolve API key and permission issues</p>
+                </div>
+                <a href="/support" class="cc-btn cc-btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Support
+                </a>
+            </div>
+
+            <div class="cc-solution-hero">
+                <h2>API Authentication Troubleshooting</h2>
+                <p>Follow these steps to resolve common API authentication errors and ensure proper access to ConfusedCloud services.</p>
+            </div>
+
+            <div class="cc-solution-steps">
+                <h3>Troubleshooting Steps</h3>
+                <ul class="cc-step-list">
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">1</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Verify API Key</h4>
+                            <p class="cc-step-description">Check that your API key is correct and hasn't expired. You can regenerate a new key from your dashboard if needed.</p>
+                        </div>
+                    </li>
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">2</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Check Permissions</h4>
+                            <p class="cc-step-description">Ensure your API key has the necessary permissions for the operations you're trying to perform.</p>
+                        </div>
+                    </li>
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">3</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Validate Request Format</h4>
+                            <p class="cc-step-description">Verify that your API requests are properly formatted and include the correct headers and authentication.</p>
+                        </div>
+                    </li>
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">4</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Check Rate Limits</h4>
+                            <p class="cc-step-description">Ensure you haven't exceeded your API rate limits. Consider implementing exponential backoff for retries.</p>
+                        </div>
+                    </li>
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">5</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Review Error Logs</h4>
+                            <p class="cc-step-description">Check the detailed error messages in your application logs to identify the specific authentication issue.</p>
+                        </div>
+                    </li>
+                    <li class="cc-step-item">
+                        <div class="cc-step-number">6</div>
+                        <div class="cc-step-content">
+                            <h4 class="cc-step-title">Test with API Explorer</h4>
+                            <p class="cc-step-description">Use our API explorer to test your requests and verify authentication is working correctly.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="cc-related-articles">
+                <h3>Related Articles</h3>
+                <ul class="cc-article-list">
+                    <li class="cc-article-item">
+                        <a href="#" class="cc-article-link">API Key Management</a>
+                        <div class="cc-article-meta">Best practices for managing API keys securely</div>
+                    </li>
+                    <li class="cc-article-item">
+                        <a href="#" class="cc-article-link">Rate Limiting Guide</a>
+                        <div class="cc-article-meta">Understanding and working with API rate limits</div>
+                    </li>
+                    <li class="cc-article-item">
+                        <a href="#" class="cc-article-link">API Error Handling</a>
+                        <div class="cc-article-meta">Proper error handling for API requests</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
