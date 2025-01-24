@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FakeCryptoX{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <nav class="bg-white border-b border-gray-200 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">₿</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">FakeCryptoX</span>
+                    </a>
+                    {% if user %}
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="/dashboard" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">Dashboard</a>
+                        <a href="/trade" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">Trade</a>
+                        <a href="/wallet" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">Wallet</a>
+                        <a href="/transactions" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">History</a>
+                        <a href="/completed-transactions" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">All Transactions</a>
+                        <a href="/nft-marketplace" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">NFTs</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex items-center space-x-4">
+                    {% if user %}
+                    <div class="hidden md:flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold">{{ user.username[0].upper() }}</span>
+                        </div>
+                        <span class="text-sm text-gray-700">Welcome, {{ user.username }}</span>
+                    </div>
+                    <a href="/logout" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors font-medium text-white">
+                        Logout
+                    </a>
+                    {% else %}
+                    <a href="/login" class="text-gray-700 hover:text-yellow-600 transition-colors font-medium">Login</a>
+                    <a href="/register" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold transition-all">
+                        Register
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">FakeCryptoX</h3>
+                    <p class="text-gray-300 text-sm">
+                        Your trusted platform for cryptocurrency trading and wallet management.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/dashboard" class="text-gray-300 hover:text-white">Dashboard</a></li>
+                        <li><a href="/trade" class="text-gray-300 hover:text-white">Trade</a></li>
+                        <li><a href="/wallet" class="text-gray-300 hover:text-white">Wallet</a></li>
+                        <li><a href="/transactions" class="text-gray-300 hover:text-white">Transactions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/tos" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                        <li><a href="/privacy" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="/news" class="text-gray-300 hover:text-white">News</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact</h4>
+                    <p class="text-gray-300 text-sm">
+                        Email: support@fakecryptox.com<br>
+                        Phone: +1 (555) 123-4567
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
+                <p>&copy; 2024 FakeCryptoX by Olúmáyòwá. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
