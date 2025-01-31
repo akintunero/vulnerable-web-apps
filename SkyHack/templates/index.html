@@ -1,0 +1,784 @@
+{% extends "base.html" %}
+
+{% block title %}AeroVault - Premium Air Travel Experience{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section position-relative overflow-hidden mb-5">
+    <div class="hero-background"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-black text-white mb-4 lh-sm">
+                    Experience the Future of
+                    <span class="text-gradient">Air Travel</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 fs-5">
+                    Discover premium destinations with our state-of-the-art fleet and unparalleled service. 
+                    Book your next adventure with confidence.
+                </p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-primary btn-lg px-4 py-3 fw-bold" onclick="scrollToSearch()">
+                        <i class="fas fa-search me-2"></i>Find Flights
+                    </button>
+                    <button class="btn btn-outline-light btn-lg px-4 py-3 fw-bold" onclick="showDestinations()">
+                        <i class="fas fa-map-marked-alt me-2"></i>Explore Destinations
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-plane">
+                    <i class="fas fa-plane text-white opacity-25" style="font-size: 8rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section mb-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-card text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h2 class="fw-black text-primary mb-2">247</h2>
+                    <p class="text-muted fw-semibold mb-0">Global Destinations</p>
+                    <small class="text-success">+12 this year</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <h2 class="fw-black text-primary mb-2">89</h2>
+                    <p class="text-muted fw-semibold mb-0">Modern Aircraft</p>
+                    <small class="text-success">99.7% reliability</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h2 class="fw-black text-primary mb-2">4.2M</h2>
+                    <p class="text-muted fw-semibold mb-0">Happy Passengers</p>
+                    <small class="text-success">+15% growth</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card text-center">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h2 class="fw-black text-primary mb-2">4.9</h2>
+                    <p class="text-muted fw-semibold mb-0">Customer Rating</p>
+                    <small class="text-success">Industry leader</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flight Search Section -->
+<div class="search-section mb-5" id="searchSection">
+    <div class="container">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-gradient-primary text-white py-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-search me-3 fa-2x"></i>
+                    <div>
+                        <h3 class="mb-1 fw-bold">Find Your Perfect Flight</h3>
+                        <p class="mb-0 opacity-75">Search across 247 destinations worldwide</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('search_flights') }}" method="GET" class="flight-search-form">
+                    <div class="row g-4">
+                        <div class="col-lg-3 col-md-6">
+                            <label for="from" class="form-label fw-bold text-dark">Departure</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-plane-departure text-primary"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" id="from" name="from" 
+                                       placeholder="From where?" required autocomplete="off">
+                                <div id="from_suggestions" class="autocomplete-suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label for="to" class="form-label fw-bold text-dark">Destination</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-plane-arrival text-primary"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" id="to" name="to" 
+                                       placeholder="To where?" required autocomplete="off">
+                                <div id="to_suggestions" class="autocomplete-suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="date" class="form-label fw-bold text-dark">Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar text-primary"></i>
+                                </span>
+                                <input type="date" class="form-control border-start-0" id="date" name="date" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label for="passengers" class="form-label fw-bold text-dark">Passengers</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-user text-primary"></i>
+                                </span>
+                                <select class="form-select border-start-0" id="passengers" name="passengers">
+                                    <option value="1">1 Passenger</option>
+                                    <option value="2">2 Passengers</option>
+                                    <option value="3">3 Passengers</option>
+                                    <option value="4">4 Passengers</option>
+                                    <option value="5">5+ Passengers</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <label class="form-label fw-bold text-dark">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
+                                <i class="fas fa-search me-2"></i>Search Flights
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Why Choose AeroVault?</h2>
+            <p class="lead text-muted">Experience the difference with our premium services</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Safety First</h4>
+                    <p class="text-muted mb-3">
+                        Our modern fleet and experienced crew ensure your safety is our top priority. 
+                        We maintain the highest safety standards in the industry.
+                    </p>
+                    <div class="feature-stats">
+                        <span class="badge bg-success me-2">99.9% Safety Record</span>
+                        <span class="badge bg-primary">Certified Crew</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Punctuality Promise</h4>
+                    <p class="text-muted mb-3">
+                        We pride ourselves on punctuality with industry-leading on-time performance. 
+                        Your time is valuable, and we respect that.
+                    </p>
+                    <div class="feature-stats">
+                        <span class="badge bg-success me-2">95.2% On-Time</span>
+                        <span class="badge bg-primary">Real-Time Updates</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Premium Service</h4>
+                    <p class="text-muted mb-3">
+                        From booking to landing, our dedicated team provides outstanding customer service. 
+                        We're here to make your journey exceptional.
+                    </p>
+                    <div class="feature-stats">
+                        <span class="badge bg-success me-2">4.9/5 Rating</span>
+                        <span class="badge bg-primary">24/7 Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Destinations -->
+<div class="destinations-section mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Popular Destinations</h2>
+            <p class="lead text-muted">Discover amazing places around the world</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="destination-card">
+                    <div class="destination-image mb-3">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">New York City</h5>
+                    <p class="text-muted mb-3">The city that never sleeps</p>
+                    <div class="destination-info">
+                        <span class="badge bg-primary me-2">From $299</span>
+                        <span class="text-success fw-semibold">Daily Flights</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="destination-card">
+                    <div class="destination-image mb-3">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Los Angeles</h5>
+                    <p class="text-muted mb-3">City of Angels</p>
+                    <div class="destination-info">
+                        <span class="badge bg-primary me-2">From $349</span>
+                        <span class="text-success fw-semibold">Daily Flights</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="destination-card">
+                    <div class="destination-image mb-3">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Denver</h5>
+                    <p class="text-muted mb-3">Mile High City</p>
+                    <div class="destination-info">
+                        <span class="badge bg-primary me-2">From $199</span>
+                        <span class="text-success fw-semibold">Daily Flights</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="destination-card">
+                    <div class="destination-image mb-3">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Miami</h5>
+                    <p class="text-muted mb-3">Magic City</p>
+                    <div class="destination-info">
+                        <span class="badge bg-primary me-2">From $249</span>
+                        <span class="text-success fw-semibold">Daily Flights</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="cta-section mb-5">
+    <div class="container">
+        <div class="card bg-gradient-primary text-white border-0">
+            <div class="card-body p-5 text-center">
+                <h2 class="display-6 fw-bold mb-3">Ready to Start Your Journey?</h2>
+                <p class="lead mb-4 opacity-75">
+                    Join millions of satisfied passengers who choose AeroVault for their travels
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <button class="btn btn-light btn-lg px-4 py-3 fw-bold" onclick="scrollToSearch()">
+                        <i class="fas fa-search me-2"></i>Book Now
+                    </button>
+                    <button class="btn btn-outline-light btn-lg px-4 py-3 fw-bold" onclick="showDeals()">
+                        <i class="fas fa-percentage me-2"></i>View Deals
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-plane {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* Stats Section */
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1);
+}
+
+.stat-icon i {
+    color: white;
+    font-size: 2rem;
+}
+
+/* Search Section */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.flight-search-form .form-control,
+.flight-search-form .form-select {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.flight-search-form .form-control:focus,
+.flight-search-form .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.flight-search-form .input-group-text {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+/* Features Section */
+.feature-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+}
+
+.feature-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon i {
+    color: white;
+    font-size: 2.5rem;
+}
+
+.feature-stats {
+    margin-top: auto;
+}
+
+/* Destinations Section */
+.destination-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+    height: 100%;
+}
+
+.destination-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+}
+
+.destination-image {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.destination-card:hover .destination-image {
+    transform: scale(1.1);
+}
+
+.destination-image i {
+    color: white;
+    font-size: 2rem;
+}
+
+.destination-info {
+    margin-top: auto;
+}
+
+/* CTA Section */
+.cta-section .card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .stat-card,
+    .feature-card,
+    .destination-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-icon,
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .feature-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card,
+.feature-card,
+.destination-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+.destination-card:nth-child(1) { animation-delay: 0.1s; }
+.destination-card:nth-child(2) { animation-delay: 0.2s; }
+.destination-card:nth-child(3) { animation-delay: 0.3s; }
+.destination-card:nth-child(4) { animation-delay: 0.4s; }
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #007bff;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    min-height: 20px;
+    background-color: #fff !important;
+}
+.autocomplete-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+.autocomplete-item:hover {
+    background-color: #f8f9fa;
+}
+.airport-code {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+.airport-city {
+    color: #333;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+.airport-name {
+    color: #666;
+    font-size: 12px;
+    font-style: italic;
+}
+</style>
+
+<script>
+function scrollToSearch() {
+    document.getElementById('searchSection').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+function showDestinations() {
+    // Simulate opening destinations modal
+    showNotification('Opening destinations explorer...', 'info');
+}
+
+function showDeals() {
+    // Simulate opening deals page
+    showNotification('Loading special deals...', 'info');
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        min-width: 300px;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            <span>${message}</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Add CSS for slide animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// Auto-fill popular routes
+document.addEventListener('DOMContentLoaded', function() {
+    const popularRoutes = [
+        { from: 'New York', to: 'Los Angeles' },
+        { from: 'Chicago', to: 'Miami' },
+        { from: 'Denver', to: 'Seattle' },
+        { from: 'Boston', to: 'San Francisco' }
+    ];
+    
+    // Set default date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('date').value = tomorrow.toISOString().split('T')[0];
+    
+    // Add route suggestions
+    const fromInput = document.getElementById('from');
+    const toInput = document.getElementById('to');
+    
+    fromInput.addEventListener('focus', function() {
+        if (!this.value) {
+            this.placeholder = 'Try: New York, Chicago, Denver...';
+        }
+    });
+    
+    toInput.addEventListener('focus', function() {
+        if (!this.value) {
+            this.placeholder = 'Try: Los Angeles, Miami, Seattle...';
+        }
+    });
+});
+
+function setupAutocomplete(inputId, suggestionsId) {
+    const input = document.getElementById(inputId);
+    const suggestions = document.getElementById(suggestionsId);
+    let timeoutId;
+    input.addEventListener('input', function() {
+        const query = this.value.trim();
+        clearTimeout(timeoutId);
+        if (query.length < 3) {
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'none';
+            return;
+        }
+        timeoutId = setTimeout(() => {
+            fetch(`/api/airports?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestions.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(airport => {
+                            const div = document.createElement('div');
+                            div.className = 'autocomplete-item';
+                            div.innerHTML = `
+                                <div class="airport-code">${airport.code}</div>
+                                <div class="airport-city">${airport.city}, ${airport.country}</div>
+                                <div class="airport-name">${airport.name}</div>
+                            `;
+                            div.addEventListener('click', () => {
+                                input.value = `${airport.code} - ${airport.city}`;
+                                suggestions.style.display = 'none';
+                            });
+                            suggestions.appendChild(div);
+                        });
+                        suggestions.style.display = 'block';
+                    } else {
+                        suggestions.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    suggestions.style.display = 'none';
+                });
+        }, 300);
+    });
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+    input.addEventListener('keydown', function(e) {
+        const items = suggestions.querySelectorAll('.autocomplete-item');
+        const activeItem = suggestions.querySelector('.autocomplete-item.active');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.classList.remove('active');
+                const nextItem = activeItem.nextElementSibling;
+                if (nextItem) {
+                    nextItem.classList.add('active');
+                } else {
+                    items[0].classList.add('active');
+                }
+            } else if (items.length > 0) {
+                items[0].classList.add('active');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.classList.remove('active');
+                const prevItem = activeItem.previousElementSibling;
+                if (prevItem) {
+                    prevItem.classList.add('active');
+                } else {
+                    items[items.length - 1].classList.add('active');
+                }
+            } else if (items.length > 0) {
+                items[items.length - 1].classList.add('active');
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.click();
+            }
+        } else if (e.key === 'Escape') {
+            suggestions.style.display = 'none';
+        }
+    });
+}
+setupAutocomplete('from', 'from_suggestions');
+setupAutocomplete('to', 'to_suggestions');
+</script>
+{% endblock %} 
