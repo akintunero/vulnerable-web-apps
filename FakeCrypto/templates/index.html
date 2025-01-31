@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}FakeCryptoX - Welcome{% endblock %}
+
+{% block content %}
+<div class="text-center py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="flex justify-center items-center space-x-3 mb-8">
+            <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-2xl">₿</span>
+            </div>
+            <h1 class="text-5xl font-bold text-gray-900">FakeCryptoX</h1>
+        </div>
+        
+        <p class="text-xl text-gray-600 mb-8">
+            Experience the world of crypto trading with mock tokens and realistic market simulation.
+        </p>
+        
+        <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Welcome to FakeCryptoX</h2>
+            <p class="text-gray-600 mb-6">
+                This application simulates a cryptocurrency exchange and wallet platform for educational purposes.
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">💼</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Digital Wallet</h3>
+                    <p class="text-sm text-gray-600">Secure storage for your cryptocurrency assets</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">📈</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Trading Platform</h3>
+                    <p class="text-sm text-gray-600">Buy and sell cryptocurrencies with real-time prices</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Market Data</h3>
+                    <p class="text-sm text-gray-600">Live charts and market analysis tools</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-4">
+            <a href="/register" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
+                Get Started
+            </a>
+            <div class="text-sm text-gray-600">
+                Already have an account? <a href="/login" class="text-yellow-600 hover:text-yellow-700 font-semibold">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
