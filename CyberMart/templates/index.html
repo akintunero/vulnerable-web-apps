@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}CyberMart - Enterprise E-commerce{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-5">
+    <div class="col-lg-7">
+        <h1 class="fw-bold display-3 mb-3" style="color:#1a2233;letter-spacing:-1px;">
+            Welcome to <span style="color:#0ea5e9;">CyberMart</span>
+        </h1>
+        <p class="lead mb-4" style="font-size:1.3rem;max-width:600px;">
+            Shop the latest in electronics, audio, security, and more. Enjoy a modern, enterprise-grade experience with real products, real data, and a crafted, human-centered design.
+        </p>
+        <div class="d-flex gap-3 mb-4">
+            <a href="#productsSection" class="btn btn-primary btn-lg px-4 py-3 fw-bold micro-anim">
+                <i class="fas fa-microchip me-2"></i>Shop Now
+            </a>
+            <a href="#reviewsSection" class="btn btn-outline-primary btn-lg px-4 py-3 fw-bold micro-anim">
+                <i class="fas fa-star me-2"></i>Customer Reviews
+            </a>
+        </div>
+        <div class="d-flex gap-4">
+            <div class="text-center">
+                <div class="fw-bold text-primary fs-4">12,000+</div>
+                <small class="text-muted">Enterprise Customers</small>
+            </div>
+            <div class="text-center">
+                <div class="fw-bold text-primary fs-4">800+</div>
+                <small class="text-muted">Products</small>
+            </div>
+            <div class="text-center">
+                <div class="fw-bold text-primary fs-4">99.9%</div>
+                <small class="text-muted">Uptime</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 text-center">
+        <img src="/static/images/enterprise-shopping.svg" alt="CyberMart" style="max-width:90%;height:auto;min-width:260px;">
+    </div>
+</div>
+<div class="branded-bar"></div>
+<div class="mb-5">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Search Products</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search text-primary"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Search for products..." onkeyup="filterProducts()">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Category</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-filter text-primary"></i></span>
+                <select class="form-select" id="categoryFilter" onchange="filterProducts()">
+                    <option value="">All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="audio">Audio</option>
+                    <option value="security">Security</option>
+                    <option value="fitness">Fitness</option>
+                    <option value="kitchen">Kitchen</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100 py-3 fw-bold" onclick="clearFilters()">
+                <i class="fas fa-times me-2"></i>Clear
+            </button>
+        </div>
+    </div>
+</div>
+<div class="mb-4">
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('')">
+            <i class="fas fa-th me-2"></i>All Products
+        </button>
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('electronics')">
+            <i class="fas fa-laptop me-2"></i>Electronics
+        </button>
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('audio')">
+            <i class="fas fa-headphones me-2"></i>Audio
+        </button>
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('security')">
+            <i class="fas fa-shield-alt me-2"></i>Security
+        </button>
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('fitness')">
+            <i class="fas fa-dumbbell me-2"></i>Fitness
+        </button>
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold rounded-pill micro-anim" onclick="filterByCategory('kitchen')">
+            <i class="fas fa-utensils me-2"></i>Kitchen
+        </button>
+    </div>
+</div>
+<div class="products-section mb-5" id="productsSection">
+    <div class="row g-4" id="productsGrid">
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 product-item" data-category="{{ product.category }}" data-name="{{ product.name.lower() }}">
+            <div class="card h-100 micro-anim">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <span class="badge bg-primary">{{ product.category|title }}</span>
+                    <span class="price">£{{ "%.2f"|format(product.price) }}</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="fw-bold mb-2">{{ product.name }}</h5>
+                    <p class="text-muted mb-3" style="min-height:48px;">{{ product.description }}</p>
+                    <div class="mb-2">
+                        <span class="badge bg-secondary"><i class="fas fa-box me-1"></i> {{ product.stock }} in stock</span>
+                        {% if product.price > 50 %}<span class="badge bg-success ms-2">Free Shipping</span>{% endif %}
+                    </div>
+                    <div class="d-flex gap-2 mb-2">
+                        {% if current_user.is_authenticated %}
+                        <form method="POST" action="{{ url_for('add_to_cart') }}" class="d-flex gap-2 w-100">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control form-control-sm" style="width: 70px;">
+                            <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+                        </form>
+                        {% else %}
+                        <form method="POST" action="{{ url_for('guest_add_to_cart') }}" class="d-flex gap-2 w-100">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control form-control-sm" style="width: 70px;">
+                            <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+                        </form>
+                        {% endif %}
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-eye me-1"></i>Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="noResults" class="text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No products found</h4>
+        <p class="text-muted">Try adjusting your search or filter criteria</p>
+        <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+    </div>
+</div>
+<div class="branded-bar"></div>
+<div id="reviewsSection" class="mb-5">
+    <h2 class="fw-bold text-dark mb-4"><i class="fas fa-star text-warning me-2"></i>What Our Customers Say</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card review-card micro-anim">
+                <div class="card-body">
+                    <div class="mb-2"><i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i></div>
+                    <p class="review-text mb-3">"Amazing quality products and super fast delivery. Highly recommended!"</p>
+                    <div class="review-author">
+                        <strong>Sarah Johnson</strong>
+                        <small class="text-muted d-block">Cisc0 Nerd Inc, London</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card review-card micro-anim">
+                <div class="card-body">
+                    <div class="mb-2"><i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i></div>
+                    <p class="review-text mb-3">"Best prices I've found online. The electronics selection is incredible!"</p>
+                    <div class="review-author">
+                        <strong>Michael Chen</strong>
+                        <small class="text-muted d-block">CyberChef Solutions, Manchester</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card review-card micro-anim">
+                <div class="card-body">
+                    <div class="mb-2"><i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i> <i class="fas fa-star text-warning"></i></div>
+                    <p class="review-text mb-3">"Fresh groceries delivered right to my door. Excellent service!"</p>
+                    <div class="review-author">
+                        <strong>Emily Patel</strong>
+                        <small class="text-muted d-block">Akintunero Inc, Birmingham</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
