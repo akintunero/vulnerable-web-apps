@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfusedCloud - Video Tutorials</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="icon" href="/static/icons/cloud.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/static/js/theme-toggle.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="cc-bg cc-text min-h-screen">
+    <nav class="cc-navbar">
+        <div class="cc-navbar-container">
+            <div class="cc-navbar-brand">
+                <span class="cc-app-title">ConfusedCloud</span>
+            </div>
+            <div class="cc-navbar-links">
+                <a href="/dashboard" class="cc-nav-link">Dashboard</a>
+                <a href="/services" class="cc-nav-link">Services</a>
+                <a href="/billing" class="cc-nav-link">Billing</a>
+                <a href="/support" class="cc-nav-link cc-nav-link-active">Support</a>
+            </div>
+            <div class="cc-navbar-user">
+                <div class="cc-user-info">
+                    <div class="cc-user-avatar">{{ user.name[0] }}</div>
+                    <div class="cc-user-details">
+                        <div class="cc-user-name">{{ user.name }}</div>
+                        <div class="cc-user-email">{{ user.email }}</div>
+                    </div>
+                </div>
+                <a href="/logout" class="cc-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cc-main-container">
+        <div class="cc-content">
+            <div class="cc-page-header">
+                <div>
+                    <h1 class="cc-page-title">Video Tutorials</h1>
+                    <p class="cc-page-subtitle">Step-by-step guides to get you started with ConfusedCloud</p>
+                </div>
+                <a href="/support" class="cc-btn cc-btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Support
+                </a>
+            </div>
+
+            <div class="cc-grid cc-grid-cols-1 lg:cc-grid-cols-3 cc-gap-6">
+                <!-- Sidebar -->
+                <div class="lg:cc-col-span-1">
+                    <div class="cc-card">
+                        <div class="cc-card-header">
+                            <h3 class="cc-card-title">Tutorial Categories</h3>
+                        </div>
+                        <div class="cc-card-body">
+                            <nav class="cc-tutorial-nav">
+                                <a href="#getting-started" class="cc-tutorial-nav-link cc-tutorial-nav-active">Getting Started</a>
+                                <a href="#compute" class="cc-tutorial-nav-link">Compute Services</a>
+                                <a href="#storage" class="cc-tutorial-nav-link">Storage Services</a>
+                                <a href="#database" class="cc-tutorial-nav-link">Database Services</a>
+                                <a href="#networking" class="cc-tutorial-nav-link">Networking</a>
+                                <a href="#security" class="cc-tutorial-nav-link">Security</a>
+                                <a href="#monitoring" class="cc-tutorial-nav-link">Monitoring</a>
+                                <a href="#advanced" class="cc-tutorial-nav-link">Advanced Topics</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:cc-col-span-2">
+                    <div class="cc-card">
+                        <div class="cc-card-body">
+                            <section id="getting-started" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Getting Started</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Welcome to ConfusedCloud</h3>
+                                        <p>Duration: 5:23</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Creating your first account</li>
+                                            <li>Understanding the dashboard</li>
+                                            <li>Basic navigation</li>
+                                            <li>Setting up billing</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Setting Up Your First Project</h3>
+                                        <p>Duration: 8:45</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Creating a new project</li>
+                                            <li>Configuring project settings</li>
+                                            <li>Managing team members</li>
+                                            <li>Setting up access controls</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="compute" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Compute Services</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Creating Your First Virtual Machine</h3>
+                                        <p>Duration: 12:15</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Choosing the right instance type</li>
+                                            <li>Selecting an operating system</li>
+                                            <li>Configuring storage</li>
+                                            <li>Setting up networking</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Managing Instances</h3>
+                                        <p>Duration: 10:32</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Starting and stopping instances</li>
+                                            <li>Resizing instances</li>
+                                            <li>Creating snapshots</li>
+                                            <li>Monitoring performance</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="storage" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Storage Services</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Object Storage Basics</h3>
+                                        <p>Duration: 9:18</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Creating storage buckets</li>
+                                            <li>Uploading and downloading files</li>
+                                            <li>Managing permissions</li>
+                                            <li>Setting up versioning</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="database" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Database Services</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Setting Up a Managed Database</h3>
+                                        <p>Duration: 11:42</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Choosing a database engine</li>
+                                            <li>Configuring database settings</li>
+                                            <li>Setting up backups</li>
+                                            <li>Connecting applications</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="networking" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Networking</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Load Balancer Configuration</h3>
+                                        <p>Duration: 14:27</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Creating load balancers</li>
+                                            <li>Configuring health checks</li>
+                                            <li>Setting up SSL certificates</li>
+                                            <li>Monitoring traffic</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="security" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Security</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Security Best Practices</h3>
+                                        <p>Duration: 16:33</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Managing API keys securely</li>
+                                            <li>Setting up firewall rules</li>
+                                            <li>Implementing access controls</li>
+                                            <li>Monitoring security events</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="monitoring" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Monitoring</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Setting Up Monitoring & Alerts</h3>
+                                        <p>Duration: 13:45</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Configuring monitoring dashboards</li>
+                                            <li>Setting up alert rules</li>
+                                            <li>Creating custom metrics</li>
+                                            <li>Analyzing performance data</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section id="advanced" class="cc-tutorial-section">
+                                <h2 class="cc-tutorial-section-title">Advanced Topics</h2>
+                                
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Automation with Terraform</h3>
+                                        <p>Duration: 18:12</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Infrastructure as Code basics</li>
+                                            <li>Writing Terraform configurations</li>
+                                            <li>Managing state files</li>
+                                            <li>Automating deployments</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="cc-tutorial-video">
+                                    <div class="cc-video-placeholder">
+                                        <i class="fas fa-play-circle cc-video-icon"></i>
+                                        <h3>Container Orchestration</h3>
+                                        <p>Duration: 20:38</p>
+                                    </div>
+                                    <div class="cc-video-description">
+                                        <h4>What you'll learn:</h4>
+                                        <ul>
+                                            <li>Deploying containers</li>
+                                            <li>Managing container clusters</li>
+                                            <li>Scaling applications</li>
+                                            <li>Service discovery</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tutorial navigation
+        document.querySelectorAll('.cc-tutorial-nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.cc-tutorial-nav-link').forEach(l => {
+                    l.classList.remove('cc-tutorial-nav-active');
+                });
+                
+                // Add active class to clicked link
+                link.classList.add('cc-tutorial-nav-active');
+                
+                // Scroll to section
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Video placeholder click handlers
+        document.querySelectorAll('.cc-video-placeholder').forEach(placeholder => {
+            placeholder.addEventListener('click', () => {
+                // In a real app, this would open the video player
+                alert('Video player would open here in a real implementation');
+            });
+        });
+    </script>
+</body>
+</html> 
