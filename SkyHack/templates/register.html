@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Register - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus"></i> Create Account</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter your full name" required data-bs-toggle="tooltip" title="All registrations are monitored for suspicious activity">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Enter your password" required>
+                            <div class="form-text text-success"><i class="fas fa-shield-alt"></i> Password Strength: Verified by QuantumShield AI</div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary w-100 mb-2" data-bs-toggle="tooltip" title="Check password against breach database (feature coming soon)"><i class="fas fa-database"></i> Check Breach Database</button>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <hr>
+                    
+                    <p class="text-center mb-0">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}">Login here</a>
+                    </p>
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-lock"></i> <strong>Security Notice:</strong> Passwords are checked against a global breach database. Email verification is required before account activation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
