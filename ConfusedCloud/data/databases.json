@@ -1,0 +1,32 @@
+{
+  "tenant1": [
+    {
+      "id": "db-001",
+      "name": "primary-db",
+      "engine": "postgresql",
+      "version": "13.4",
+      "status": "Available",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "db-002",
+      "name": "analytics-db",
+      "engine": "mysql",
+      "version": "8.0.28",
+      "status": "Available",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "db-003",
+      "name": "cache-db",
+      "engine": "redis",
+      "version": "6.2.6",
+      "status": "Available",
+      "created": "2024-01-05"
+    }
+  ]
+}
