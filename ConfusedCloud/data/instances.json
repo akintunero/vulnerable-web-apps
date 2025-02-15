@@ -1,0 +1,80 @@
+{
+  "tenant1": [
+    {
+      "id": "77365051-9dc3-4cde-81ea-a063224ebeb7",
+      "name": "web-server-01",
+      "type": "t3.medium",
+      "zone": "us-east-1a",
+      "status": "Running",
+      "created": "2024-01-15"
+    },
+    {
+      "id": "af04cbfb-7c5e-44f5-8ee3-f5742d7c9eab",
+      "name": "app-server-01",
+      "type": "t3.large",
+      "zone": "us-east-1b",
+      "status": "Running",
+      "created": "2024-01-10"
+    },
+    {
+      "id": "3c53ec46-5930-421d-ae38-0da924c6c21e",
+      "name": "db-server-01",
+      "type": "r5.xlarge",
+      "zone": "us-east-1c",
+      "status": "Running",
+      "created": "2024-01-05"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "3c2cf36d-6dbf-4ea8-8a8c-2f972406cabd",
+      "name": "web-server-01",
+      "type": "t3.medium",
+      "zone": "us-east-1a",
+      "status": "Running",
+      "created": "2024-01-15"
+    },
+    {
+      "id": "538b846e-beb3-4475-a4b1-179d0ea3c950",
+      "name": "app-server-01",
+      "type": "t3.large",
+      "zone": "us-east-1b",
+      "status": "Running",
+      "created": "2024-01-10"
+    },
+    {
+      "id": "1e91bbab-92b8-4466-bc28-3925a4a9000e",
+      "name": "db-server-01",
+      "type": "r5.xlarge",
+      "zone": "us-east-1c",
+      "status": "Running",
+      "created": "2024-01-05"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "d3d81df1-48ff-498d-8f3c-e44a68143d6f",
+      "name": "web-server-01",
+      "type": "t3.medium",
+      "zone": "us-east-1a",
+      "status": "Running",
+      "created": "2024-01-15"
+    },
+    {
+      "id": "11db0f62-467f-469f-a9ab-9c104fde74c4",
+      "name": "app-server-01",
+      "type": "t3.large",
+      "zone": "us-east-1b",
+      "status": "Running",
+      "created": "2024-01-10"
+    },
+    {
+      "id": "2e91bbab-92b8-4466-bc28-3925a4a9000e",
+      "name": "db-server-01",
+      "type": "r5.xlarge",
+      "zone": "us-east-1c",
+      "status": "Running",
+      "created": "2024-01-05"
+    }
+  ]
+}
