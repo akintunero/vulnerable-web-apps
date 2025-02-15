@@ -1,0 +1,466 @@
+<!-- Sensitive endpoint: /api/flag -->
+{% extends "base.html" %}
+
+{% block title %}Search Flights - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<style>
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    /* Debug styles to ensure visibility */
+    min-height: 20px;
+    background-color: #fff !important;
+    border: 2px solid #007bff !important;
+}
+
+.autocomplete-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #f8f9fa;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.airport-code {
+    font-weight: bold;
+    color: #0d6efd;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.airport-city {
+    color: #333;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.airport-name {
+    color: #666;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.position-relative {
+    position: relative;
+}
+
+/* Loading animation for autocomplete */
+.autocomplete-loading {
+    padding: 12px 16px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .autocomplete-suggestions {
+        max-height: 200px;
+    }
+    
+    .autocomplete-item {
+        padding: 10px 12px;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0">
+                <div class="card-header bg-primary text-white border-0">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-search me-2"></i> Search Flights</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <span class="badge bg-success fw-semibold me-2" title="All bookings are protected by SkyHack WAF">
+                            <i class="fas fa-shield-alt me-1"></i> Flight Security Level: High
+                        </span>
+                        <button type="button" class="btn btn-outline-warning btn-sm fw-semibold" title="Request security clearance for this search (feature coming soon)">
+                            <i class="fas fa-user-shield me-1"></i> Request Security Clearance
+                        </button>
+                    </div>
+                    <form method="POST" id="searchForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="from_city" class="form-label fw-semibold">From</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" id="from_city" name="from_city" 
+                                           placeholder="e.g., New York, JFK, or London" required autocomplete="off">
+                                    <div id="from_suggestions" class="autocomplete-suggestions"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="to_city" class="form-label fw-semibold">To</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" id="to_city" name="to_city" 
+                                           placeholder="e.g., Los Angeles, LAX, or Paris" required autocomplete="off">
+                                    <div id="to_suggestions" class="autocomplete-suggestions"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <label for="date" class="form-label fw-semibold">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="trip_type" class="form-label fw-semibold">Trip Type</label>
+                                <select class="form-select" id="trip_type" name="trip_type" required>
+                                    <option value="one_way">One Way</option>
+                                    <option value="return">Return</option>
+                                    <option value="multi_city">Multi-City</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="airline" class="form-label fw-semibold">Airline</label>
+                                <input type="text" class="form-control" id="airline" name="airline" 
+                                       placeholder="e.g., SkyHack Air" value="SkyHack Airlines" readonly>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2" id="return_date_row" style="display: none;">
+                            <div class="col-md-4">
+                                <label for="return_date" class="form-label fw-semibold">Return Date</label>
+                                <input type="date" class="form-control" id="return_date" name="return_date">
+                            </div>
+                            <div class="col-md-8"></div>
+                        </div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-4">
+                                <label for="stops" class="form-label fw-semibold">Number of Stops</label>
+                                <select class="form-select" id="stops" name="stops">
+                                    <option value="">Any</option>
+                                    <option value="0">Non-stop</option>
+                                    <option value="1">1 Stop</option>
+                                    <option value="2">2+ Stops</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="departure_time" class="form-label fw-semibold">Departure Time</label>
+                                <input type="time" class="form-control" id="departure_time" name="departure_time">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Price Range ($)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="price_min" placeholder="Min">
+                                    <span class="input-group-text">-</span>
+                                    <input type="number" class="form-control" name="price_max" placeholder="Max">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+                                <i class="fas fa-search me-2"></i> Search Flights
+                            </button>
+                        </div>
+                    </form>
+                    {% if search_term %}
+                        <div class="alert alert-info">You searched for: {{ search_term|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="resultsSection" class="mt-4" style="display: none;">
+                <div class="card border-0">
+                    <div class="card-header bg-success text-white border-0">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-plane me-2"></i> Available Flights</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="flightsResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set default date to today
+document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+// Trip type functionality
+document.getElementById('trip_type').addEventListener('change', function() {
+    const returnDateRow = document.getElementById('return_date_row');
+    const returnDateInput = document.getElementById('return_date');
+    const departureDate = document.getElementById('date').value;
+    
+    if (this.value === 'return') {
+        returnDateRow.style.display = 'block';
+        // Set minimum return date to departure date
+        if (departureDate) {
+            returnDateInput.min = departureDate;
+            // Set default return date to 7 days after departure
+            const departure = new Date(departureDate);
+            const returnDate = new Date(departure);
+            returnDate.setDate(departure.getDate() + 7);
+            returnDateInput.value = returnDate.toISOString().split('T')[0];
+        }
+    } else {
+        returnDateRow.style.display = 'none';
+        returnDateInput.value = '';
+    }
+});
+
+// Update return date minimum when departure date changes
+document.getElementById('date').addEventListener('change', function() {
+    const tripType = document.getElementById('trip_type').value;
+    const returnDateInput = document.getElementById('return_date');
+    
+    if (tripType === 'return' && this.value) {
+        returnDateInput.min = this.value;
+        // Update return date if it's before the new departure date
+        if (returnDateInput.value && returnDateInput.value < this.value) {
+            const departure = new Date(this.value);
+            const returnDate = new Date(departure);
+            returnDate.setDate(departure.getDate() + 7);
+            returnDateInput.value = returnDate.toISOString().split('T')[0];
+        }
+    }
+});
+
+// Initialize autocomplete
+setupAutocomplete('from_city', 'from_suggestions');
+setupAutocomplete('to_city', 'to_suggestions');
+
+// Autocomplete function
+function setupAutocomplete(inputId, suggestionsId) {
+    const input = document.getElementById(inputId);
+    const suggestions = document.getElementById(suggestionsId);
+    let timeoutId;
+
+    console.log(`Setting up autocomplete for ${inputId} with suggestions ${suggestionsId}`);
+
+    input.addEventListener('input', function() {
+        const query = this.value.trim();
+        console.log(`Input event triggered: "${query}"`);
+        
+        // Clear previous timeout
+        clearTimeout(timeoutId);
+        
+        // Hide suggestions if query is too short
+        if (query.length < 3) {
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'none';
+            console.log('Query too short, hiding suggestions');
+            return;
+        }
+        
+        // Debounce the API call
+        timeoutId = setTimeout(() => {
+            console.log(`Making API call for query: "${query}"`);
+            fetch(`/api/airports?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`API response: ${data.length} results`);
+                    suggestions.innerHTML = '';
+                    
+                    if (data.length > 0) {
+                        data.forEach(airport => {
+                            const div = document.createElement('div');
+                            div.className = 'autocomplete-item';
+                            div.innerHTML = `
+                                <div class="airport-code">${airport.code}</div>
+                                <div class="airport-city">${airport.city}, ${airport.country}</div>
+                                <div class="airport-name">${airport.name}</div>
+                            `;
+                            div.addEventListener('click', () => {
+                                input.value = `${airport.code} - ${airport.city}`;
+                                suggestions.style.display = 'none';
+                                console.log(`Selected: ${input.value}`);
+                            });
+                            suggestions.appendChild(div);
+                        });
+                        suggestions.style.display = 'block';
+                        console.log('Showing suggestions');
+                    } else {
+                        suggestions.style.display = 'none';
+                        console.log('No results, hiding suggestions');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching airports:', error);
+                    suggestions.style.display = 'none';
+                });
+        }, 300); // 300ms debounce
+    });
+    
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+    
+    // Handle keyboard navigation
+    input.addEventListener('keydown', function(e) {
+        const items = suggestions.querySelectorAll('.autocomplete-item');
+        const activeItem = suggestions.querySelector('.autocomplete-item.active');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.classList.remove('active');
+                const nextItem = activeItem.nextElementSibling;
+                if (nextItem) {
+                    nextItem.classList.add('active');
+                } else {
+                    items[0].classList.add('active');
+                }
+            } else if (items.length > 0) {
+                items[0].classList.add('active');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.classList.remove('active');
+                const prevItem = activeItem.previousElementSibling;
+                if (prevItem) {
+                    prevItem.classList.add('active');
+                } else {
+                    items[items.length - 1].classList.add('active');
+                }
+            } else if (items.length > 0) {
+                items[items.length - 1].classList.add('active');
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeItem) {
+                activeItem.click();
+            }
+        } else if (e.key === 'Escape') {
+            suggestions.style.display = 'none';
+        }
+    });
+}
+
+// Form submission with automatic flight generation
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const fromCity = document.getElementById('from_city').value;
+    const toCity = document.getElementById('to_city').value;
+    const date = document.getElementById('date').value;
+    const tripType = document.getElementById('trip_type').value;
+    const returnDate = document.getElementById('return_date').value;
+    
+    if (!fromCity || !toCity || !date) {
+        alert('Please fill in all required fields (From, To, and Date)');
+        return;
+    }
+    
+    // Show loading
+    const resultsSection = document.getElementById('resultsSection');
+    const flightsResults = document.getElementById('flightsResults');
+    resultsSection.style.display = 'block';
+    flightsResults.innerHTML = '<div class="loading"><div class="loading"></div><p>Searching for flights...</p></div>';
+    
+    // Fetch generated flights with layovers
+    fetch(`/api/generate-flights-with-layovers?from=${encodeURIComponent(fromCity)}&to=${encodeURIComponent(toCity)}&date=${encodeURIComponent(date)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                flightsResults.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                return;
+            }
+            
+            flightsResults.innerHTML = '';
+            data.forEach(flight => {
+                const flightCard = document.createElement('div');
+                flightCard.className = 'flight-card';
+                
+                let layoverHtml = '';
+                if (flight.layovers && flight.layovers.length > 0) {
+                    layoverHtml = flight.layovers.map(layover => 
+                        `<div class="layover-info">
+                            <i class="fas fa-plane me-2"></i>
+                            Layover in <span class="layover-city">${layover.city}</span> (${layover.duration})
+                        </div>`
+                    ).join('');
+                }
+                
+                // Add trip type badge
+                let tripTypeBadge = '';
+                if (tripType === 'return') {
+                    tripTypeBadge = '<span class="badge bg-warning text-dark me-2">Round Trip</span>';
+                } else if (tripType === 'multi_city') {
+                    tripTypeBadge = '<span class="badge bg-info text-white me-2">Multi-City</span>';
+                } else {
+                    tripTypeBadge = '<span class="badge bg-secondary me-2">One Way</span>';
+                }
+                
+                flightCard.innerHTML = `
+                    <div class="flight-header">
+                        <div class="flight-number">
+                            ${tripTypeBadge}
+                            ${flight.flight_number}
+                        </div>
+                        <div class="flight-price">$${flight.price}</div>
+                    </div>
+                    <div class="flight-route">
+                        <div class="departure">
+                            <div class="time">${flight.departure_time}</div>
+                            <div class="city">${flight.from_city}</div>
+                        </div>
+                        <div class="arrow">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <div class="arrival">
+                            <div class="time">${flight.arrival_time}</div>
+                            <div class="city">${flight.to_city}</div>
+                        </div>
+                    </div>
+                    <div class="flight-duration">
+                        <i class="fas fa-clock me-1"></i> ${flight.duration} • ${flight.stops} stop${flight.stops !== 1 ? 's' : ''}
+                    </div>
+                    ${layoverHtml}
+                    <div class="flight-info">
+                        <span><i class="fas fa-calendar me-1"></i> ${flight.date}</span>
+                        <span><i class="fas fa-plane me-1"></i> ${flight.aircraft_type}</span>
+                        <span><i class="fas fa-chair me-1"></i> ${flight.available_seats} seats</span>
+                    </div>
+                    ${tripType === 'return' && returnDate ? `
+                    <div class="return-info mt-2 p-2 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-undo me-1"></i> Return flight available on ${returnDate}
+                        </small>
+                    </div>
+                    ` : ''}
+                `;
+                flightCard.addEventListener('click', () => {
+                    // Redirect to booking page with flight details and trip information
+                    const bookingUrl = `/book/${flight.id}?from=${encodeURIComponent(flight.from_city)}&to=${encodeURIComponent(flight.to_city)}&date=${encodeURIComponent(flight.date)}&price=${flight.price}&trip_type=${tripType}`;
+                    const finalUrl = tripType === 'return' && returnDate ? 
+                        `${bookingUrl}&return_date=${encodeURIComponent(returnDate)}` : bookingUrl;
+                    window.location.href = finalUrl;
+                });
+                flightsResults.appendChild(flightCard);
+            });
+        })
+        .catch(error => {
+            console.error('Error generating flights:', error);
+            flightsResults.innerHTML = '<div class="alert alert-danger">Error searching flights. Please try again.</div>';
+        });
+});
+</script>
+{% endblock %}
