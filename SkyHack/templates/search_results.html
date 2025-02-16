@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="fas fa-plane"></i> Flight Search Results</h2>
+            
+            {% if flights %}
+                <div class="row">
+                    {% for flight in flights %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card flight-card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-plane"></i> {{ flight.flight_number }}
+                                </h5>
+                                <span class="badge bg-success me-2" data-bs-toggle="tooltip" title="All bookings are protected by SkyHack WAF"><i class="fas fa-shield-alt"></i> Flight Security Level: High</span>
+                                <button type="button" class="btn btn-outline-warning btn-sm ms-2" data-bs-toggle="tooltip" title="Request security clearance for this flight (feature coming soon)"><i class="fas fa-user-shield"></i> Request Security Clearance</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>From</h6>
+                                        <p class="text-primary">{{ flight.from_city }}</p>
+                                        <small class="text-muted">{{ flight.departure_time }}</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>To</h6>
+                                        <p class="text-primary">{{ flight.to_city }}</p>
+                                        <small class="text-muted">{{ flight.arrival_time }}</small>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Date</h6>
+                                        <p>{{ flight.date }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Price</h6>
+                                        <p class="text-success fw-bold">${{ "%.2f"|format(flight.price) }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Aircraft</h6>
+                                        <p>{{ flight.aircraft_type }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Available Seats</h6>
+                                        <p>{{ flight.available_seats }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('book_flight', flight_id=flight.id) }}" 
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-ticket-alt"></i> Book Flight
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> No flights found</h5>
+                    <p>Try adjusting your search criteria or check back later for new flights.</p>
+                    <a href="{{ url_for('search_flights') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search Again
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
