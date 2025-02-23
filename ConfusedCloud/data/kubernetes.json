@@ -1,0 +1,29 @@
+{
+  "tenant1": [
+    {
+      "id": "k8s-001",
+      "name": "prod-cluster",
+      "version": "1.24.0",
+      "status": "Active",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "k8s-002",
+      "name": "staging-cluster",
+      "version": "1.23.0",
+      "status": "Active",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "k8s-003",
+      "name": "dev-cluster",
+      "version": "1.22.0",
+      "status": "Active",
+      "created": "2024-01-05"
+    }
+  ]
+}
