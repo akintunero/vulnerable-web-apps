@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Book Flight - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Trip Type Header -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-2">Complete Your Booking</h2>
+                <p class="text-muted">Review your flight details and passenger information</p>
+            </div>
+
+            {% if flight %}
+            <!-- Flight Details Card -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-primary text-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-plane me-2"></i>Flight Details</h4>
+                        {% if request.args.get('trip_type') == 'return' %}
+                            <span class="badge bg-warning text-dark fs-6">Round Trip</span>
+                        {% elif request.args.get('trip_type') == 'multi_city' %}
+                            <span class="badge bg-info text-white fs-6">Multi-City</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">One Way</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Outbound Flight -->
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-plane-departure me-2"></i>Outbound Flight
+                        </h6>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">FROM</h6>
+                                    <h5 class="fw-bold mb-0">{{ flight.from_city }}</h5>
+                                    <small class="text-muted">{{ flight.departure_time }}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="flight-route">
+                                    <i class="fas fa-plane text-primary" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Flight {{ flight.flight_number }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">TO</h6>
+                                    <h5 class="fw-bold mb-0">{{ flight.to_city }}</h5>
+                                    <small class="text-muted">{{ flight.arrival_time }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DATE</h6>
+                                <p class="fw-bold mb-0">{{ flight.date }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">AIRCRAFT</h6>
+                                <p class="fw-bold mb-0">{{ flight.aircraft_type }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DURATION</h6>
+                                <p class="fw-bold mb-0">{{ flight.arrival_time }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">PRICE</h6>
+                                <p class="fw-bold mb-0 text-success">${{ "%.2f"|format(flight.price) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Return Flight (if applicable) -->
+                    {% if request.args.get('trip_type') == 'return' and request.args.get('return_date') %}
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-plane-arrival me-2"></i>Return Flight
+                        </h6>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">FROM</h6>
+                                    <h5 class="fw-bold mb-0">{{ flight.to_city }}</h5>
+                                    <small class="text-muted">TBD</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="flight-route">
+                                    <i class="fas fa-plane text-warning" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Return Flight</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">TO</h6>
+                                    <h5 class="fw-bold mb-0">{{ flight.from_city }}</h5>
+                                    <small class="text-muted">TBD</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DATE</h6>
+                                <p class="fw-bold mb-0">{{ request.args.get('return_date') }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">AIRCRAFT</h6>
+                                <p class="fw-bold mb-0">TBD</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DURATION</h6>
+                                <p class="fw-bold mb-0">TBD</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">PRICE</h6>
+                                <p class="fw-bold mb-0 text-success">Included</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Multi-City Additional Legs (if applicable) -->
+                    {% if request.args.get('trip_type') == 'multi_city' %}
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-route me-2"></i>Additional Legs
+                        </h6>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Multi-City Trip:</strong> Additional flight legs will be configured during the booking process. 
+                            You'll receive separate confirmations for each leg of your journey.
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Passenger Information Card -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-success text-white border-0">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-user me-2"></i>Passenger Information</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="passenger_name" class="form-label fw-semibold">Passenger Name</label>
+                                <input type="text" class="form-control" id="passenger_name" name="passenger_name" 
+                                       placeholder="Enter passenger name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="passenger_email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="passenger_email" name="passenger_email" 
+                                       placeholder="Enter email address" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="seat_class" class="form-label fw-semibold">Seat Class</label>
+                                <select class="form-select" id="seat_class" name="seat_class" required>
+                                    <option value="economy">Economy Class</option>
+                                    <option value="business">Business Class</option>
+                                    <option value="first">First Class</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="passport_data" class="form-label fw-semibold">Passport Data (Optional)</label>
+                                <input type="file" class="form-control" id="passport_data" name="passport_data" 
+                                       accept=".jpg,.jpeg,.png,.gif,.pdf">
+                                <small class="text-muted">Upload passport data page for international flights</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden fields for trip information -->
+                        <input type="hidden" name="trip_type" value="{{ request.args.get('trip_type', 'one_way') }}">
+                        {% if request.args.get('return_date') %}
+                        <input type="hidden" name="return_date" value="{{ request.args.get('return_date') }}">
+                        {% endif %}
+                        
+                        <!-- VULNERABILITY: Hidden Price Manipulation Field -->
+                        <!-- Users can modify this hidden field to manipulate the booking price -->
+                        <input type="hidden" name="custom_price" id="custom_price" value="{{ flight.price }}">
+                        
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Special Requests or Comments (optional)</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="2" placeholder="Enter any special requests or comments"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a href="{{ url_for('search_flights') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Search
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-credit-card me-2"></i>Complete Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3 text-warning">Flight Not Found</h3>
+                    <p class="text-muted">The flight you're looking for could not be found.</p>
+                    <a href="{{ url_for('search_flights') }}" class="btn btn-primary">Search Flights</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.flight-route {
+    position: relative;
+}
+
+.flight-route::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -50%;
+    right: -50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--bs-primary), transparent);
+    z-index: -1;
+}
+
+.flight-leg {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: #f8f9fa;
+}
+</style>
+{% endblock %} 
