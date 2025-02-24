@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Confirmation - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Success Header -->
+            <div class="text-center mb-4">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="fw-bold text-success mb-2">Booking Confirmed!</h2>
+                <p class="text-muted">Your flight has been successfully booked with SkyHack Airlines</p>
+            </div>
+
+            {% if booking %}
+            <!-- PNR Card -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-primary text-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-plane me-2"></i>Booking Reference</h4>
+                        <span class="badge bg-light text-primary fs-6 fw-bold">PNR: {{ booking.pnr }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">PASSENGER</h6>
+                            <p class="fw-bold fs-5 mb-0">{{ booking.passenger_name | safe }}</p>
+                            <p class="text-muted mb-0">{{ booking.passenger_email }}</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <h6 class="text-muted mb-2">BOOKING DATE</h6>
+                            <p class="fw-bold mb-0">{{ booking.booking_date }}</p>
+                            <p class="text-muted mb-0">Status: <span class="badge bg-success">Confirmed</span></p>
+                        </div>
+                    </div>
+                    {% if booking.comment %}
+                        <div class="alert alert-warning mt-3">Special Requests/Comments: {{ booking.comment|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Flight Details Card -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-success text-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-route me-2"></i>Flight Details</h4>
+                        {% if trip_type == 'return' %}
+                        <span class="badge bg-warning text-dark fs-6">Round Trip</span>
+                        {% elif trip_type == 'multi_city' %}
+                        <span class="badge bg-info text-white fs-6">Multi-City</span>
+                        {% else %}
+                        <span class="badge bg-secondary fs-6">One Way</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Outbound Flight -->
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-plane-departure me-2"></i>Outbound Flight
+                        </h6>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">FROM</h6>
+                                    <h5 class="fw-bold mb-0">{{ booking.from_city }}</h5>
+                                    <small class="text-muted">{{ booking.departure_time }}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="flight-route">
+                                    <i class="fas fa-plane text-primary" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Flight {{ booking.flight_number }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">TO</h6>
+                                    <h5 class="fw-bold mb-0">{{ booking.to_city }}</h5>
+                                    <small class="text-muted">{{ booking.arrival_time }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DATE</h6>
+                                <p class="fw-bold mb-0">{{ booking.date }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">SEAT CLASS</h6>
+                                <p class="fw-bold mb-0">{{ booking.seat_class | title }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">AIRCRAFT</h6>
+                                <p class="fw-bold mb-0">{{ booking.aircraft_type }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">PRICE</h6>
+                                <p class="fw-bold mb-0 text-success">${{ "%.2f"|format(booking.price) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Return Flight (if applicable) -->
+                    {% if trip_type == 'return' and return_date %}
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-plane-arrival me-2"></i>Return Flight
+                        </h6>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">FROM</h6>
+                                    <h5 class="fw-bold mb-0">{{ booking.to_city }}</h5>
+                                    <small class="text-muted">TBD</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="flight-route">
+                                    <i class="fas fa-plane text-warning" style="font-size: 2rem;"></i>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Return Flight</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="text-muted mb-1">TO</h6>
+                                    <h5 class="fw-bold mb-0">{{ booking.from_city }}</h5>
+                                    <small class="text-muted">TBD</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">DATE</h6>
+                                <p class="fw-bold mb-0">{{ return_date }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">SEAT CLASS</h6>
+                                <p class="fw-bold mb-0">{{ booking.seat_class | title }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">AIRCRAFT</h6>
+                                <p class="fw-bold mb-0">TBD</p>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="text-muted mb-1">PRICE</h6>
+                                <p class="fw-bold mb-0 text-success">Included</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Multi-City Information (if applicable) -->
+                    {% if trip_type == 'multi_city' %}
+                    <div class="flight-leg mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-route me-2"></i>Multi-City Trip
+                        </h6>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Multi-City Trip:</strong> Additional flight legs will be configured separately. 
+                            You'll receive individual confirmations for each leg of your journey.
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-info text-white border-0">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Important Information</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Check-in Information</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-clock text-primary me-2"></i>Check-in opens 24 hours before departure</li>
+                                <li><i class="fas fa-mobile-alt text-primary me-2"></i>Mobile boarding pass available</li>
+                                <li><i class="fas fa-suitcase text-primary me-2"></i>Baggage allowance: 1 checked + 1 carry-on</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Contact Information</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-phone text-primary me-2"></i>Customer Service: +1-800-SKYHACK</li>
+                                <li><i class="fas fa-envelope text-primary me-2"></i>Email: support@skyhack.com</li>
+                                <li><i class="fas fa-globe text-primary me-2"></i>Website: www.skyhack.com</li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% if booking.passport_data %}
+                    <hr>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-passport me-2"></i>
+                        <strong>Passport Data:</strong> Your passport data has been uploaded successfully. 
+                        <a href="/uploads/{{ booking.passport_data }}" target="_blank" class="alert-link">View uploaded file</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <a href="{{ url_for('my_bookings') }}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-list me-2"></i>View My Bookings
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg me-3">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-print me-2"></i>Print Confirmation
+                </button>
+            </div>
+
+            {% else %}
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3 text-warning">Booking Not Found</h3>
+                    <p class="text-muted">The booking you're looking for could not be found.</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Return to Home</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.flight-route {
+    position: relative;
+}
+
+.flight-route::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -50%;
+    right: -50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--bs-primary), transparent);
+    z-index: -1;
+}
+
+@media print {
+    .btn {
+        display: none !important;
+    }
+}
+</style>
+{% endblock %} 
