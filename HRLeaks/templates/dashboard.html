@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+
+{% block title %}TalentForge - HR Management Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h1 mb-1 fw-bold text-dark">
+            <i class="fas fa-users-cog me-3 text-primary"></i>HR Dashboard
+        </h1>
+        <p class="text-muted mb-0">Welcome back, <span class="fw-bold text-primary">{{ user.username }}</span> • Last updated: {{ now.strftime('%b %d, %H:%M') if now else 'Just now' }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshDashboard()">
+            <i class="fas fa-sync-alt me-1"></i>Refresh
+        </button>
+        <button type="button" class="btn btn-outline-success btn-sm" onclick="exportDashboard()">
+            <i class="fas fa-download me-1"></i>Export Report
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="showQuickActions()">
+            <i class="fas fa-plus me-1"></i>Quick Actions
+        </button>
+    </div>
+</div>
+
+<!-- Key Metrics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="text-uppercase text-primary fw-bold small mb-1">Total Employees</div>
+                        <div class="h2 mb-0 fw-bold text-dark">{{ stats.total_employees|safe }}</div>
+                        <div class="text-success small fw-semibold">
+                            <i class="fas fa-arrow-up me-1"></i>+3 this month
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="text-uppercase text-success fw-bold small mb-1">Total Payroll</div>
+                        <div class="h2 mb-0 fw-bold text-dark">£{{ stats.total_payroll|safe }}</div>
+                        <div class="text-success small fw-semibold">
+                            <i class="fas fa-arrow-up me-1"></i>+5.2% vs last month
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="text-uppercase text-warning fw-bold small mb-1">Active Resumes</div>
+                        <div class="h2 mb-0 fw-bold text-dark">{{ stats.total_resumes|safe }}</div>
+                        <div class="text-warning small fw-semibold">
+                            <i class="fas fa-clock me-1"></i>{{ stats.total_resumes|int - 5 }} pending review
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                            <i class="fas fa-file-alt fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="text-uppercase text-info fw-bold small mb-1">Departments</div>
+                        <div class="h2 mb-0 fw-bold text-dark">{{ stats.total_departments|safe }}</div>
+                        <div class="text-info small fw-semibold">
+                            <i class="fas fa-chart-line me-1"></i>Avg. 8.5 employees/dept
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-3">
+                            <i class="fas fa-building fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-xl-8 col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>Employee Growth & Trends
+                    </h5>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar me-1"></i>This Quarter
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="updateChart('week')">This Week</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="updateChart('month')">This Month</a></li>
+                            <li><a class="dropdown-item active" href="#" onclick="updateChart('quarter')">This Quarter</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="updateChart('year')">This Year</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="employeeChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>Department Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="departmentChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity & Quick Actions -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-user-plus me-2 text-primary"></i>Recent Hires
+                    </h5>
+                    <a href="/employee/new" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Add Employee
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for employee in recent_employees %}
+                    <div class="list-group-item border-0 d-flex justify-content-between align-items-center py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-user text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold text-dark">{{ employee.name|safe }}</h6>
+                                <small class="text-muted">{{ employee.position|safe }} • {{ employee.department|safe }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-success rounded-pill">{{ employee.hire_date|safe }}</span>
+                            <div class="small text-muted mt-1">Employee ID: {{ loop.index + 1000 }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-history me-2 text-primary"></i>Recent Activities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% for activity in recent_activities %}
+                    <div class="timeline-item mb-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-circle text-white" style="font-size: 0.5rem;"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <p class="mb-1 fw-semibold text-dark">{{ activity.description|safe }}</p>
+                                <small class="text-muted">{{ activity.timestamp|safe }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Grid -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3 mb-3">
+                        <a href="/employee/new" class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 rounded-3 border-0 shadow-sm">
+                            <i class="fas fa-user-plus fa-2x mb-3"></i>
+                            <span class="fw-bold">Add Employee</span>
+                            <small class="text-light opacity-75">New hire onboarding</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/resume/new" class="btn btn-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 rounded-3 border-0 shadow-sm">
+                            <i class="fas fa-file-upload fa-2x mb-3"></i>
+                            <span class="fw-bold">Upload Resume</span>
+                            <small class="text-light opacity-75">Candidate management</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/payroll/new" class="btn btn-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 rounded-3 border-0 shadow-sm">
+                            <i class="fas fa-calculator fa-2x mb-3"></i>
+                            <span class="fw-bold">Process Payroll</span>
+                            <small class="text-light opacity-75">Salary management</small>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/reports" class="btn btn-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-4 rounded-3 border-0 shadow-sm">
+                            <i class="fas fa-chart-bar fa-2x mb-3"></i>
+                            <span class="fw-bold">Generate Report</span>
+                            <small class="text-light opacity-75">Analytics & insights</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Performance Metrics -->
+<div class="row mt-4">
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-trophy me-2 text-primary"></i>Performance Metrics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="bg-primary bg-opacity-10 rounded-3 p-3 mb-2">
+                            <i class="fas fa-star fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">4.8</h4>
+                        <small class="text-muted">Avg. Rating</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-success bg-opacity-10 rounded-3 p-3 mb-2">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">94%</h4>
+                        <small class="text-muted">Retention Rate</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-warning bg-opacity-10 rounded-3 p-3 mb-2">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">2.3</h4>
+                        <small class="text-muted">Avg. Days to Hire</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fas fa-bell me-2 text-primary"></i>Recent Notifications
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 d-flex align-items-center py-2">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold text-dark">Payroll processed successfully</div>
+                            <small class="text-muted">All employees paid on time</small>
+                        </div>
+                        <small class="text-muted">2 min ago</small>
+                    </div>
+                    <div class="list-group-item border-0 d-flex align-items-center py-2">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold text-dark">3 resumes pending review</div>
+                            <small class="text-muted">Engineering positions</small>
+                        </div>
+                        <small class="text-muted">15 min ago</small>
+                    </div>
+                    <div class="list-group-item border-0 d-flex align-items-center py-2">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                            <i class="fas fa-info-circle text-info"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold text-dark">New employee onboarding</div>
+                            <small class="text-muted">Sarah Johnson - Marketing</small>
+                        </div>
+                        <small class="text-muted">1 hour ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dashboard data
+    const dashboardData = {
+        totalEmployees: '{{ stats.total_employees|safe }}',
+        totalPayroll: '{{ stats.total_payroll|safe }}',
+        totalResumes: '{{ stats.total_resumes|safe }}',
+        totalDepartments: '{{ stats.total_departments|safe }}'
+    };
+    
+    // Employee Growth Chart
+    const employeeCtx = document.getElementById('employeeChart').getContext('2d');
+    const employeeChart = new Chart(employeeCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Total Employees',
+                data: [8, 9, 9, 10, 10, 10],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4,
+                borderWidth: 3,
+                fill: true
+            }, {
+                label: 'New Hires',
+                data: [1, 0, 0, 1, 0, 0],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                tension: 0.4,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Department Distribution Chart
+    const departmentCtx = document.getElementById('departmentChart').getContext('2d');
+    const departmentChart = new Chart(departmentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Engineering', 'Sales', 'Marketing', 'Finance', 'HR', 'Operations'],
+            datasets: [{
+                data: [3, 2, 2, 1, 1, 1],
+                backgroundColor: [
+                    '#0d6efd',
+                    '#198754',
+                    '#ffc107',
+                    '#dc3545',
+                    '#6f42c1',
+                    '#fd7e14'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+    
+    function refreshDashboard() {
+        showNotification('Dashboard refreshed successfully', 'success');
+        // Simulate data refresh
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+    
+    function exportDashboard() {
+        showNotification('Generating export report...', 'info');
+        setTimeout(() => {
+            showNotification('Dashboard exported successfully', 'success');
+        }, 2000);
+    }
+    
+    function showQuickActions() {
+        showNotification('Quick actions panel opened', 'info');
+    }
+    
+    function updateChart(period) {
+        showNotification(`Chart updated to show ${period} data`, 'info');
+    }
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        notification.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <span>${message}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('animate-fade-in');
+        });
+    });
+</script>
+
+<style>
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 32px;
+    bottom: -16px;
+    width: 2px;
+    background: rgba(13, 110, 253, 0.2);
+}
+</style>
+{% endblock %} 
