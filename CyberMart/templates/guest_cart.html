@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Guest Cart - CyberMart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="guest-banner">
+        <i class="fas fa-user-clock"></i> Shopping as Guest - <a href="{{ url_for('register') }}" class="text-white fw-bold">Create Account</a> to save your cart and track orders
+    </div>
+    
+    <h2 class="mb-4">
+        <i class="fas fa-shopping-cart text-primary"></i> Your Guest Cart
+    </h2>
+    
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cart Items</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in cart_items %}
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-md-2">
+                                <img src="{{ item.product.image_url or '/static/images/placeholder.jpg' }}" 
+                                     alt="{{ item.product.name }}" 
+                                     class="img-fluid rounded" style="max-height: 80px;">
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="mb-1">{{ item.product.name }}</h6>
+                                <small class="text-muted">{{ item.product.category }}</small>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="price">£{{ "%.2f"|format(item.product.price) }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge bg-secondary">{{ item.quantity }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="price">${{ "%.2f"|format(item.subtotal) }}</span>
+                            </div>
+                            <div class="col-md-1">
+                                <form method="POST" action="{{ url_for('guest_remove_from_cart') }}" class="d-inline">
+                                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% if not loop.last %}
+                        <hr>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>${{ "%.2f"|format(total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span>Free</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax:</span>
+                            <span>${{ "%.2f"|format(total * 0.08) }}</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong class="price">${{ "%.2f"|format(total * 1.08) }}</strong>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('guest_checkout') }}" class="btn btn-primary">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </a>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-shopping-bag"></i> Continue Shopping
+                            </a>
+                            <a href="{{ url_for('register') }}" class="btn btn-secondary">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+            <h4>Your cart is empty</h4>
+            <p class="text-muted">Start shopping to add items to your cart!</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Start Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 
