@@ -1,0 +1,29 @@
+{
+  "tenant1": [
+    {
+      "id": "lb-001",
+      "name": "web-lb",
+      "type": "application",
+      "status": "Active",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "lb-002",
+      "name": "api-lb",
+      "type": "network",
+      "status": "Active",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "lb-003",
+      "name": "app-lb",
+      "type": "application",
+      "status": "Active",
+      "created": "2024-01-05"
+    }
+  ]
+}
