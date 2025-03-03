@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="fas fa-ticket-alt"></i> My Bookings</h2>
+            
+            {% if bookings %}
+                <div class="row">
+                    {% for booking in bookings %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card flight-card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-plane"></i> Booking #{{ booking.id }}
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Flight</h6>
+                                        <p class="text-primary">{{ booking.flight_number }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Status</h6>
+                                        <span class="badge bg-success">{{ booking.status }}</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>From</h6>
+                                        <p>{{ booking.from_city }}</p>
+                                        <small class="text-muted">{{ booking.departure_time }}</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>To</h6>
+                                        <p>{{ booking.to_city }}</p>
+                                        <small class="text-muted">{{ booking.arrival_time }}</small>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Date</h6>
+                                        <p>{{ booking.date }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Seat Class</h6>
+                                        <p>{{ booking.seat_class | title }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6>Passenger</h6>
+                                        <p>{{ booking.passenger_name | safe }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6>Price</h6>
+                                        <p class="text-success fw-bold">${{ "%.2f"|format(booking.price) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('checkin') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check-circle"></i> Check-in
+                                </a>
+                                <a href="{{ url_for('boarding_pass', booking_id=booking.id) }}" class="btn btn-info btn-sm ms-2" data-bs-toggle="tooltip" title="Download your boarding pass (AI-verified)">
+                                    <i class="fas fa-ticket-alt"></i> Download Boarding Pass
+                                </a>
+                                <a href="{{ url_for('download_file') }}?file=ticket_{{ booking.id }}.pdf" class="btn btn-secondary btn-sm ms-2" data-bs-toggle="tooltip" title="All downloads are scanned by SkyHack WAF">
+                                    <i class="fas fa-download"></i> Download Ticket
+                                </a>
+                                <button type="button" class="btn btn-outline-warning btn-sm ms-2" data-bs-toggle="tooltip" title="Report suspicious booking to SkyHack SOC (feature coming soon)">
+                                    <i class="fas fa-exclamation-triangle"></i> Report Suspicious Booking
+                                </button>
+                                <span class="text-muted ms-2">Booking ID: {{ booking.id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> No bookings found</h5>
+                    <p>You haven't made any flight bookings yet.</p>
+                    <a href="{{ url_for('search_flights') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search Flights
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
