@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Guest Checkout - CyberMart{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-7">
+        <div class="card shadow-sm micro-anim">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
+                <i class="fas fa-user me-2"></i>
+                <h4 class="mb-0">Guest Information</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" autocomplete="off">
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
+                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label fw-bold">Shipping Address <span class="text-danger">*</span></label>
+                        <textarea id="address" name="address" rows="3" class="form-control" required placeholder="Enter your complete shipping address"></textarea>
+                    </div>
+                    <div class="alert alert-info mb-4">
+                        <strong>Guest Checkout Benefits:</strong>
+                        <ul class="mb-0 ps-3">
+                            <li>No account required</li>
+                            <li>Quick and easy checkout</li>
+                            <li>Order tracking via email</li>
+                            <li>Secure payment processing</li>
+                        </ul>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 micro-anim">
+                        <i class="fas fa-credit-card me-2"></i>Complete Order - ${{ "%.2f"|format(total) }}
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <span class="text-muted">Already have an account?</span>
+                    <a href="{{ url_for('login') }}" class="fw-bold text-primary">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 mt-4 mt-lg-0">
+        <div class="card shadow-sm micro-anim">
+            <div class="card-header bg-dark text-white d-flex align-items-center">
+                <i class="fas fa-shopping-cart me-2"></i>
+                <h4 class="mb-0">Order Summary</h4>
+            </div>
+            <div class="card-body">
+                {% if cart_items %}
+                <ul class="list-group mb-3">
+                    {% for item in cart_items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">{{ item.product.name }}</span>
+                            <br><small class="text-muted">Qty: {{ item.quantity }}</small>
+                        </div>
+                        <span class="price">${{ "%.2f"|format(item.subtotal) }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Shipping:</span>
+                    <span>Free</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tax:</span>
+                    <span>${{ "%.2f"|format(total * 0.08) }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-3">
+                    <strong>Total:</strong>
+                    <strong class="price">${{ "%.2f"|format(total * 1.08) }}</strong>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h4>Your cart is empty</h4>
+                    <p class="text-muted">Add some products to get started!</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> Start Shopping
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
