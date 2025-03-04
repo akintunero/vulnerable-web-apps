@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Boarding Pass - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-ticket-alt"></i> Boarding Pass</h3>
+                </div>
+                <div class="card-body">
+                    {% if booking %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Flight</h6>
+                            <p><strong>{{ booking.flight_number }}</strong></p>
+                            <p>From: {{ booking.from_city }}</p>
+                            <p>To: {{ booking.to_city }}</p>
+                            <p>Date: {{ booking.date }}</p>
+                            <p>Departure: {{ booking.departure_time }}</p>
+                            <p>Arrival: {{ booking.arrival_time }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Passenger</h6>
+                            <p>Name: {{ booking.passenger_name | safe }}</p>
+                            <p>Email: {{ booking.passenger_email }}</p>
+                            <p>Seat Class: {{ booking.seat_class | title }}</p>
+                            <p>Booking ID: {{ booking.id }}</p>
+                            <div class="mt-3 text-center">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?data=flag%7Bqr_boarding_pass_flag_2024%7D&size=120x120" alt="Boarding Pass QR Code" title="Scan for a surprise!" />
+                                <div class="small text-muted">Scan for a surprise!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Please arrive at the airport 2 hours before departure. Have your ID and booking reference ready.
+                    </div>
+                    <a href="{{ url_for('download_file') }}?file=ticket_{{ booking.id }}.pdf" class="btn btn-success mt-3" data-bs-toggle="tooltip" title="Download your PDF boarding pass (AI-verified)">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                    {% else %}
+                    <div class="alert alert-danger">
+                        <h5>Booking Not Found</h5>
+                        <p>The requested booking could not be found.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('my_bookings') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to My Bookings
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
