@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}FakeCryptoX - Completed Transactions{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Completed Transactions</h1>
+        <div class="text-sm text-gray-600">
+            Total: <span class="font-semibold text-green-600">{{ transactions|length }}</span> transactions
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Filter Transactions</h3>
+        <div class="grid md:grid-cols-4 gap-4">
+            <div>
+                <label for="filter_type" class="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+                <select id="filter_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white text-gray-900">
+                    <option value="">All Types</option>
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="deposit">Deposit</option>
+                    <option value="withdraw">Withdraw</option>
+                </select>
+            </div>
+            <div>
+                <label for="filter_token" class="block text-sm font-medium text-gray-700 mb-1">Token</label>
+                <select id="filter_token" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white text-gray-900">
+                    <option value="">All Tokens</option>
+                    <option value="BTC">Bitcoin (BTC)</option>
+                    <option value="ETH">Ethereum (ETH)</option>
+                    <option value="DOGE">Dogecoin (DOGE)</option>
+                    <option value="ADA">Cardano (ADA)</option>
+                    <option value="LTC">Litecoin (LTC)</option>
+                    <option value="USDT">Tether (USDT)</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+            <div>
+                <label for="filter_status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="filter_status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white text-gray-900">
+                    <option value="">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+            <div>
+                <label for="filter_date" class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                <select id="filter_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white text-gray-900">
+                    <option value="">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl">📈</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Volume</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ "%.2f"|format(total_volume) }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl">💰</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Value</p>
+                    <p class="text-2xl font-bold text-gray-900">${{ "%.2f"|format(total_value) }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl">✅</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Completed</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ completed_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <span class="text-2xl">❌</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Failed</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ failed_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        {% if transactions %}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for transaction in transactions %}
+                    <tr class="hover:bg-gray-50 transaction-row" 
+                        data-type="{{ transaction.type }}" 
+                        data-token="{{ transaction.token }}" 
+                        data-status="{{ transaction.status }}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                            {{ transaction.id[:8] }}...
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if transaction.type == 'buy' %}
+                                    bg-green-100 text-green-800
+                                {% elif transaction.type == 'sell' %}
+                                    bg-red-100 text-red-800
+                                {% elif transaction.type == 'transfer' %}
+                                    bg-blue-100 text-blue-800
+                                {% elif transaction.type == 'deposit' %}
+                                    bg-purple-100 text-purple-800
+                                {% else %}
+                                    bg-gray-100 text-gray-800
+                                {% endif %}">
+                                {{ transaction.type|title }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if transaction.from_user == user.username %}
+                                    bg-red-100 text-red-800
+                                {% elif transaction.from_user == 'EXCHANGE' %}
+                                    bg-blue-100 text-blue-800
+                                {% else %}
+                                    bg-gray-100 text-gray-800
+                                {% endif %}">
+                                {{ transaction.from_user }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if transaction.to_user == user.username %}
+                                    bg-green-100 text-green-800
+                                {% elif transaction.to_user == 'EXCHANGE' %}
+                                    bg-blue-100 text-blue-800
+                                {% else %}
+                                    bg-gray-100 text-gray-800
+                                {% endif %}">
+                                {{ transaction.to_user }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <span class="text-lg mr-2">
+                                    {% if transaction.token == "BTC" %}₿
+                                    {% elif transaction.token == "ETH" %}Ξ
+                                    {% elif transaction.token == "DOGE" %}Ð
+                                    {% elif transaction.token == "ADA" %}₳
+                                    {% else %}💵
+                                    {% endif %}
+                                </span>
+                                <span class="font-medium">{{ transaction.token }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                            {{ "%.4f"|format(transaction.amount) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if transaction.status == 'completed' %}
+                                    bg-green-100 text-green-800
+                                {% elif transaction.status == 'pending' %}
+                                    bg-yellow-100 text-yellow-800
+                                {% else %}
+                                    bg-red-100 text-red-800
+                                {% endif %}">
+                                {{ transaction.status|title }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ transaction.timestamp.split('T')[0] }}
+                            <br>
+                            <span class="text-xs">{{ transaction.timestamp.split('T')[1][:8] }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="viewTransactionDetails('{{ transaction.id }}')" 
+                                    class="text-yellow-600 hover:text-yellow-900 font-medium">
+                                View Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="text-6xl mb-4">📊</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No transactions found</h3>
+            <p class="text-gray-500 mb-6">Try adjusting your filters or start trading to see transactions here.</p>
+            <a href="/dashboard" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-md transition-colors">
+                Start Trading
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if transactions|length > 20 %}
+    <div class="flex justify-center">
+        <nav class="flex items-center space-x-2">
+            <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                Previous
+            </button>
+            <button class="px-3 py-2 text-sm font-medium text-white bg-yellow-500 border border-yellow-500 rounded-md">
+                1
+            </button>
+            <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                Next
+            </button>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filterType = document.getElementById('filter_type');
+    const filterToken = document.getElementById('filter_token');
+    const filterStatus = document.getElementById('filter_status');
+    const filterDate = document.getElementById('filter_date');
+    const transactionRows = document.querySelectorAll('.transaction-row');
+
+    function applyFilters() {
+        const typeFilter = filterType.value;
+        const tokenFilter = filterToken.value;
+        const statusFilter = filterStatus.value;
+        const dateFilter = filterDate.value;
+
+        transactionRows.forEach(row => {
+            const type = row.dataset.type;
+            const token = row.dataset.token;
+            const status = row.dataset.status;
+            
+            let show = true;
+            
+            if (typeFilter && type !== typeFilter) show = false;
+            if (tokenFilter && token !== tokenFilter) show = false;
+            if (statusFilter && status !== statusFilter) show = false;
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    filterType.addEventListener('change', applyFilters);
+    filterToken.addEventListener('change', applyFilters);
+    filterStatus.addEventListener('change', applyFilters);
+    filterDate.addEventListener('change', applyFilters);
+});
+
+function viewTransactionDetails(transactionId) {
+    // Enhanced function for viewing transaction details
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Transaction Details</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Transaction ID:</span>
+                    <span class="font-mono text-sm">${transactionId}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Status:</span>
+                    <span class="text-green-600 font-semibold">Completed</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Type:</span>
+                    <span class="font-semibold">Buy/Sell</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Amount:</span>
+                    <span class="font-semibold">0.0000</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Price:</span>
+                    <span class="font-semibold">$0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Fee:</span>
+                    <span class="font-semibold">$0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Total:</span>
+                    <span class="font-semibold text-green-600">$0.00</span>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="this.closest('.fixed').remove()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Enhanced filter functionality
+function applyAdvancedFilters() {
+    const filterType = document.getElementById('filter_type');
+    const filterToken = document.getElementById('filter_token');
+    const filterStatus = document.getElementById('filter_status');
+    const filterDate = document.getElementById('filter_date');
+    const transactionRows = document.querySelectorAll('.transaction-row');
+
+    function applyFilters() {
+        const typeFilter = filterType.value;
+        const tokenFilter = filterToken.value;
+        const statusFilter = filterStatus.value;
+        const dateFilter = filterDate.value;
+
+        transactionRows.forEach(row => {
+            const type = row.dataset.type;
+            const token = row.dataset.token;
+            const status = row.dataset.status;
+            
+            let show = true;
+            
+            if (typeFilter && type !== typeFilter) show = false;
+            if (tokenFilter && token !== tokenFilter) show = false;
+            if (statusFilter && status !== statusFilter) show = false;
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    if (filterType) filterType.addEventListener('change', applyFilters);
+    if (filterToken) filterToken.addEventListener('change', applyFilters);
+    if (filterStatus) filterStatus.addEventListener('change', applyFilters);
+    if (filterDate) filterDate.addEventListener('change', applyFilters);
+}
+
+// Export functionality
+function exportTransactions() {
+    const exportBtn = document.querySelector('button[onclick="exportTransactions()"]');
+    if (exportBtn) {
+        exportBtn.disabled = true;
+        exportBtn.textContent = 'Exporting...';
+        
+        setTimeout(() => {
+            exportBtn.disabled = false;
+            exportBtn.textContent = 'Export CSV';
+            alert('Transaction data exported successfully!');
+        }, 2000);
+    }
+}
+</script>
+{% endblock %} 
