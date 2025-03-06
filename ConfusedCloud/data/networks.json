@@ -1,0 +1,29 @@
+{
+  "tenant1": [
+    {
+      "id": "vpc-001",
+      "name": "main-vpc",
+      "cidr": "10.0.0.0/16",
+      "status": "Available",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "vpc-002",
+      "name": "isolated-vpc",
+      "cidr": "172.16.0.0/16",
+      "status": "Available",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "vpc-003",
+      "name": "public-vpc",
+      "cidr": "192.168.0.0/16",
+      "status": "Available",
+      "created": "2024-01-05"
+    }
+  ]
+}
