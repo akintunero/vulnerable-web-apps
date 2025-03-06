@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}FakeCryptoX - Processing Transaction{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+        <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-yellow-100 flex items-center justify-center">
+                {% if transaction_type == "buy" %}
+                    <span class="text-2xl">📈</span>
+                {% elif transaction_type == "sell" %}
+                    <span class="text-2xl">📉</span>
+                {% else %}
+                    <span class="text-2xl">💸</span>
+                {% endif %}
+            </div>
+
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                {% if transaction_type == "buy" %}
+                    Buying {{ token }}
+                {% elif transaction_type == "sell" %}
+                    Selling {{ token }}
+                {% else %}
+                    Sending {{ token }}
+                {% endif %}
+            </h1>
+
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Amount:</span>
+                        <span class="font-semibold">{{ "%.4f"|format(amount) }} {{ token }}</span>
+                    </div>
+                    {% if transaction_type in ["buy", "sell"] %}
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Price:</span>
+                        <span class="font-semibold">${{ "%.2f"|format(price) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total:</span>
+                        <span class="font-semibold">${{ "%.2f"|format(amount * price) }}</span>
+                    </div>
+                    {% else %}
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Recipient:</span>
+                        <span class="font-semibold">{{ recipient }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div id="progress-bar" class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div id="status-text" class="text-sm text-gray-600">Initializing transaction...</div>
+            </div>
+
+            <div class="flex justify-center mb-6">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+            </div>
+
+            <div class="space-y-3 text-left">
+                <div id="step1" class="flex items-center text-sm">
+                    <div class="w-4 h-4 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
+                        <span class="text-xs text-white">1</span>
+                    </div>
+                    <span class="text-gray-600">Validating transaction</span>
+                </div>
+                <div id="step2" class="flex items-center text-sm">
+                    <div class="w-4 h-4 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
+                        <span class="text-xs text-white">2</span>
+                    </div>
+                    <span class="text-gray-600">Processing payment</span>
+                </div>
+                <div id="step3" class="flex items-center text-sm">
+                    <div class="w-4 h-4 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
+                        <span class="text-xs text-white">3</span>
+                    </div>
+                    <span class="text-gray-600">Updating balances</span>
+                </div>
+                <div id="step4" class="flex items-center text-sm">
+                    <div class="w-4 h-4 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
+                        <span class="text-xs text-white">4</span>
+                    </div>
+                    <span class="text-gray-600">Confirming transaction</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simulate transaction processing
+const steps = [
+    { id: 'step1', text: 'Validating transaction...', duration: 1000 },
+    { id: 'step2', text: 'Processing payment...', duration: 1500 },
+    { id: 'step3', text: 'Updating balances...', duration: 1000 },
+    { id: 'step4', text: 'Confirming transaction...', duration: 1000 }
+];
+
+let currentStep = 0;
+let progress = 0;
+
+function updateProgress(stepIndex) {
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const step = steps[stepIndex];
+    
+    if (step) {
+        // Update step indicator
+        const stepElement = document.getElementById(step.id);
+        const stepNumber = stepElement.querySelector('div');
+        stepNumber.className = 'w-4 h-4 rounded-full bg-yellow-500 mr-3 flex items-center justify-center';
+        stepElement.querySelector('span:last-child').className = 'text-gray-900 font-medium';
+        
+        // Update status text
+        statusText.textContent = step.text;
+        
+        // Update progress bar
+        progress = ((stepIndex + 1) / steps.length) * 100;
+        progressBar.style.width = progress + '%';
+    }
+}
+
+function processTransaction() {
+    if (currentStep < steps.length) {
+        updateProgress(currentStep);
+        currentStep++;
+        
+        setTimeout(() => {
+            processTransaction();
+        }, steps[currentStep - 1].duration);
+    } else {
+        // Transaction complete
+        setTimeout(() => {
+            window.location.href = '/transaction-complete?type={{ transaction_type }}&token={{ token }}&amount={{ amount }}&price={{ price if transaction_type in ["buy", "sell"] else 0 }}&recipient={{ recipient if transaction_type == "send" else "" }}';
+        }, 500);
+    }
+}
+
+// Start processing when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        processTransaction();
+    }, 500);
+});
+</script>
+{% endblock %} 
