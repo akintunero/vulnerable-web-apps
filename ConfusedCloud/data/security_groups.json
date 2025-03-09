@@ -1,0 +1,29 @@
+{
+  "tenant1": [
+    {
+      "id": "sg-001",
+      "name": "web-sg",
+      "description": "Web server security group",
+      "status": "Active",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "sg-002",
+      "name": "db-sg",
+      "description": "Database security group",
+      "status": "Active",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "sg-003",
+      "name": "app-sg",
+      "description": "Application security group",
+      "status": "Active",
+      "created": "2024-01-05"
+    }
+  ]
+}
