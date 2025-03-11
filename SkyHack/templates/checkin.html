@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-check-circle"></i> Online Check-in</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-success me-2" data-bs-toggle="tooltip" title="Security screening passed by QuantumShield AI"><i class="fas fa-user-shield"></i> Security Screening Passed</span>
+                        <span class="badge bg-info text-dark" data-bs-toggle="tooltip" title="AI Threat Scan: No threats detected"><i class="fas fa-robot"></i> AI Threat Scan: No threats detected</span>
+                    </div>
+                    <p class="lead">Enter your booking reference to check in for your flight.</p>
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="booking_id" class="form-label">Booking Reference (PNR or Booking ID)</label>
+                            <input type="text" class="form-control" id="booking_id" name="booking_id" 
+                                   placeholder="e.g., 97CGCK or 12345" required>
+                            <div class="form-text">Enter your 6-character PNR or numeric Booking ID from your confirmation.</div>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Check-in
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-outline-primary mt-3" data-bs-toggle="tooltip" title="Download boarding pass (AI-verified, feature coming soon)"><i class="fas fa-ticket-alt"></i> Download Boarding Pass</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
