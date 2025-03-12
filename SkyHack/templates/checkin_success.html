@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in Successful - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-check-circle"></i> Check-in Successful!</h3>
+                </div>
+                <div class="card-body">
+                    {% if booking %}
+                    <div class="mb-3">
+                        <span class="badge bg-success me-2" data-bs-toggle="tooltip" title="Security screening passed by QuantumShield AI"><i class="fas fa-user-shield"></i> Security Screening Passed</span>
+                        <span class="badge bg-info text-dark" data-bs-toggle="tooltip" title="AI Threat Scan: No threats detected"><i class="fas fa-robot"></i> AI Threat Scan: No threats detected</span>
+                    </div>
+                    <div class="alert alert-success">
+                        <h5>Booking Confirmed</h5>
+                        <p>You have successfully checked in for your flight.</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Flight Details</h6>
+                            <p><strong>Flight:</strong> {{ booking.flight_number }}</p>
+                            <p><strong>From:</strong> {{ booking.from_city }}</p>
+                            <p><strong>To:</strong> {{ booking.to_city }}</p>
+                            <p><strong>Date:</strong> {{ booking.date }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Passenger Details</h6>
+                            <p><strong>Name:</strong> {{ booking.passenger_name | safe }}</p>
+                            <p><strong>Email:</strong> {{ booking.passenger_email }}</p>
+                            <p><strong>Seat Class:</strong> {{ booking.seat_class }}</p>
+                            <p><strong>Booking ID:</strong> {{ booking.id }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>Departure</h6>
+                            <p><strong>Time:</strong> {{ booking.departure_time }}</p>
+                            <p><strong>Airport:</strong> {{ booking.from_city }} International</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Arrival</h6>
+                            <p><strong>Time:</strong> {{ booking.arrival_time }}</p>
+                            <p><strong>Airport:</strong> {{ booking.to_city }} International</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Important Information</h6>
+                        <ul class="mb-0">
+                            <li>Please arrive at the airport 2 hours before departure</li>
+                            <li>Have your ID and booking reference ready</li>
+                            <li>Check your email for boarding pass</li>
+                        </ul>
+                    </div>
+
+                    <a href="{{ url_for('boarding_pass', booking_id=booking.id) }}" class="btn btn-primary mt-3" data-bs-toggle="tooltip" title="Download your AI-verified boarding pass">
+                        <i class="fas fa-ticket-alt"></i> Download Boarding Pass
+                    </a>
+
+                    {% else %}
+                    <div class="alert alert-danger">
+                        <h5>Booking Not Found</h5>
+                        <p>The booking reference you provided could not be found.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('checkin') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Check-in
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
