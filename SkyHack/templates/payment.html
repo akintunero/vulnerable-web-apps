@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-credit-card"></i> Payment Processing</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-success me-2" data-bs-toggle="tooltip" title="PCI DSS Level 1 Compliant"><i class="fas fa-id-card"></i> PCI DSS</span>
+                        <span class="badge bg-primary me-2" data-bs-toggle="tooltip" title="3D Secure Enabled"><i class="fas fa-shield-alt"></i> 3D Secure</span>
+                        <span class="badge bg-info text-dark" data-bs-toggle="tooltip" title="AI Fraud Detection Active"><i class="fas fa-robot"></i> AI Fraud Detection</span>
+                    </div>
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Amount ($)</label>
+                                <input type="number" step="0.01" class="form-control" id="amount" name="amount" 
+                                       placeholder="0.00" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="coupon" class="form-label">Coupon Code (Optional)</label>
+                                <input type="text" class="form-control" id="coupon" name="coupon" 
+                                       placeholder="Enter coupon code">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="card_number" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="card_number" name="card_number" 
+                                       placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="expiry" class="form-label">Expiry</label>
+                                <input type="text" class="form-control" id="expiry" name="expiry" 
+                                       placeholder="MM/YY" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" 
+                                       placeholder="123" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cardholder" class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" id="cardholder" name="cardholder" 
+                                   placeholder="John Doe" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-lock"></i> Process Payment
+                        </button>
+                        <button type="button" class="btn btn-outline-primary w-100 mt-2" data-bs-toggle="tooltip" title="QuantumShield AI verification (feature coming soon)">
+                            <i class="fas fa-robot"></i> Verify with QuantumShield
+                        </button>
+                    </form>
+                    <div class="alert alert-info mt-4" data-bs-toggle="tooltip" title="All card data is tokenized and monitored by SkyHack SIEM.">
+                        <i class="fas fa-shield-alt"></i> <strong>Security Notice:</strong> All transactions are protected by 3D Secure, PCI DSS, and real-time fraud detection.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('card_number').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+    });
+
+    document.getElementById('expiry').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+    });
+</script>
+{% endblock %} 
