@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - ShopCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Admin Panel</h2>
+    </div>
+</div>
+
+<!-- Admin Panel Content -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Users ({{ users|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Admin</th>
+                                <th>Payment Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username | safe }}</td>
+                                <td>{{ user.email | safe }}</td>
+                                <td>
+                                    {% if user.is_admin %}
+                                        <span class="badge bg-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">No</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <!-- Payment information display -->
+                                    <code>{{ user.credit_card }}</code>
+                                    <button class="btn btn-sm btn-outline-info" onclick="copyToClipboard('{{ user.credit_card }}')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Products ({{ products|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name | safe }}</td>
+                                <td>£{{ "%.2f"|format(product.price) }}</td>
+                                <td>{{ product.stock }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Orders ({{ orders|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.user_id }}</td>
+                                <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if order.status == 'completed' else 'warning' }}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Management -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>VAPT Test: File Upload Vulnerabilities</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-warning">
+                    <strong>Warning:</strong> This file upload has no validation and is vulnerable to various attacks.
+                </p>
+                
+                <a href="{{ url_for('upload') }}" class="btn btn-warning">
+                    <i class="fas fa-upload"></i> Test File Upload
+                </a>
+                
+                <div class="mt-3">
+                    <h6>File Upload Test Cases:</h6>
+                    <ul>
+                        <li>Upload a PHP file with malicious code</li>
+                        <li>Upload a file with path traversal in filename</li>
+                        <li>Upload a very large file to test size limits</li>
+                        <li>Upload a file with double extension (.jpg.php)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Copy data to clipboard
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert('Credit card number copied to clipboard: ' + text);
+        });
+    }
+    
+    // Form manipulation
+    document.getElementById('idorForm').addEventListener('submit', function(e) {
+        const userId = document.querySelector('input[name="user_id"]').value;
+        const action = this.action.replace(/\d+$/, userId);
+        this.action = action;
+    });
+    
+    // Client-side admin check
+    function checkAdminStatus() {
+        const currentUser = '{{ current_user.username }}';
+        const isAdmin = '{{ current_user.is_admin }}';
+        
+        if (isAdmin === 'False') {
+            console.log('Warning: Non-admin user accessing admin panel');
+            // This check can be bypassed in browser dev tools
+        }
+    }
+    
+    checkAdminStatus();
+</script>
+{% endblock %} 
