@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ employee.name }} - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-user me-2 text-primary"></i>{{ employee.name }}
+                    </h1>
+                    <p class="text-muted mb-0">Employee Profile Details</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="/employee/{{ employee.id }}/edit" class="btn btn-success fw-bold">
+                        <i class="fas fa-edit me-2"></i>Edit Employee
+                    </a>
+                    <form method="POST" action="/employee/{{ employee.id }}/delete" class="d-inline">
+                        <button type="submit" class="btn btn-danger fw-bold" 
+                                onclick="return confirm('Are you sure you want to delete this employee?')">
+                            <i class="fas fa-trash me-2"></i>Delete Employee
+                        </button>
+                    </form>
+                    <a href="/employees" class="btn btn-secondary fw-bold">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Employees
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Employee Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Employee Information
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold text-dark" style="width: 200px;">Full Name</td>
+                                    <td class="text-dark">{{ employee.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Email Address</td>
+                                    <td class="text-dark">{{ employee.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Department</td>
+                                    <td>
+                                        <span class="badge rounded-pill 
+                                            {% if employee.department == 'Engineering' %}bg-primary
+                                            {% elif employee.department == 'Marketing' %}bg-success
+                                            {% elif employee.department == 'Sales' %}bg-warning text-dark
+                                            {% elif employee.department == 'HR' %}bg-info
+                                            {% elif employee.department == 'Finance' %}bg-secondary
+                                            {% else %}bg-dark{% endif %}">
+                                            {{ employee.department }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Position</td>
+                                    <td class="text-dark">{{ employee.position }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Annual Salary</td>
+                                    <td class="fw-bold text-success">£{{ "{:,}".format(employee.salary) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Hire Date</td>
+                                    <td class="text-dark">{{ employee.hire_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Phone</td>
+                                    <td class="text-dark">{{ employee.phone }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Address</td>
+                                    <td class="text-dark">{{ employee.address }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Social Security Number</td>
+                                    <td class="text-dark font-monospace">{{ employee.ssn }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-dark">Employee ID</td>
+                                    <td class="text-dark">{{ employee.id }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Employee Avatar -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px;">
+                        <span class="fw-bold text-primary fs-1">{{ employee.name.split()[0][0] }}{{ employee.name.split()[-1][0] }}</span>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">{{ employee.name }}</h5>
+                    <p class="text-muted mb-3">{{ employee.position }}</p>
+                    <span class="badge rounded-pill 
+                        {% if employee.department == 'Engineering' %}bg-primary
+                        {% elif employee.department == 'Marketing' %}bg-success
+                        {% elif employee.department == 'Sales' %}bg-warning text-dark
+                        {% elif employee.department == 'HR' %}bg-info
+                        {% elif employee.department == 'Finance' %}bg-secondary
+                        {% else %}bg-dark{% endif %}">
+                        {{ employee.department }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/payroll/{{ employee.id }}" class="btn btn-primary fw-bold">
+                            <i class="fas fa-pound-sign me-2"></i>View Payroll Information
+                        </a>
+                        <a href="/resumes" class="btn btn-success fw-bold">
+                            <i class="fas fa-file-alt me-2"></i>View Resumes
+                        </a>
+                        <a href="/employee/{{ employee.id }}/edit" class="btn btn-warning fw-bold">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        <a href="/employee/{{ employee.id }}/payroll" class="btn btn-info fw-bold">
+                            <i class="fas fa-calculator me-2"></i>Generate Payroll
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
