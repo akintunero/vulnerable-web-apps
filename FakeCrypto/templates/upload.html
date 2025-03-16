@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Upload NFT - FakeCryptoX{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+    <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Upload NFT for Sale</h1>
+        <p class="text-gray-600">Create and list your NFT on the marketplace</p>
+    </div>
+    
+    <div class="bg-white p-8 rounded-lg shadow-md border border-gray-200">
+        <form method="POST" action="/upload/nft" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">NFT File</label>
+                <input type="file" name="file" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                <p class="text-sm text-gray-500 mt-1">Supported formats: PNG, JPG, GIF, MP4, WEBP</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">NFT Name</label>
+                <input type="text" name="nft_name" required placeholder="e.g., CryptoPunk #1234"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea name="nft_description" rows="3" required placeholder="Describe your NFT... (supports advanced formatting)"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                <p class="text-sm text-gray-500 mt-1">💡 Tip: You can use special formatting like {{variable}} in your description</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Price (USD)</label>
+                <input type="number" name="price" step="0.01" min="0.01" required placeholder="0.00"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+            </div>
+            
+            <div class="flex space-x-4 pt-4">
+                <button type="submit" 
+                        class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-md transition-colors">
+                    Upload NFT
+                </button>
+                <a href="/nft-marketplace" 
+                   class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-md transition-colors text-center">
+                    View Marketplace
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-yellow-800 mb-3">📋 Upload Guidelines</h3>
+        <div class="space-y-2 text-sm text-yellow-700">
+            <p>• <strong>File Size:</strong> Maximum 10MB per file</p>
+            <p>• <strong>Supported Formats:</strong> PNG, JPG, GIF, MP4, WEBP</p>
+            <p>• <strong>Pricing:</strong> Set competitive prices for better sales</p>
+            <p>• <strong>Description:</strong> Be detailed about your NFT's unique features</p>
+        </div>
+    </div>
+    
+    <div class="flex justify-center">
+        <a href="/dashboard" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-semibold transition-colors">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %} 
