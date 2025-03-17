@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Admin Dashboard</h1>
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-yellow-400 mb-2">Users</h2>
+            <table class="w-full text-sm">
+                <thead><tr class="text-gray-400"><th>Username</th><th>Email</th><th>Balances</th></tr></thead>
+                <tbody>
+                    {% for user_id, u in users.items() %}
+                    <tr>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            {% for token, amt in u.wallet.balance.items() %}
+                                <span class="mr-2">{{ token }}: {{ '%.4f'|format(amt) }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-yellow-400 mb-2">Open Orders</h2>
+            <table class="w-full text-sm">
+                <thead><tr class="text-gray-400"><th>User</th><th>Type</th><th>Price</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.user }}</td>
+                        <td>{{ order.type }}</td>
+                        <td>{{ order.price }}</td>
+                        <td>{{ order.amount }}</td>
+                        <td>{{ order.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold text-yellow-400 mb-2">Transactions</h2>
+        <table class="w-full text-sm">
+            <thead><tr class="text-gray-400"><th>ID</th><th>From</th><th>To</th><th>Token</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>{{ t.id[:8] }}...</td>
+                    <td>{{ t.from_user }}</td>
+                    <td>{{ t.to_user }}</td>
+                    <td>{{ t.token }}</td>
+                    <td>{{ '%.4f'|format(t.amount) }}</td>
+                    <td>{{ t.status }}</td>
+                    <td>{{ t.timestamp.split('T')[1][:8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold text-yellow-400 mb-2">Audit Log</h2>
+        <table class="w-full text-xs">
+            <thead><tr class="text-gray-400"><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+            <tbody>
+                {% for log in audit %}
+                <tr>
+                    <td>{{ log.timestamp.split('T')[1][:8] }}</td>
+                    <td>{{ log.user }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="flex space-x-4 mt-6">
+        <a href="/audit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Full Audit Log</a>
+        <a href="/tos" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">ToS</a>
+        <a href="/privacy" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Privacy</a>
+        <a href="/news" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-4 py-2 rounded-md">News</a>
+    </div>
+</div>
+
+<script>
+// Admin utility functions
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        type === 'warning' ? 'bg-yellow-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+function confirmAction(message) {
+    return confirm(message);
+}
+
+// Admin action functions
+function banUser(username) {
+    if (!confirmAction(`Are you sure you want to ban user ${username}?`)) {
+        return;
+    }
+    
+    showNotification(`Banning user ${username}...`, 'warning');
+    // TODO: Implement ban functionality
+}
+
+function freezeFunds(username) {
+    if (!confirmAction(`Are you sure you want to freeze funds for user ${username}?`)) {
+        return;
+    }
+    
+    showNotification(`Freezing funds for user ${username}...`, 'warning');
+    // TODO: Implement freeze functionality
+}
+
+function adjustBalance(username, token, amount) {
+    const newAmount = prompt(`Enter new balance for ${username} ${token}:`, amount);
+    if (newAmount !== null) {
+        showNotification(`Adjusting balance for ${username} ${token}...`, 'info');
+        // TODO: Implement balance adjustment
+    }
+}
+
+function exportData() {
+    showNotification('Exporting admin data...', 'info');
+    // TODO: Implement export functionality
+}
+
+function backupSystem() {
+    showNotification('Creating system backup...', 'info');
+    // TODO: Implement backup functionality
+}
+
+// Initialize admin panel
+document.addEventListener('DOMContentLoaded', function() {
+    showNotification('Admin panel loaded', 'success');
+});
+</script>
+{% endblock %} 
