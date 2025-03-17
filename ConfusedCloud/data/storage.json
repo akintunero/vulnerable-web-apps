@@ -1,0 +1,32 @@
+{
+  "tenant1": [
+    {
+      "id": "storage-001",
+      "name": "primary-storage",
+      "type": "gp2",
+      "size": "100",
+      "status": "Available",
+      "created": "2024-01-15"
+    }
+  ],
+  "tenant2": [
+    {
+      "id": "storage-002",
+      "name": "backup-storage",
+      "type": "io1",
+      "size": "500",
+      "status": "Available",
+      "created": "2024-01-10"
+    }
+  ],
+  "tenant3": [
+    {
+      "id": "storage-003",
+      "name": "archive-storage",
+      "type": "st1",
+      "size": "1000",
+      "status": "Available",
+      "created": "2024-01-05"
+    }
+  ]
+}
