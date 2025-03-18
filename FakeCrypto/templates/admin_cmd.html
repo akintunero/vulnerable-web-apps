@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Admin Command  Demo{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Admin Command  Demo</h1>
+    <form method="POST" action="/admin-cmd" class="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Shell Command</label>
+            <input type="text" name="cmd" class="w-full px-3 py-2 border border-gray-700 rounded-md bg-gray-900 text-white">
+        </div>
+        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-4 rounded-md">Execute</button>
+    </form>
+    <div class="flex space-x-4 mt-6">
+        <a href="/admin" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Back to Admin</a>
+    </div>
+</div>
+{% endblock %} 
