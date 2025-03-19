@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Audit Log{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Audit Log</h1>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <table class="w-full text-xs">
+            <thead><tr class="text-gray-400"><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+            <tbody>
+                {% for log in audit %}
+                <tr>
+                    <td>{{ log.timestamp.split('T')[1][:8] }}</td>
+                    <td>{{ log.user }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="flex space-x-4 mt-6">
+        <a href="/admin" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Back to Admin</a>
+    </div>
+</div>
+{% endblock %} 
