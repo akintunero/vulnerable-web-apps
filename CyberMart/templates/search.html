@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Search - ShopCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Search Products</h2>
+        
+        <!-- VULNERABLE: Search form with no input validation -->
+        <form method="GET" action="{{ url_for('search') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" name="q" value="{{ query | safe }}" 
+                       placeholder="Search for products..." required>
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+        
+        <!-- VULNERABLE: XSS in search results -->
+        {% if query %}
+            <div class="alert alert-info">
+                Search results for: <strong>{{ query | safe }}</strong>  <!-- VULNERABLE: XSS -->
+            </div>
+        {% endif %}
+        
+        <!-- Search Results -->
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card product-card h-100">
+                        <div class="card-body position-relative">
+                            <span class="badge bg-secondary category-badge">{{ product.category }}</span>
+                            
+                            <h5 class="card-title">{{ product.name | safe }}</h5>  <!-- VULNERABLE: XSS -->
+                            <p class="card-text">{{ product.description | safe }}</p>  <!-- VULNERABLE: XSS -->
+                            
+                            <div class="price mb-3">£{{ "%.2f"|format(product.price) }}</div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Stock: {{ product.stock }}</small>
+                                
+                                {% if current_user.is_authenticated %}
+                                    <form method="POST" action="{{ url_for('add_to_cart') }}" class="d-inline">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" 
+                                               class="form-control form-control-sm d-inline-block" style="width: 60px;">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-cart-plus"></i> Add
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm">Login to Buy</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>No products found</h4>
+                <p class="text-muted">Try a different search term</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- VULNERABLE: XSS test interface -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>VAPT Test: XSS in Search Results</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-warning">
+                    <strong>Warning:</strong> Search results are vulnerable to XSS attacks.
+                </p>
+                
+                <form method="GET" action="{{ url_for('search') }}">
+                    <div class="mb-3">
+                        <label class="form-label">XSS Test Payloads:</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="q" class="form-control mb-2" 
+                                       value="<script>alert('XSS')</script>" placeholder="Basic XSS">
+                                <button type="submit" class="btn btn-warning btn-sm">Test Basic XSS</button>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="q" class="form-control mb-2" 
+                                       value="<img src=x onerror=alert('XSS')>" placeholder="Image XSS">
+                                <button type="submit" class="btn btn-warning btn-sm">Test Image XSS</button>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="q" class="form-control mb-2" 
+                                       value="<svg onload=alert('XSS')>" placeholder="SVG XSS">
+                                <button type="submit" class="btn btn-warning btn-sm">Test SVG XSS</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="mt-3">
+                    <h6>XSS Test Cases:</h6>
+                    <ul>
+                        <li><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> - Basic script injection</li>
+                        <li><code>&lt;img src=x onerror=alert('XSS')&gt;</code> - Image error handler</li>
+                        <li><code>&lt;svg onload=alert('XSS')&gt;</code> - SVG load event</li>
+                        <li><code>&lt;iframe src="javascript:alert('XSS')"&gt;</code> - Iframe injection</li>
+                        <li><code>&lt;body onload=alert('XSS')&gt;</code> - Body load event</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VULNERABLE: NoSQL injection test (if applicable) -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>VAPT Test: Advanced Search Techniques</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-warning">
+                    <strong>Warning:</strong> Test various search techniques and injection methods.
+                </p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Boolean-based SQL Injection:</h6>
+                        <ul>
+                            <li><code>' AND (SELECT COUNT(*) FROM user WHERE username='admin') > 0 --</code></li>
+                            <li><code>' AND (SELECT LENGTH(password) FROM user WHERE id=1) > 5 --</code></li>
+                            <li><code>' AND (SELECT SUBSTR(password,1,1) FROM user WHERE id=1) = 'a' --</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Time-based SQL Injection:</h6>
+                        <ul>
+                            <li><code>' AND (SELECT SLEEP(5) FROM user WHERE id=1) --</code></li>
+                            <li><code>' AND (SELECT BENCHMARK(1000000,MD5(1)) FROM user WHERE id=1) --</code></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>Search Techniques:</h6>
+                    <ul>
+                        <li>Wildcard searches: <code>%</code>, <code>_</code></li>
+                        <li>Case-insensitive searches</li>
+                        <li>Partial word matches</li>
+                        <li>Special character handling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // VULNERABLE: Client-side search validation (can be bypassed)
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const query = document.querySelector('input[name="q"]').value;
+        
+        // VULNERABLE: Client-side validation can be bypassed
+        if (query.length < 2) {
+            alert('Search query must be at least 2 characters long');
+            e.preventDefault();
+            return false;
+        }
+        
+        // VULNERABLE: Logging search queries (potential information disclosure)
+        console.log('Search query:', query);
+    });
+    
+    // VULNERABLE: Auto-complete with XSS potential
+    function autoComplete(query) {
+        const suggestions = [
+            '<script>alert("XSS")</script>',
+            '<img src=x onerror=alert("XSS")>',
+            'laptop',
+            'smartphone',
+            'apples',
+            'bananas'
+        ];
+        
+        return suggestions.filter(item => 
+            item.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+    
+    // VULNERABLE: Search history stored in localStorage
+    const searchInput = document.querySelector('input[name="q"]');
+    searchInput.addEventListener('blur', function() {
+        const searches = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        if (this.value && !searches.includes(this.value)) {
+            searches.push(this.value);
+            localStorage.setItem('searchHistory', JSON.stringify(searches));
+        }
+    });
+</script>
+{% endblock %} 
