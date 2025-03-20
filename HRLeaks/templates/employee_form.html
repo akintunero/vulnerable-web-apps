@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{% if employee %}Edit Employee{% else %}New Employee{% endif %} - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-{% if employee %}edit{% else %}plus{% endif %} me-2 text-primary"></i>
+                        {% if employee %}Edit Employee{% else %}New Employee{% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% if employee %}Update employee information{% else %}Add a new employee to the system{% endif %}
+                    </p>
+                </div>
+                <a href="/employees" class="btn btn-secondary fw-bold">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Employees
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-user me-2 text-primary"></i>Employee Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% if employee %}/employee/{{ employee.id }}/update{% else %}/employee/create{% endif %}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Full Name</label>
+                                <input type="text" name="name" value="{{ employee.name if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter full name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Email</label>
+                                <input type="email" name="email" value="{{ employee.email if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter email address">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Department</label>
+                                <select name="department" required class="form-select border-2">
+                                    <option value="">Select Department</option>
+                                    <option value="Engineering" {% if employee and employee.department == 'Engineering' %}selected{% endif %}>Engineering</option>
+                                    <option value="Marketing" {% if employee and employee.department == 'Marketing' %}selected{% endif %}>Marketing</option>
+                                    <option value="Sales" {% if employee and employee.department == 'Sales' %}selected{% endif %}>Sales</option>
+                                    <option value="HR" {% if employee and employee.department == 'HR' %}selected{% endif %}>Human Resources</option>
+                                    <option value="Finance" {% if employee and employee.department == 'Finance' %}selected{% endif %}>Finance</option>
+                                    <option value="Operations" {% if employee and employee.department == 'Operations' %}selected{% endif %}>Operations</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Position</label>
+                                <input type="text" name="position" value="{{ employee.position if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter job position">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Salary (£)</label>
+                                <input type="number" name="salary" value="{{ employee.salary if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter annual salary">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Phone</label>
+                                <input type="tel" name="phone" value="{{ employee.phone if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter phone number">
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label class="form-label fw-bold text-dark">Address</label>
+                                <textarea name="address" rows="3" required
+                                          class="form-control border-2" placeholder="Enter full address">{{ employee.address if employee else '' }}</textarea>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Hire Date</label>
+                                <input type="date" name="hire_date" value="{{ employee.hire_date if employee else '' }}" required
+                                       class="form-control border-2">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">Employee ID</label>
+                                <input type="text" name="employee_id" value="{{ employee.employee_id if employee else '' }}" required
+                                       class="form-control border-2" placeholder="Enter employee ID">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="/employees" class="btn btn-secondary fw-bold">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary fw-bold">
+                                <i class="fas fa-{% if employee %}save{% else %}plus{% endif %} me-2"></i>
+                                {% if employee %}Update Employee{% else %}Create Employee{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
