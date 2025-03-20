@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Session Info{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Session Info</h1>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <table class="w-full text-sm">
+            <thead><tr class="text-gray-400"><th>Device</th><th>IP</th><th>Login Time</th></tr></thead>
+            <tbody>
+                {% for s in sessions %}
+                <tr>
+                    <td>{{ s.device }}</td>
+                    <td>{{ s.ip }}</td>
+                    <td>{{ s.login }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="flex space-x-4 mt-6">
+        <a href="/profile" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Back to Profile</a>
+    </div>
+</div>
+{% endblock %} 
