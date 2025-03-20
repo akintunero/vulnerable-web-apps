@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Frequent Flyer - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-star"></i> Frequent Flyer Program</h3>
+                </div>
+                <div class="card-body">
+                    {% if user and points %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Account Information</h5>
+                            <p><strong>Name:</strong> {{ user.name }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Member Since:</strong> {{ user.created_at }}</p>
+                            <p><strong>Loyalty Tier:</strong> <span class="badge bg-success">{{ tier|default('Bronze') }}</span> <span class="badge bg-info text-dark" data-bs-toggle="tooltip" title="Verified by QuantumShield AI">AI-verified</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Points Balance</h5>
+                            <div class="alert alert-success">
+                                <h4 class="mb-0">{{ points.balance }} Points</h4>
+                            </div>
+                            <p class="text-muted">Last updated: {{ points.last_updated }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5>Upgrade Loyalty Tier</h5>
+                    <form method="POST" action="{{ url_for('upgrade_tier') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="tier" class="form-label">Select Tier</label>
+                                <select class="form-select" id="tier" name="tier" required>
+                                    <option value="Silver">Silver (1000 points)</option>
+                                    <option value="Gold">Gold (2000 points)</option>
+                                    <option value="Platinum">Platinum (5000 points)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="AI anomaly detection enabled">
+                                    <i class="fas fa-arrow-up"></i> Upgrade Tier
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <h5>Transfer Points</h5>
+                    <form method="POST" action="{{ url_for('transfer_points') }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="from_user_id" class="form-label">From User ID</label>
+                                <input type="number" class="form-control" id="from_user_id" name="from_user_id" 
+                                       value="{{ user.id }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="to_user_id" class="form-label">To User ID</label>
+                                <input type="number" class="form-control" id="to_user_id" name="to_user_id" 
+                                       placeholder="Enter user ID" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="amount" class="form-label">Amount</label>
+                                <input type="number" class="form-control" id="amount" name="amount" 
+                                       placeholder="Points to transfer" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="fas fa-exchange-alt"></i> Transfer Points
+                        </button>
+                    </form>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-eye"></i> <strong>Security Notice:</strong> All points transfers and tier upgrades are monitored by SkyHack SIEM and QuantumShield AI.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <h5>No Account Found</h5>
+                        <p>Unable to load frequent flyer information.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Points Guide</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Earning Points</h6>
+                    <ul>
+                        <li>Economy: 100 points per flight</li>
+                        <li>Business: 200 points per flight</li>
+                        <li>First Class: 500 points per flight</li>
+                    </ul>
+                    
+                    <h6>Redeeming Points</h6>
+                    <ul>
+                        <li>1000 points = $50 flight credit</li>
+                        <li>2000 points = $100 flight credit</li>
+                        <li>5000 points = Free economy flight</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-warning text-dark">
+            <i class="fas fa-shield-virus"></i> Loyalty Tier Security
+        </div>
+        <div class="card-body">
+            <p>AI anomaly detection chart (simulated):</p>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 98%;" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">98% Normal</div>
+            </div>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-warning text-dark" role="progressbar" style="width: 2%;" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100">2% Anomaly</div>
+            </div>
+            <button type="button" class="btn btn-outline-danger w-100 mt-2" data-bs-toggle="tooltip" title="Request manual review by SkyHack SOC (feature coming soon)"><i class="fas fa-user-secret"></i> Request Manual Review</button>
+            <button type="button" class="btn btn-outline-info w-100 mt-2" data-bs-toggle="tooltip" title="Email SkyHack SOC (feature coming soon)"><i class="fas fa-envelope"></i> Email SOC</button>
+        </div>
+    </div>
+</div>
+{% endblock %} 
