@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}News & Announcements{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">News & Announcements</h1>
+    <div class="space-y-6">
+        {% for item in news %}
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+            <div class="text-sm text-gray-400 mb-2">{{ item.date }}</div>
+            <h2 class="text-lg font-semibold text-yellow-400 mb-2">{{ item.title }}</h2>
+            <p class="text-gray-200">{{ item.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="flex space-x-4 mt-6">
+        <a href="/dashboard" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %} 
