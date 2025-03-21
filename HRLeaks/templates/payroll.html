@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Payroll - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-pound-sign me-2 text-primary"></i>Payroll Management
+                    </h1>
+                    <p class="text-muted mb-0">Manage employee payroll and compensation</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <a href="/payroll/new" class="btn btn-primary fw-bold">
+                        <i class="fas fa-plus me-2"></i>New Payroll
+                    </a>
+                    <form method="POST" action="/process_payroll" class="d-inline">
+                        <button type="submit" class="btn btn-success fw-bold">
+                            <i class="fas fa-cog me-2"></i>Process Payroll
+                        </button>
+                    </form>
+                    <a href="/export_payroll" class="btn btn-info fw-bold">
+                        <i class="fas fa-download me-2"></i>Export Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll Summary -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-pound-sign text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Total Gross Pay</h6>
+                            <h3 class="mb-0 fw-bold text-dark">£687,000</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-calculator text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Total Net Pay</h6>
+                            <h3 class="mb-0 fw-bold text-dark">£523,000</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-clock text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Total Overtime</h6>
+                            <h3 class="mb-0 fw-bold text-dark">£7,400</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-chart-line text-info fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Total Commission</h6>
+                            <h3 class="mb-0 fw-bold text-dark">£20,000</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light border-0">
+            <h5 class="mb-0 fw-bold text-dark">
+                <i class="fas fa-filter me-2 text-primary"></i>Payroll Filters
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Month</label>
+                    <select class="form-select border-2">
+                        <option value="2024-01" selected>January 2024</option>
+                        <option value="2023-12">December 2023</option>
+                        <option value="2023-11">November 2023</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Department</label>
+                    <select class="form-select border-2">
+                        <option value="">All Departments</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Status</label>
+                    <select class="form-select border-2">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Sort By</label>
+                    <select class="form-select border-2">
+                        <option value="name">Employee Name</option>
+                        <option value="salary">Salary</option>
+                        <option value="department">Department</option>
+                        <option value="date">Payment Date</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light border-0">
+            <h5 class="mb-0 fw-bold text-dark">
+                <i class="fas fa-list me-2 text-primary"></i>Payroll Records
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0 fw-bold text-dark">Employee</th>
+                            <th class="border-0 fw-bold text-dark">Department</th>
+                            <th class="border-0 fw-bold text-dark">Gross Pay</th>
+                            <th class="border-0 fw-bold text-dark">Deductions</th>
+                            <th class="border-0 fw-bold text-dark">Net Pay</th>
+                            <th class="border-0 fw-bold text-dark">Overtime</th>
+                            <th class="border-0 fw-bold text-dark">Commission</th>
+                            <th class="border-0 fw-bold text-dark">Status</th>
+                            <th class="border-0 fw-bold text-dark">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payroll in payrolls %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span class="fw-bold text-primary">{{ payroll.employee_name.split()[0][0] }}{{ payroll.employee_name.split()[-1][0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0 fw-bold text-dark">{{ payroll.employee_name }}</h6>
+                                        <small class="text-muted">{{ payroll.employee_id }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill 
+                                    {% if payroll.department == 'Engineering' %}bg-primary
+                                    {% elif payroll.department == 'Marketing' %}bg-success
+                                    {% elif payroll.department == 'Sales' %}bg-warning text-dark
+                                    {% elif payroll.department == 'HR' %}bg-info
+                                    {% elif payroll.department == 'Finance' %}bg-secondary
+                                    {% else %}bg-dark{% endif %}">
+                                    {{ payroll.department }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-success">£{{ "{:,}".format(payroll.gross_pay) }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-danger">£{{ "{:,}".format(payroll.deductions) }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-primary">£{{ "{:,}".format(payroll.net_pay) }}</div>
+                            </td>
+                            <td>
+                                <div class="text-dark">£{{ "{:,}".format(payroll.overtime) }}</div>
+                            </td>
+                            <td>
+                                <div class="text-dark">£{{ "{:,}".format(payroll.commission) }}</div>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill 
+                                    {% if payroll.status == 'paid' %}bg-success
+                                    {% elif payroll.status == 'pending' %}bg-warning text-dark
+                                    {% else %}bg-info{% endif %}">
+                                    <i class="fas fa-{% if payroll.status == 'paid' %}check-circle{% elif payroll.status == 'pending' %}clock{% else %}cog{% endif %} me-1"></i>
+                                    {{ payroll.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/payroll/{{ payroll.id }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/payroll/{{ payroll.id }}/edit" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="/payroll/{{ payroll.id }}/pdf" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
