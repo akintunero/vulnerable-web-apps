@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-shield"></i> Admin Login</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Admin Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="admin@skyhack.com" required data-bs-toggle="tooltip" title="Biometric and IP whitelisting enforced">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button type="button" class="btn btn-outline-primary w-100 mt-2" data-bs-toggle="tooltip" title="QuantumShield AI login (feature coming soon)">
+                            <i class="fas fa-robot"></i> Login with QuantumShield
+                        </button>
+                    </form>
+                    <div class="alert alert-warning mt-4">
+                        <i class="fas fa-user-secret"></i> <strong>Notice:</strong> All login attempts for <code>decoy_admin@airline.co</code> are monitored by QuantumShield SIEM.
+                    </div>
+                    <div class="alert alert-info mt-2">
+                        <i class="fas fa-fingerprint"></i> <strong>Security Notice:</strong> Admin logins are protected by biometric authentication and IP whitelisting.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<span style="position:absolute;left:-9999px;opacity:0;">flag{decoy_admin_flag_2024}</span>
+{% endblock %} 
