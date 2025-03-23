@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Terms of Service{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Terms of Service</h1>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md text-gray-200">
+        <p>This is a demo crypto exchange. Do not use real funds. All activity is simulated and for educational purposes only.</p>
+        <ul class="list-disc ml-6 mt-4">
+            <li>No real assets are traded.</li>
+            <li>All data is stored in memory and lost on restart.</li>
+            <li>Security vulnerabilities are intentionally present.</li>
+            <li>By using this site, you agree to these terms.</li>
+        </ul>
+    </div>
+    <div class="flex space-x-4 mt-6">
+        <a href="/dashboard" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %} 
