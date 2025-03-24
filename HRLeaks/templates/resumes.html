@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Management - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-file-alt me-2 text-primary"></i>Resume Management
+                    </h1>
+                    <p class="text-muted mb-0">Manage and organize employee resumes</p>
+                </div>
+                <a href="/resume/new" class="btn btn-primary fw-bold">
+                    <i class="fas fa-plus me-2"></i>Upload Resume
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light border-0">
+            <h5 class="mb-0 fw-bold text-dark">
+                <i class="fas fa-search me-2 text-primary"></i>Search & Filter
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Search Resumes</label>
+                    <input type="text" placeholder="Search by name, filename..." 
+                           class="form-control border-2">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">File Type</label>
+                    <select class="form-select border-2">
+                        <option value="">All Types</option>
+                        <option value="pdf">PDF Documents</option>
+                        <option value="html">HTML Files</option>
+                        <option value="doc">Word Documents</option>
+                        <option value="txt">Text Files</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Department</label>
+                    <select class="form-select border-2">
+                        <option value="">All Departments</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="HR">Human Resources</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold text-dark">Sort By</label>
+                    <select class="form-select border-2">
+                        <option value="upload_date">Upload Date</option>
+                        <option value="employee_name">Employee Name</option>
+                        <option value="filename">Filename</option>
+                        <option value="department">Department</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-file-alt text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Total Resumes</h6>
+                            <h3 class="mb-0 fw-bold text-dark">10</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-file-pdf text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">PDF Files</h6>
+                            <h3 class="mb-0 fw-bold text-dark">6</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-file-code text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">HTML Files</h6>
+                            <h3 class="mb-0 fw-bold text-dark">4</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-clock text-info fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 fw-bold">Recent Uploads</h6>
+                            <h3 class="mb-0 fw-bold text-dark">3</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumes Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light border-0">
+            <h5 class="mb-0 fw-bold text-dark">
+                <i class="fas fa-list me-2 text-primary"></i>Resume Database
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0 fw-bold text-dark">Employee</th>
+                            <th class="border-0 fw-bold text-dark">Filename</th>
+                            <th class="border-0 fw-bold text-dark">File Type</th>
+                            <th class="border-0 fw-bold text-dark">Department</th>
+                            <th class="border-0 fw-bold text-dark">Upload Date</th>
+                            <th class="border-0 fw-bold text-dark">Status</th>
+                            <th class="border-0 fw-bold text-dark">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resume in resumes %}
+                        {% set employee = employees | selectattr("id", "equalto", resume.employee_id) | first %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <span class="fw-bold text-primary">{{ employee.name.split()[0][0] }}{{ employee.name.split()[-1][0] }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0 fw-bold text-dark">{{ employee.name }}</h6>
+                                        <small class="text-muted">{{ employee.position }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">{{ resume.filename }}</h6>
+                                    <small class="text-muted">{{ resume.filename.split('.')[-1].upper() }} file</small>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill 
+                                    {% if resume.filename.endswith('.html') %}bg-warning text-dark
+                                    {% elif resume.filename.endswith('.pdf') %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    <i class="fas fa-file-{% if resume.filename.endswith('.html') %}code{% elif resume.filename.endswith('.pdf') %}pdf{% else %}alt{% endif %} me-1"></i>
+                                    {{ resume.filename.split('.')[-1].upper() }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill 
+                                    {% if employee.department == 'Engineering' %}bg-primary
+                                    {% elif employee.department == 'Marketing' %}bg-success
+                                    {% elif employee.department == 'Sales' %}bg-warning text-dark
+                                    {% elif employee.department == 'HR' %}bg-info
+                                    {% elif employee.department == 'Finance' %}bg-purple
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ employee.department }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">{{ resume.upload_date }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success rounded-pill">
+                                    <i class="fas fa-check me-1"></i>Active
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/resume/{{ resume.id }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <a href="/resume/{{ resume.id }}/edit" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </a>
+                                    <form method="POST" action="/resume/{{ resume.id }}/delete" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this resume?')">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="row mt-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-pie me-2 text-primary"></i>File Type Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">PDF Files</span>
+                            <span class="fw-bold text-primary">6 files (60%)</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">HTML Files</span>
+                            <span class="fw-bold text-warning">4 files (40%)</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>Department Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">Engineering</span>
+                            <span class="fw-bold text-primary">3 resumes</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">Marketing</span>
+                            <span class="fw-bold text-success">2 resumes</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">Sales</span>
+                            <span class="fw-bold text-warning">2 resumes</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">Finance</span>
+                            <span class="fw-bold text-info">1 resume</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">Operations</span>
+                            <span class="fw-bold text-secondary">1 resume</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-secondary" style="width: 10%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-dark">HR</span>
+                            <span class="fw-bold text-purple">1 resume</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-purple" style="width: 10%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
