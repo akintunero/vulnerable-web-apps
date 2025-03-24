@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-book"></i> SkyHack Airlines API Documentation</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Security Notice:</strong> All API access is monitored by QuantumShield AI and SkyHack SIEM. Unauthorized use is strictly prohibited.
+                    </div>
+                    <h5>Base URL</h5>
+                    <code>https://api.skyhack-airlines.com/v1/</code>
+                    <h5 class="mt-4">Authentication</h5>
+                    <p>Use your API key in the <code>X-API-Key</code> header.</p>
+                    <div class="alert alert-info"><strong>Example API Key:</strong> <code>sk_live_12345FAKEKEY67890</code></div>
+                    <h5 class="mt-4">Endpoints</h5>
+                    <ul>
+                        <li><code>GET /flights</code> - List all flights</li>
+                        <li><code>POST /book</code> - Book a flight</li>
+                        <li><code>POST /checkin</code> - Check in for a flight</li>
+                        <li><code>GET /loyalty</code> - Get loyalty status</li>
+                        <li><code>POST /transfer-points</code> - Transfer loyalty points</li>
+                        <li><code>GET /siem/events</code> - View SIEM events (admin only)</li>
+                        <li><code>GET /admin/backup</code> - Download admin backup (403 Forbidden)</li>
+                        <li><code>GET /api/internal</code> - Internal API (access restricted)</li>
+                        <li><code>POST /api/flag</code> - Honeypot endpoint (returns error and logs access)</li>
+                        <li><code>GET /staff/portal</code> - Staff portal (access restricted)</li>
+                        <li><code>GET /api/hidden-status</code> - Returns hidden status (misleading)</li>
+                        <li><code>POST /api/broken-endpoint</code> - (Deprecated) Always returns 500 error</li>
+                        <li><code>GET /api/experimental/quantum</code> - (Experimental) May return random data</li>
+                    </ul>
+                    <h5 class="mt-4">Deprecated/Experimental Endpoints</h5>
+                    <ul>
+                        <li><code>POST /api/broken-endpoint</code> - Deprecated, unstable, always fails</li>
+                        <li><code>GET /api/experimental/quantum</code> - Experimental, may be removed at any time</li>
+                    </ul>
+                    <h5 class="mt-4">Security Warnings</h5>
+                    <ul>
+                        <li>All API requests are logged and analyzed by QuantumShield AI.</li>
+                        <li>Multiple failed authentication attempts will result in a temporary ban.</li>
+                        <li>API keys are rotated every 24 hours for your security.</li>
+                        <li>Do not share your API key. Violations will be reported to SkyHack SOC.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
