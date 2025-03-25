@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}{{ resume.filename }} - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-file-alt me-2 text-primary"></i>{{ resume.filename }}
+                    </h1>
+                    <p class="text-muted mb-0">Resume Details & Content</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/resume/{{ resume.id }}/edit" class="btn btn-success fw-bold">
+                        <i class="fas fa-edit me-2"></i>Edit Resume
+                    </a>
+                    <form method="POST" action="/resume/{{ resume.id }}/delete" class="d-inline">
+                        <button type="submit" class="btn btn-danger fw-bold" 
+                                onclick="return confirm('Are you sure you want to delete this resume?')">
+                            <i class="fas fa-trash me-2"></i>Delete
+                        </button>
+                    </form>
+                    <a href="/resumes" class="btn btn-outline-secondary fw-bold">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Resumes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <!-- Resume Information -->
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Resume Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Filename</label>
+                        <div class="form-control-plaintext">{{ resume.filename }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Employee ID</label>
+                        <div class="form-control-plaintext">{{ resume.employee_id }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Upload Date</label>
+                        <div class="form-control-plaintext">{{ resume.upload_date }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Resume ID</label>
+                        <div class="form-control-plaintext">{{ resume.id }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">File Type</label>
+                        <div>
+                            <span class="badge rounded-pill 
+                                {% if resume.filename.endswith('.html') %}bg-warning text-dark
+                                {% elif resume.filename.endswith('.pdf') %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                <i class="fas fa-file-{% if resume.filename.endswith('.html') %}code{% elif resume.filename.endswith('.pdf') %}pdf{% else %}alt{% endif %} me-1"></i>
+                                {{ resume.filename.split('.')[-1].upper() }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8 mb-4">
+            <!-- Resume Content -->
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-align-left me-2 text-primary"></i>Resume Content
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="border rounded p-4 bg-light">
+                        <div class="prose">
+                            {{ content | safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a href="/employee/{{ resume.employee_id }}" class="btn btn-primary w-100 fw-bold">
+                                <i class="fas fa-user me-2"></i>View Employee Profile
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="/payroll/{{ resume.employee_id }}" class="btn btn-success w-100 fw-bold">
+                                <i class="fas fa-money-bill me-2"></i>View Payroll Information
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
