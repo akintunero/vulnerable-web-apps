@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}JWT Playground - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0"><i class="fas fa-key"></i> JWT Playground</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="jwt_token" class="form-label">Paste JWT</label>
+                            <input type="text" class="form-control" id="jwt_token" name="jwt_token" placeholder="eyJhbGciOi...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_payload" class="form-label">New Payload (JSON, optional)</label>
+                            <textarea class="form-control" id="new_payload" name="new_payload" rows="3" placeholder='{"user_id":1,"admin":true}'></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Decode / Re-sign</button>
+                    </form>
+                    {% if error %}
+                    <div class="alert alert-danger mt-3">Error: {{ error }}</div>
+                    {% endif %}
+                    {% if decoded %}
+                    <div class="alert alert-success mt-3">
+                        <strong>Decoded Payload:</strong>
+                        <pre>{{ decoded | tojson(indent=2) }}</pre>
+                    </div>
+                    {% endif %}
+                    {% if new_jwt %}
+                    <div class="alert alert-info mt-3">
+                        <strong>New JWT (signed with weak key):</strong>
+                        <pre>{{ new_jwt }}</pre>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
