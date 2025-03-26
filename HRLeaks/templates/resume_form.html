@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{% if resume %}Edit Resume{% else %}New Resume{% endif %} - EnterpriseHR{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-dark fw-bold">
+                        <i class="fas fa-file-alt me-2 text-primary"></i>
+                        {% if resume %}Edit Resume{% else %}Upload New Resume{% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% if resume %}Update resume information and content{% else %}Add a new resume to the system{% endif %}
+                    </p>
+                </div>
+                <a href="/resumes" class="btn btn-outline-secondary fw-bold">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Resumes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-edit me-2 text-primary"></i>Resume Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% if resume %}/resume/{{ resume.id }}/update{% else %}/resume/create{% endif %}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">
+                                    <i class="fas fa-user me-2 text-primary"></i>Employee
+                                </label>
+                                <select name="employee_id" required class="form-select border-2">
+                                    <option value="">Select Employee</option>
+                                    {% for employee in employees %}
+                                    <option value="{{ employee.id }}" {% if resume and resume.employee_id == employee.id %}selected{% endif %}>
+                                        {{ employee.name }} - {{ employee.position }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-dark">
+                                    <i class="fas fa-file me-2 text-primary"></i>Filename
+                                </label>
+                                <input type="text" name="filename" value="{{ resume.filename if resume else '' }}" required
+                                       placeholder="e.g., john_smith_resume.pdf"
+                                       class="form-control border-2">
+                                <div class="form-text">Use descriptive filename with appropriate extension</div>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label class="form-label fw-bold text-dark">
+                                    <i class="fas fa-align-left me-2 text-primary"></i>Resume Content
+                                </label>
+                                <textarea name="content" rows="12" required
+                                          placeholder="Enter the resume content here. You can include professional formatting, skills, experience, and qualifications."
+                                          class="form-control border-2 font-monospace">{{ resume.content if resume else '' }}</textarea>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Include professional content with proper formatting. HTML tags are supported for enhanced presentation.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            <a href="/resumes" class="btn btn-outline-secondary fw-bold">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary fw-bold">
+                                <i class="fas fa-save me-2"></i>
+                                {% if resume %}Update Resume{% else %}Create Resume{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
