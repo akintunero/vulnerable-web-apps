@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Honeypot Detected - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-secret"></i> Unauthorized Access Detected</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger mb-4">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Your activity has been detected and logged by SkyHack SOC. Your IP has been reported for further investigation.
+                    </div>
+                    <p class="lead">If you believe this is a mistake, please contact security@skyhack.com.</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">
+                        <i class="fas fa-home"></i> Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
