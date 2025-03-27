@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Challenges - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="fas fa-flag-checkered"></i> CTF Challenges</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <ul class="list-group mb-3">
+                            {% for vuln in vulns %}
+                            <li class="list-group-item">
+                                <input type="checkbox" id="vuln{{ loop.index }}" disabled>
+                                <label for="vuln{{ loop.index }}">{{ vuln }}</label>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <a href="{{ url_for('walkthrough') }}" class="btn btn-info">Toggle Walkthrough Mode</a>
+                    </form>
+                    {% if session.get('walkthrough') %}
+                    <div class="alert alert-info mt-3">
+                        <strong>Walkthrough Mode:</strong> Subtle hints are now enabled throughout the app.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
