@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-dark fw-bold">
+                    <i class="fas fa-shield-alt me-2 text-primary"></i>Admin Panel
+                </h1>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" onclick="exportAdminData()">
+                        <i class="fas fa-download me-2"></i>Export Data
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" onclick="backupSystem()">
+                        <i class="fas fa-database me-2"></i>Backup System
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endif %}
+
+    <!-- System Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-uppercase text-primary fw-bold small mb-1">Total Users</div>
+                            <div class="h2 mb-0 fw-bold text-dark">{{ admin_stats.users }}</div>
+                            <div class="text-success small fw-semibold">
+                                <i class="fas fa-arrow-up me-1"></i>Active accounts
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-uppercase text-success fw-bold small mb-1">Total Employees</div>
+                            <div class="h2 mb-0 fw-bold text-dark">{{ admin_stats.employees }}</div>
+                            <div class="text-success small fw-semibold">
+                                <i class="fas fa-arrow-up me-1"></i>+{{ admin_stats.employees - 5 }} this month
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                                <i class="fas fa-user-tie fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-uppercase text-warning fw-bold small mb-1">Total Payroll</div>
+                            <div class="h2 mb-0 fw-bold text-dark">£{{ "{:,}".format(admin_stats.total_salary) }}</div>
+                            <div class="text-warning small fw-semibold">
+                                <i class="fas fa-chart-line me-1"></i>+12.5% vs last month
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                                <i class="fas fa-money-bill-wave fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-uppercase text-info fw-bold small mb-1">Departments</div>
+                            <div class="h2 mb-0 fw-bold text-dark">{{ admin_stats.departments }}</div>
+                            <div class="text-info small fw-semibold">
+                                <i class="fas fa-building me-1"></i>Active departments
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <div class="bg-info bg-opacity-10 p-3 rounded-3">
+                                <i class="fas fa-sitemap fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Information -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-server me-2 text-primary"></i>System Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Platform</label>
+                            <div class="text-secondary">{{ system_info.platform }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Python Version</label>
+                            <div class="text-secondary">{{ system_info.python_version }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Server Path</label>
+                            <div class="text-secondary">{{ system_info.server_path }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Database Path</label>
+                            <div class="text-secondary">{{ system_info.database_path }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Country</label>
+                            <div class="text-secondary">{{ system_info.country }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Currency</label>
+                            <div class="text-secondary">{{ system_info.currency }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Timezone</label>
+                            <div class="text-secondary">{{ system_info.timezone }}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark">Secret Key</label>
+                            <div class="text-secondary">{{ system_info.secret_key }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-primary" onclick="manageUsers()">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </button>
+                        <button class="btn btn-outline-success" onclick="generateReport()">
+                            <i class="fas fa-chart-bar me-2"></i>Generate Report
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="systemMaintenance()">
+                            <i class="fas fa-tools me-2"></i>System Maintenance
+                        </button>
+                        <button class="btn btn-outline-info" onclick="viewLogs()">
+                            <i class="fas fa-clipboard-list me-2"></i>View Logs
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="emergencyMode()">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Emergency Mode
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-history me-2 text-primary"></i>Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                    <th>Timestamp</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-user-plus text-success me-2"></i>User Created</td>
+                                    <td>admin@enterprise.com.uk</td>
+                                    <td>New employee account created</td>
+                                    <td>2024-01-15 14:30</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-file-upload text-info me-2"></i>File Upload</td>
+                                    <td>hr@enterprise.com.uk</td>
+                                    <td>Resume uploaded for John Smith</td>
+                                    <td>2024-01-15 13:45</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-money-bill-wave text-warning me-2"></i>Payroll Update</td>
+                                    <td>admin@enterprise.com.uk</td>
+                                    <td>Monthly payroll processed</td>
+                                    <td>2024-01-15 12:15</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-shield-alt text-primary me-2"></i>Security Check</td>
+                                    <td>System</td>
+                                    <td>Vulnerability scan completed</td>
+                                    <td>2024-01-15 11:00</td>
+                                    <td><span class="badge bg-warning">Warning</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-database text-secondary me-2"></i>Backup</td>
+                                    <td>System</td>
+                                    <td>Daily backup completed</td>
+                                    <td>2024-01-15 02:00</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportAdminData() {
+    showToast('Exporting admin data...', 'info');
+    setTimeout(() => {
+        showToast('Admin data exported successfully!', 'success');
+    }, 2000);
+}
+
+function backupSystem() {
+    showToast('Creating system backup...', 'info');
+    setTimeout(() => {
+        showToast('System backup completed!', 'success');
+    }, 3000);
+}
+
+function refreshStats() {
+    showToast('Refreshing statistics...', 'info');
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
+
+function manageUsers() {
+    showToast('Opening user management...', 'info');
+    setTimeout(() => {
+        window.open('/employees', '_blank');
+    }, 1000);
+}
+
+function generateReport() {
+    showToast('Generating comprehensive report...', 'info');
+    setTimeout(() => {
+        window.open('/reports', '_blank');
+    }, 1500);
+}
+
+function systemMaintenance() {
+    showToast('Initiating system maintenance...', 'warning');
+    setTimeout(() => {
+        showToast('Maintenance mode activated', 'success');
+    }, 2000);
+}
+
+function viewLogs() {
+    showToast('Opening system logs...', 'info');
+    setTimeout(() => {
+        window.open('/audit_logs', '_blank');
+    }, 1000);
+}
+
+function emergencyMode() {
+    if (confirm('Are you sure you want to activate emergency mode? This will restrict access to essential functions only.')) {
+        showToast('Emergency mode activated!', 'danger');
+    }
+}
+
+// Auto-refresh stats every 30 seconds
+setInterval(() => {
+    // Update stats without full page reload
+    console.log('Auto-refreshing admin stats...');
+}, 30000);
+</script>
+{% endblock %} 
