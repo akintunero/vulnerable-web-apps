@@ -1,0 +1,222 @@
+[
+  {
+    "id": "audit_001",
+    "timestamp": "2024-12-19T10:30:00Z",
+    "user_id": "admin",
+    "action": "login_success",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "Admin login successful",
+    "severity": "info",
+    "session_id": "sess_admin_001"
+  },
+  {
+    "id": "audit_002",
+    "timestamp": "2024-12-19T10:25:00Z",
+    "user_id": "trader1",
+    "action": "large_transaction",
+    "ip_address": "203.0.113.45",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "details": "Large BTC purchase: 2.5 BTC for $112,500",
+    "severity": "warning",
+    "session_id": "sess_trader1_001"
+  },
+  {
+    "id": "audit_003",
+    "timestamp": "2024-12-19T10:20:00Z",
+    "user_id": "unknown",
+    "action": "login_failed",
+    "ip_address": "185.220.101.45",
+    "user_agent": "curl/7.68.0",
+    "details": "Failed login attempt for user: admin",
+    "severity": "warning",
+    "session_id": null
+  },
+  {
+    "id": "audit_004",
+    "timestamp": "2024-12-19T10:15:00Z",
+    "user_id": "trader4",
+    "action": "account_created",
+    "ip_address": "198.51.100.123",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15",
+    "details": "New account registration",
+    "severity": "info",
+    "session_id": "sess_trader4_001"
+  },
+  {
+    "id": "audit_005",
+    "timestamp": "2024-12-19T10:10:00Z",
+    "user_id": "admin",
+    "action": "system_config_change",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "Updated trading fee structure",
+    "severity": "info",
+    "session_id": "sess_admin_001"
+  },
+  {
+    "id": "audit_006",
+    "timestamp": "2024-12-19T10:05:00Z",
+    "user_id": "trader6",
+    "action": "suspicious_activity",
+    "ip_address": "203.0.113.67",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "details": "Multiple rapid transactions detected",
+    "severity": "high",
+    "session_id": "sess_trader6_001"
+  },
+  {
+    "id": "audit_007",
+    "timestamp": "2024-12-19T10:00:00Z",
+    "user_id": "trader3",
+    "action": "withdrawal_request",
+    "ip_address": "198.51.100.89",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "BTC withdrawal request: 0.5 BTC",
+    "severity": "info",
+    "session_id": "sess_trader3_001"
+  },
+  {
+    "id": "audit_008",
+    "timestamp": "2024-12-19T09:55:00Z",
+    "user_id": "unknown",
+    "action": "api_rate_limit_exceeded",
+    "ip_address": "185.220.101.67",
+    "user_agent": "python-requests/2.25.1",
+    "details": "API rate limit exceeded for IP",
+    "severity": "warning",
+    "session_id": null
+  },
+  {
+    "id": "audit_009",
+    "timestamp": "2024-12-19T09:50:00Z",
+    "user_id": "trader2",
+    "action": "password_change",
+    "ip_address": "203.0.113.23",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "details": "Password changed successfully",
+    "severity": "info",
+    "session_id": "sess_trader2_001"
+  },
+  {
+    "id": "audit_010",
+    "timestamp": "2024-12-19T09:45:00Z",
+    "user_id": "admin",
+    "action": "user_suspended",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "Suspended user: trader_suspicious",
+    "severity": "high",
+    "session_id": "sess_admin_001"
+  },
+  {
+    "id": "audit_011",
+    "timestamp": "2024-12-19T09:40:00Z",
+    "user_id": "trader5",
+    "action": "api_key_generated",
+    "ip_address": "198.51.100.156",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "details": "New API key generated",
+    "severity": "info",
+    "session_id": "sess_trader5_001"
+  },
+  {
+    "id": "audit_012",
+    "timestamp": "2024-12-19T09:35:00Z",
+    "user_id": "unknown",
+    "action": "sql_injection_attempt",
+    "ip_address": "185.220.101.89",
+    "user_agent": "sqlmap/1.5.12",
+    "details": "SQL injection attempt detected",
+    "severity": "critical",
+    "session_id": null
+  },
+  {
+    "id": "audit_013",
+    "timestamp": "2024-12-19T09:30:00Z",
+    "user_id": "trader7",
+    "action": "two_factor_enabled",
+    "ip_address": "203.0.113.78",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15",
+    "details": "2FA enabled for account",
+    "severity": "info",
+    "session_id": "sess_trader7_001"
+  },
+  {
+    "id": "audit_014",
+    "timestamp": "2024-12-19T09:25:00Z",
+    "user_id": "admin",
+    "action": "system_backup",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "Database backup completed",
+    "severity": "info",
+    "session_id": "sess_admin_001"
+  },
+  {
+    "id": "audit_015",
+    "timestamp": "2024-12-19T09:20:00Z",
+    "user_id": "trader8",
+    "action": "unusual_login_location",
+    "ip_address": "203.0.113.234",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "details": "Login from new location: Singapore",
+    "severity": "warning",
+    "session_id": "sess_trader8_001"
+  },
+  {
+    "id": "audit_016",
+    "timestamp": "2024-12-19T09:15:00Z",
+    "user_id": "unknown",
+    "action": "ddos_attack_detected",
+    "ip_address": "185.220.101.123",
+    "user_agent": "Mozilla/5.0 (compatible; Bot/1.0)",
+    "details": "DDoS attack detected from IP range",
+    "severity": "critical",
+    "session_id": null
+  },
+  {
+    "id": "audit_017",
+    "timestamp": "2024-12-19T09:10:00Z",
+    "user_id": "trader9",
+    "action": "deposit_received",
+    "ip_address": "198.51.100.45",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "details": "ETH deposit: 2.0 ETH",
+    "severity": "info",
+    "session_id": "sess_trader9_001"
+  },
+  {
+    "id": "audit_018",
+    "timestamp": "2024-12-19T09:05:00Z",
+    "user_id": "admin",
+    "action": "maintenance_mode_enabled",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "System maintenance mode activated",
+    "severity": "info",
+    "session_id": "sess_admin_001"
+  },
+  {
+    "id": "audit_019",
+    "timestamp": "2024-12-19T09:00:00Z",
+    "user_id": "trader10",
+    "action": "api_key_revoked",
+    "ip_address": "203.0.113.89",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+    "details": "API key revoked due to suspicious activity",
+    "severity": "warning",
+    "session_id": "sess_trader10_001"
+  },
+  {
+    "id": "audit_020",
+    "timestamp": "2024-12-19T08:55:00Z",
+    "user_id": "unknown",
+    "action": "xss_attempt",
+    "ip_address": "185.220.101.156",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "details": "XSS attack attempt detected",
+    "severity": "high",
+    "session_id": null
+  }
+] 
