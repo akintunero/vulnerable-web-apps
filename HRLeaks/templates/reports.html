@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - HRLeaks{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">
+        <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
+    </h1>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-outline-primary btn-sm" onclick="generateReport()">
+            <i class="fas fa-file-pdf me-1"></i>Export PDF
+        </button>
+        <button type="button" class="btn btn-outline-success btn-sm" onclick="exportExcel()">
+            <i class="fas fa-file-excel me-1"></i>Export Excel
+        </button>
+    </div>
+</div>
+
+<!-- Report Filters -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Report Filters</h6>
+    </div>
+    <div class="card-body">
+        <form id="reportForm">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="reportType" class="form-label">Report Type</label>
+                    <select class="form-select" id="reportType" name="reportType">
+                        <option value="employee">Employee Report</option>
+                        <option value="payroll">Payroll Report</option>
+                        <option value="department">Department Report</option>
+                        <option value="resume">Resume Report</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="department" class="form-label">Department</label>
+                    <select class="form-select" id="department" name="department">
+                        <option value="">All Departments</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Finance">Finance</option>
+                        <option value="HR">HR</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Generate Report
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Salary Distribution</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="salaryChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Department Headcount</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="headcountChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Report Table -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Employee Report</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="employeeTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Salary</th>
+                        <th>Hire Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.id|safe }}</td>
+                        <td>{{ employee.name|safe }}</td>
+                        <td>{{ employee.email|safe }}</td>
+                        <td>{{ employee.department|safe }}</td>
+                        <td>{{ employee.position|safe }}</td>
+                        <td>£{{ employee.salary|safe }}</td>
+                        <td>{{ employee.hire_date|safe }}</td>
+                        <td>
+                            <a href="/employee/{{ employee.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="/employee/{{ employee.id }}/edit" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Payroll Summary -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Payroll Summary</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h5>Total Salary</h5>
+                        <h3>£{{ payroll_summary.total_salary|safe }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h5>Total Bonus</h5>
+                        <h3>£{{ payroll_summary.total_bonus|safe }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <h5>Total Tax</h5>
+                        <h3>£{{ payroll_summary.total_tax|safe }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <h5>Net Pay</h5>
+                        <h3>£{{ payroll_summary.net_pay|safe }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // VULNERABILITY: XSS in JavaScript - rendering report data unsafely
+    const reportData = {
+        employees: JSON.parse('{{ employees|tojson|safe }}'),
+        payrollData: JSON.parse('{{ payroll_data|tojson|safe }}')
+    };
+    
+    // VULNERABILITY: Unsafe innerHTML usage
+    document.body.innerHTML += '<div class="alert alert-info" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">Report loaded with ' + reportData.employees.length + ' employees</div>';
+    
+    // Salary Distribution Chart
+    const salaryCtx = document.getElementById('salaryChart').getContext('2d');
+    const salaries = reportData.employees.map(emp => emp.salary);
+    new Chart(salaryCtx, {
+        type: 'bar',
+        data: {
+            labels: ['<50k', '50k-60k', '60k-70k', '70k+'],
+            datasets: [{
+                label: 'Employees',
+                data: [
+                    salaries.filter(s => s < 50000).length,
+                    salaries.filter(s => s >= 50000 && s < 60000).length,
+                    salaries.filter(s => s >= 60000 && s < 70000).length,
+                    salaries.filter(s => s >= 70000).length
+                ],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Department Headcount Chart
+    const headcountCtx = document.getElementById('headcountChart').getContext('2d');
+    const departments = {};
+    reportData.employees.forEach(emp => {
+        departments[emp.department] = (departments[emp.department] || 0) + 1;
+    });
+    
+    new Chart(headcountCtx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(departments),
+            datasets: [{
+                data: Object.values(departments),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+    
+    function generateReport() {
+        // VULNERABILITY: XSS in JavaScript - rendering report generation message unsafely
+        const reportType = document.getElementById('reportType').value;
+        const message = 'Generating ' + reportType + ' report...';
+        document.body.innerHTML += '<div class="alert alert-success" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">' + message + '</div>';
+    }
+    
+    function exportExcel() {
+        // VULNERABILITY: XSS in JavaScript - rendering export message unsafely
+        const message = 'Exporting Excel report with ' + reportData.employees.length + ' employees';
+        document.body.innerHTML += '<div class="alert alert-warning" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">' + message + '</div>';
+    }
+    
+    // VULNERABILITY: XSS in form submission
+    document.getElementById('reportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const reportType = formData.get('reportType');
+        const department = formData.get('department');
+        
+        // VULNERABILITY: Unsafe innerHTML usage
+        document.body.innerHTML += '<div class="alert alert-info" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">Generating ' + reportType + ' report for ' + department + '</div>';
+    });
+</script>
+{% endblock %} 
