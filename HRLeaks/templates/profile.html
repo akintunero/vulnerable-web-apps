@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - HRLeaks{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">
+        <i class="fas fa-user-circle me-2"></i>User Profile
+    </h1>
+    <button type="button" class="btn btn-outline-primary btn-sm" onclick="editProfile()">
+        <i class="fas fa-edit me-1"></i>Edit Profile
+    </button>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-body text-center">
+                <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="Profile Picture">
+                <h5 class="card-title">{{ user.name|safe }}</h5>
+                <p class="text-muted">{{ user.email|safe }}</p>
+                <span class="badge bg-primary">{{ user.role|safe }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Profile Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Full Name:</strong></label>
+                        <p>{{ user.name|safe }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Email:</strong></label>
+                        <p>{{ user.email|safe }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Role:</strong></label>
+                        <p>{{ user.role|safe }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>User ID:</strong></label>
+                        <p>{{ user.id|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // VULNERABILITY: XSS in JavaScript - rendering user data unsafely
+    const userData = {
+        name: '{{ user.name|safe }}',
+        email: '{{ user.email|safe }}',
+        role: '{{ user.role|safe }}'
+    };
+    
+    // VULNERABILITY: Unsafe innerHTML usage
+    document.body.innerHTML += '<div class="alert alert-info" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">Profile loaded for: ' + userData.name + '</div>';
+    
+    function editProfile() {
+        // VULNERABILITY: XSS in JavaScript - rendering edit message unsafely
+        const message = 'Editing profile for: ' + userData.name + ' (' + userData.role + ')';
+        document.body.innerHTML += '<div class="alert alert-warning" style="position: fixed; top: 70px; right: 20px; z-index: 1000;">' + message + '</div>';
+    }
+</script>
+{% endblock %} 
