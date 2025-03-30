@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Walkthrough - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white border-0">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-map me-2"></i> SkyHack Airlines Walkthrough</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Welcome to SkyHack Airlines!</strong> This walkthrough will guide you through the main features of our airline booking system.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="text-primary mb-3"><i class="fas fa-search me-2"></i>Flight Search</h4>
+                            <p class="text-muted">Search for flights using our advanced search functionality:</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Autocomplete airport search</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Flexible date selection</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Multiple airline options</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Price range filtering</li>
+                            </ul>
+                            <a href="/search" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Start Searching
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h4 class="text-success mb-3"><i class="fas fa-user me-2"></i>User Account</h4>
+                            <p class="text-muted">Manage your bookings and preferences:</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>View booking history</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Check-in online</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Download boarding passes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Manage loyalty points</li>
+                            </ul>
+                            <a href="/login" class="btn btn-success">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="text-warning mb-3"><i class="fas fa-plane me-2"></i>Flight Features</h4>
+                            <p class="text-muted">Explore our comprehensive flight services:</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Real-time flight status</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Seat selection</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Baggage tracking</li>
+                                <li><i class="fas fa-check text-success me-2"></i>In-flight services</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h4 class="text-info mb-3"><i class="fas fa-shield-alt me-2"></i>Security Features</h4>
+                            <p class="text-muted">Your security is our priority:</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Advanced WAF protection</li>
+                                <li><i class="fas fa-check text-success me-2"></i>QuantumShield scanning</li>
+                                <li><i class="fas fa-check text-success me-2"></i>SIEM monitoring</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Real-time threat detection</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <h4 class="text-dark mb-3">Ready to Get Started?</h4>
+                        <p class="text-muted mb-4">Choose your next destination and experience the future of air travel.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="/search" class="btn btn-lg btn-primary">
+                                <i class="fas fa-search me-2"></i>Search Flights
+                            </a>
+                            <a href="/register" class="btn btn-lg btn-outline-primary">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </a>
+                            <a href="/challenges" class="btn btn-lg btn-outline-warning">
+                                <i class="fas fa-trophy me-2"></i>Security Challenges
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
