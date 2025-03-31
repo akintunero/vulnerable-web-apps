@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="display-1 text-muted">404</h1>
+                    <h2 class="mb-4">Page Not Found</h2>
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-bell"></i> Security Team Notified. Incident ID: <span class="fw-bold">ERR-{{ (range(100000,999999)|random) }}</span>
+                    </div>
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-fingerprint"></i> Trace ID: <span class="fw-bold">TRC-{{ (range(100000,999999)|random) }}</span>
+                    </div>
+                    <button class="btn btn-outline-danger mb-3" data-bs-toggle="tooltip" title="Report this error to SkyHack SOC (feature coming soon)"><i class="fas fa-exclamation-triangle"></i> Report this error</button>
+                    <p class="lead mb-4">The page you're looking for doesn't exist.</p>
+                    <span style="position:absolute;left:-9999px;opacity:0;">flag{404_easter_egg_flag}</span>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Go Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
