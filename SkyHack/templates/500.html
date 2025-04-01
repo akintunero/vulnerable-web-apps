@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - SkyHack Airlines{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Server Error</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-bell"></i> Security Team Notified. Incident ID: <span class="fw-bold">ERR-{{ (range(100000,999999)|random) }}</span>
+                    </div>
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-fingerprint"></i> Trace ID: <span class="fw-bold">TRC-{{ (range(100000,999999)|random) }}</span>
+                    </div>
+                    <button class="btn btn-outline-danger mb-3" data-bs-toggle="tooltip" title="Report this error to SkyHack SOC (feature coming soon)"><i class="fas fa-exclamation-triangle"></i> Report this error</button>
+                    <p class="lead">An unexpected error occurred. Please try again later.</p>
+                    <span style="position:absolute;left:-9999px;opacity:0;">flag{500_easter_egg_flag}</span>
+                    
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Go Home
+                    </a>
+                </div>
+            </div>
+
+            {% if traceback %}
+            <div class="alert alert-danger mt-4">
+                <h5><i class="fas fa-exclamation-triangle"></i> Stack Trace (Information Disclosure)</h5>
+                <p class="mb-2">This error page discloses the full stack trace:</p>
+                <pre class="bg-dark text-light p-3 rounded"><code>{{ traceback }}</code></pre>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
