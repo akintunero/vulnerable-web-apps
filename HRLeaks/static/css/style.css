@@ -1,0 +1,126 @@
+/* Custom styles for HRLeaks */
+
+/* Vulnerability warning styles */
+.vuln-warning {
+    border-left: 4px solid #dc2626;
+    background-color: #fef2f2;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.vuln-warning h3 {
+    color: #dc2626;
+    margin-top: 0;
+}
+
+/* Code block styling */
+.code-block {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    overflow-x: auto;
+}
+
+/* Resume content styling */
+.resume-content {
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.resume-content h1 {
+    color: #1f2937;
+    border-bottom: 2px solid #3b82f6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.resume-content p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+/* Payroll chart styling */
+.payroll-chart {
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 50%, #ef4444 100%);
+    height: 8px;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    backdrop-filter: blur(4px);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        height: 100vh;
+        z-index: 50;
+        transition: left 0.3s ease-in-out;
+    }
+    
+    .sidebar.open {
+        left: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Animation for vulnerability notices */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.vuln-notice {
+    animation: pulse 2s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .nav,
+    .vuln-warning,
+    .vuln-notice {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+} 
