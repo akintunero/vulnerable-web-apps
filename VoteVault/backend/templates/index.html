@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectraVote - Secure Digital Voting Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-shield-alt me-2"></i>ElectraVote
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="/search">
+                            <i class="fas fa-search me-1"></i>Search
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="/upload">
+                            <i class="fas fa-upload me-1"></i>Report Issues
+                        </a>
+                    </li>
+                    {% if session.get('role') == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="/admin/dashboard">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-black text-dark mb-4">
+                        Secure Digital
+                        <span class="text-gradient">Voting</span>
+                    </h1>
+                    <p class="lead text-muted mb-4">
+                        Experience the future of democracy with our secure, transparent, and accessible digital voting platform. 
+                        Your voice matters, and we ensure it's heard.
+                    </p>
+                    <div class="d-flex gap-3 mb-4">
+                        <button class="btn btn-primary btn-lg px-4 py-3 fw-bold" onclick="scrollToElections()">
+                            <i class="fas fa-vote-yea me-2"></i>Vote Now
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg px-4 py-3 fw-bold" onclick="showResults()">
+                            <i class="fas fa-chart-bar me-2"></i>View Results
+                        </button>
+                    </div>
+                    <div class="hero-stats d-flex gap-4">
+                        <div class="text-center">
+                            <div class="fw-bold text-primary fs-4">50K+</div>
+                            <small class="text-muted">Votes Cast</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold text-primary fs-4">99.9%</div>
+                            <small class="text-muted">Security Rate</small>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold text-primary fs-4">24/7</div>
+                            <small class="text-muted">Monitoring</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero-image">
+                        <i class="fas fa-shield-alt text-primary opacity-25" style="font-size: 8rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Elections Section -->
+    <div class="elections-section py-5" id="electionsSection">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-dark mb-3">Active Elections</h2>
+                <p class="lead text-muted">Participate in ongoing democratic processes</p>
+            </div>
+            
+            {% if elections %}
+            <div class="row g-4">
+                {% for election in elections %}
+                <div class="col-lg-6">
+                    <div class="election-card">
+                        <div class="election-header">
+                            <div class="election-badge">
+                                <span class="badge bg-success">{{ election.status|title }}</span>
+                            </div>
+                            <h4 class="election-title fw-bold text-dark mb-2">{{ election.title }}</h4>
+                            <p class="election-description text-muted mb-3">{{ election.description }}</p>
+                            <div class="election-meta mb-3">
+                                <span class="badge bg-primary me-2">{{ election.election_type|title }}</span>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>Ends: {{ election.end_date }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="candidates-section mb-4">
+                            <h6 class="fw-bold text-dark mb-3">
+                                <i class="fas fa-users me-2"></i>Candidates
+                            </h6>
+                            <div class="row g-2">
+                                {% for candidate in election.candidates %}
+                                <div class="col-md-6">
+                                    <div class="candidate-card">
+                                        <div class="candidate-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="candidate-info">
+                                            <div class="candidate-name fw-bold">{{ candidate.name }}</div>
+                                            {% if candidate.party %}
+                                            <div class="candidate-party text-muted small">{{ candidate.party }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="election-actions">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="/vote/{{ election.id }}" class="btn btn-primary w-100 fw-bold">
+                                        <i class="fas fa-vote-yea me-2"></i>Vote Now
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="/results/{{ election.id }}" class="btn btn-outline-primary w-100 fw-bold">
+                                        <i class="fas fa-chart-bar me-2"></i>View Results
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times text-muted mb-4" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted mb-3">No Active Elections</h4>
+                    <p class="text-muted mb-4">Check back later for upcoming elections or contact your administrator.</p>
+                    <button class="btn btn-primary" onclick="refreshElections()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="actions-section py-5 bg-white">
+        <div class="container">
+            <h2 class="text-center fw-bold text-dark mb-5">Quick Actions</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3">Search Elections</h5>
+                        <p class="text-muted mb-4">Find specific elections, candidates, or voting records</p>
+                        <a href="/search" class="btn btn-primary w-100 fw-bold">
+                            <i class="fas fa-search me-2"></i>Search Now
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3">Report Issues</h5>
+                        <p class="text-muted mb-4">Upload evidence of voting irregularities or technical issues</p>
+                        <a href="/upload" class="btn btn-warning w-100 fw-bold">
+                            <i class="fas fa-upload me-2"></i>Report Issue
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="action-card">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3">View Results</h5>
+                        <p class="text-muted mb-4">See real-time election results and analytics</p>
+                        <a href="/results/1" class="btn btn-success w-100 fw-bold">
+                            <i class="fas fa-chart-bar me-2"></i>View Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Features -->
+    <div class="security-section py-5">
+        <div class="container">
+            <h2 class="text-center fw-bold text-dark mb-5">Security & Transparency</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="security-card text-center">
+                        <div class="security-icon mb-3">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark">End-to-End Encryption</h6>
+                        <p class="text-muted small">All votes are encrypted and secure</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="security-card text-center">
+                        <div class="security-icon mb-3">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark">Biometric Verification</h6>
+                        <p class="text-muted small">Multi-factor authentication</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="security-card text-center">
+                        <div class="security-icon mb-3">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark">Transparent Process</h6>
+                        <p class="text-muted small">Public audit trails</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="security-card text-center">
+                        <div class="security-icon mb-3">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark">24/7 Monitoring</h6>
+                        <p class="text-muted small">Continuous security oversight</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function scrollToElections() {
+            document.getElementById('electionsSection').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function showResults() {
+            showNotification('Loading election results...', 'info');
+            setTimeout(() => {
+                window.location.href = '/results/1';
+            }, 1000);
+        }
+
+        function refreshElections() {
+            showNotification('Refreshing elections...', 'info');
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                min-width: 300px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.election-card, .action-card, .security-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fade-in');
+            });
+        });
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .hero-image {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Election Cards */
+        .election-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .election-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        }
+
+        .election-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .election-title {
+            font-size: 1.3rem;
+            line-height: 1.3;
+        }
+
+        .election-description {
+            line-height: 1.5;
+        }
+
+        /* Candidate Cards */
+        .candidate-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .candidate-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .candidate-name {
+            font-size: 0.9rem;
+        }
+
+        .candidate-party {
+            font-size: 0.8rem;
+        }
+
+        /* Action Cards */
+        .action-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        }
+
+        .action-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
+        }
+
+        .action-icon i {
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* Security Cards */
+        .security-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+
+        .security-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .security-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .security-card:hover .security-icon {
+            transform: scale(1.1);
+        }
+
+        .security-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 3rem 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+                padding: 2rem 0;
+            }
+            
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                justify-content: center;
+            }
+            
+            .election-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .election-card:nth-child(1) { animation-delay: 0.1s; }
+        .election-card:nth-child(2) { animation-delay: 0.2s; }
+        .action-card:nth-child(1) { animation-delay: 0.1s; }
+        .action-card:nth-child(2) { animation-delay: 0.2s; }
+        .action-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</body>
+</html> 
