@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteVault - Upload Evidence</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-vote-yea me-2"></i>VoteVault
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/search">Search</a>
+                {% if session.get('role') == 'admin' %}
+                <a class="nav-link" href="/admin/dashboard">Admin</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">
+                            <i class="fas fa-upload me-2"></i>
+                            Upload Evidence
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Upload Guidelines:</strong> Please upload evidence related to voting irregularities or fraud. Supported formats: PDF, JPG, PNG, DOC, TXT
+                        </div>
+                        
+                        <form method="post" action="/upload-evidence" enctype="multipart/form-data" id="uploadForm">
+                            <div class="mb-3">
+                                <label for="evidence_type" class="form-label">Evidence Type</label>
+                                <select class="form-select" id="evidence_type" name="evidence_type" required>
+                                    <option value="">Select evidence type...</option>
+                                    <option value="fraud">Voter Fraud</option>
+                                    <option value="irregularity">Voting Irregularity</option>
+                                    <option value="intimidation">Voter Intimidation</option>
+                                    <option value="technical">Technical Issue</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="election_id" class="form-label">Related Election</label>
+                                <select class="form-select" id="election_id" name="election_id" required>
+                                    <option value="">Select election...</option>
+                                    {% for election in elections %}
+                                    <option value="{{ election.id }}">{{ election.title|safe }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" 
+                                          placeholder="Please describe the evidence you're uploading..." required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Evidence File</label>
+                                <input type="file" class="form-control" id="file" name="file" required>
+                                <div class="form-text">Maximum file size: 10MB</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="reporter_name" class="form-label">Reporter Name (Optional)</label>
+                                <input type="text" class="form-control" id="reporter_name" name="reporter_name" 
+                                       placeholder="Your name or 'Anonymous'">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contact_email" class="form-label">Contact Email (Optional)</label>
+                                <input type="email" class="form-control" id="contact_email" name="contact_email" 
+                                       placeholder="your.email@example.com">
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-upload me-2"></i>Upload Evidence
+                                </button>
+                                <a href="/" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Elections
+                                </a>
+                            </div>
+                        </form>
+                        
+                        {% if uploaded_files %}
+                        <div class="mt-4">
+                            <h5>Recently Uploaded Files</h5>
+                            <div class="list-group">
+                                {% for file in uploaded_files %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ file.filename|safe }}</h6>
+                                            <small class="text-muted">{{ file.description|safe }}</small>
+                                        </div>
+                                        <span class="badge bg-primary">{{ file.evidence_type|safe }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // VULNERABILITY: XSS in JavaScript - rendering user input unsafely
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const description = document.getElementById('description').value;
+            const reporterName = document.getElementById('reporter_name').value;
+            
+            // VULNERABILITY: Unsafe innerHTML usage
+            if (description) {
+                document.body.innerHTML += '<div class="alert alert-info">Description: ' + description + '</div>';
+            }
+            if (reporterName) {
+                document.body.innerHTML += '<div class="alert alert-info">Reporter: ' + reporterName + '</div>';
+            }
+        });
+        
+        // VULNERABILITY: XSS in JavaScript - rendering election titles unsafely
+        document.getElementById('election_id').addEventListener('change', function(e) {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            if (selectedOption.text) {
+                document.body.innerHTML += '<div class="alert alert-success">Selected: ' + selectedOption.text + '</div>';
+            }
+        });
+    </script>
+</body>
+</html> 
