@@ -1,146 +1,158 @@
-# 🚀 Vulnerable Web Applications Collection
+# Vulnerable Web Applications Collection
 
-A comprehensive collection of intentionally vulnerable web applications designed for security research, penetration testing practice, and educational purposes. **All applications are containerized with Docker for safe isolation.**
+A comprehensive collection of intentionally vulnerable web applications designed for security testing, penetration testing practice, and educational purposes.
 
-## ⚠️ **IMPORTANT SECURITY NOTICE**
+## 🚨 **IMPORTANT SECURITY WARNING**
 
-**These applications contain intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy these applications in production environments or on public-facing servers.**
+⚠️ **These applications contain intentional security vulnerabilities and should NEVER be deployed in production environments or exposed to the internet.**
 
-## 📋 Table of Contents
+⚠️ **Use only in isolated, controlled environments for educational and testing purposes.**
 
-- [Overview](#overview)
-- [Projects](#projects)
-- [Quick Start](#quick-start)
-- [Security Guidelines](#security-guidelines)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+## 📁 Project Structure
 
-## 🎯 Overview
+This repository contains multiple vulnerable web applications, each designed to demonstrate different types of security vulnerabilities:
 
-This repository contains a curated collection of vulnerable web applications, each designed to demonstrate specific security vulnerabilities in a controlled, educational environment. All applications are Dockerized to ensure safe isolation and easy deployment.
+### 🏗️ **ConfusedCloud** - Cloud Management Platform
+- **Vulnerabilities**: SQL Injection, XSS, CSRF, Authentication Bypass
+- **Technology**: Flask, Python
+- **Features**: Cloud service management, billing, user dashboard
+- **Educational Value**: Real-world cloud platform vulnerabilities
 
-### Key Features:
-- 🔒 **Docker Isolation**: All apps run in isolated containers
-- 🎓 **Educational Focus**: Designed for learning security concepts
-- 🛡️ **Controlled Environment**: Safe for security research
-- 📚 **Comprehensive Documentation**: Detailed setup and vulnerability guides
+### 🛒 **CyberMart** - E-commerce Platform  
+- **Vulnerabilities**: Command Injection, Deserialization, SSRF, XXE
+- **Technology**: Flask, Python
+- **Features**: Product catalog, shopping cart, admin panel
+- **Educational Value**: E-commerce security testing scenarios
 
-## 🏗️ Projects
+### 💰 **FakeCrypto** - Cryptocurrency Exchange
+- **Vulnerabilities**: Session Management, Input Validation, Authorization Flaws
+- **Technology**: Flask, Python
+- **Features**: Trading platform, wallet management, NFT marketplace
+- **Educational Value**: Financial application security testing
 
-### [ConfusedCloud](ConfusedCloud/) - Cloud Management Platform
-A vulnerable cloud management platform demonstrating various web application vulnerabilities including authentication bypass, privilege escalation, and data exposure.
+### 👥 **HRLeaks** - Human Resources System
+- **Vulnerabilities**: Data Exposure, Access Control, Information Disclosure
+- **Technology**: Flask, Python
+- **Features**: Employee management, payroll, resume handling
+- **Educational Value**: HR system security and data privacy
 
-### [FakeCrypto](FakeCrypto/) - Cryptocurrency Trading Platform
-A vulnerable cryptocurrency trading platform featuring SQL injection, XSS, CSRF, and other common web vulnerabilities.
+### ✈️ **SkyHack** - Airline Booking System
+- **Vulnerabilities**: JWT Manipulation, API Security, Session Hijacking
+- **Technology**: Flask, Python
+- **Features**: Flight booking, check-in, frequent flyer program
+- **Educational Value**: Travel industry security testing
 
-### [HRLeaks](HRLeaks/) - Human Resources Management System
-A vulnerable HR management system showcasing data exposure, authentication flaws, and business logic vulnerabilities.
+### 🗳️ **VoteVault** - Voting System
+- **Vulnerabilities**: Election Security, Vote Manipulation, Audit Trail
+- **Technology**: Flask, Python
+- **Features**: Digital voting, result verification, admin controls
+- **Educational Value**: Critical infrastructure security
 
-### [VoteVault](VoteVault/) - Digital Voting System
-A vulnerable digital voting platform demonstrating election security vulnerabilities and data integrity issues.
-
-### [SkyHack](SkyHack/) - Airline Booking System
-A vulnerable airline booking system featuring authentication bypass, data manipulation, and session management flaws.
-
-### [CyberMart](CyberMart/) - E-commerce Shopping Cart
-A vulnerable e-commerce platform demonstrating payment processing vulnerabilities, cart manipulation, and checkout race conditions.
-
-## 🚀 Quick Start
+## 🛠️ Setup Instructions
 
 ### Prerequisites
-- Docker
-- Docker Compose
+- Docker and Docker Compose
+- Python 3.8+
 - Git
 
-### Installation
+### Quick Start
 ```bash
 # Clone the repository
 git clone git@github.com:akintunero/vulnerable-web-apps.git
 cd vulnerable-web-apps
 
-# Navigate to any project directory
-cd OpenSource/[project-name]
+# Choose a project to run
+cd ConfusedCloud  # or any other project
 
-# Start the application
+# Start with Docker
 docker-compose up -d
+
+# Or run locally
+pip install -r requirements.txt
+python app.py
 ```
 
-### Example: Starting ConfusedCloud
-```bash
-cd OpenSource/ConfusedCloud
-docker-compose up -d
-# Access at http://localhost:5000
-```
+## 🎯 Learning Objectives
 
-## 🛡️ Security Guidelines
+Each application is designed to teach specific security concepts:
 
-### **CRITICAL RULES:**
-1. **NEVER** deploy these applications in production
-2. **ALWAYS** run in isolated Docker containers
-3. **NEVER** expose to public networks
-4. **ONLY** use for educational purposes
-5. **ALWAYS** use strong passwords for admin accounts
+- **OWASP Top 10** vulnerabilities
+- **Web Application Security** testing methodologies
+- **Penetration Testing** techniques
+- **Secure Coding** practices
+- **Security Assessment** frameworks
 
-### Safe Usage:
-- ✅ Run in Docker containers
-- ✅ Use on isolated networks
-- ✅ Use for security research
-- ✅ Use for educational purposes
-- ✅ Use for penetration testing practice
+## 📚 Educational Resources
 
-### Unsafe Usage:
-- ❌ Deploy to production
-- ❌ Expose to public internet
-- ❌ Use with real data
-- ❌ Use for actual business operations
+### Recommended Learning Path
+1. **Start with ConfusedCloud** - Basic web vulnerabilities
+2. **Progress to CyberMart** - E-commerce security
+3. **Explore FakeCrypto** - Financial application security
+4. **Study HRLeaks** - Data privacy and access control
+5. **Master SkyHack** - API and session security
+6. **Challenge with VoteVault** - Critical infrastructure security
 
-## 🎓 Educational Use Cases
+### Security Testing Tools
+- **Burp Suite** - Web application security testing
+- **OWASP ZAP** - Automated security scanning
+- **SQLMap** - SQL injection testing
+- **Nikto** - Web server vulnerability scanner
 
-- **Security Research**: Study vulnerability patterns
-- **Penetration Testing**: Practice ethical hacking
-- **Security Training**: Learn about web application security
-- **CTF Challenges**: Create capture-the-flag scenarios
-- **Security Auditing**: Practice security assessments
+## 🔒 Security Categories Covered
 
-## 🤝 Contributing
+### Injection Attacks
+- SQL Injection
+- NoSQL Injection
+- Command Injection
+- LDAP Injection
 
-We welcome contributions! Please read our contributing guidelines:
+### Cross-Site Attacks
+- Cross-Site Scripting (XSS)
+- Cross-Site Request Forgery (CSRF)
+- Cross-Origin Resource Sharing (CORS)
+
+### Authentication & Authorization
+- Session Management
+- JWT Security
+- Access Control
+- Privilege Escalation
+
+### Data Security
+- Input Validation
+- Output Encoding
+- Data Encryption
+- Secure Communication
+
+## 🚀 Contributing
+
+We welcome contributions to improve the educational value of these applications:
 
 1. **Fork** the repository
 2. **Create** a feature branch
-3. **Add** your vulnerable application
-4. **Ensure** Docker containerization
-5. **Document** vulnerabilities clearly
-6. **Submit** a pull request
+3. **Add** new vulnerabilities or improve existing ones
+4. **Submit** a pull request
 
-### Adding New Projects
-When adding a new vulnerable application:
-
-1. Create a new directory under `OpenSource/`
-2. Include `Dockerfile` and `docker-compose.yml`
-3. Add comprehensive `README.md`
-4. Document all vulnerabilities
-5. Include setup instructions
-6. Add security warnings
+### Contribution Guidelines
+- Ensure vulnerabilities are clearly documented
+- Include educational materials and walkthroughs
+- Maintain realistic application scenarios
+- Follow secure coding practices for the framework code
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+## ⚖️ Disclaimer
 
-**Author:** Olúmáyòwá Akinkuehinmi  
-**Email:** akintunero101@gmail.com  
-**GitHub:** [@akintunero](https://github.com/akintunero)
+This software is provided for educational purposes only. The authors are not responsible for any misuse of these applications. Users are responsible for ensuring they comply with applicable laws and regulations.
 
-## 🙏 Acknowledgments
+## 🤝 Support
 
-- Security researchers and penetration testers
-- Open source security community
-- Educational institutions using these applications
-- Contributors and maintainers
+For questions, issues, or contributions:
+- **Issues**: Use GitHub Issues
+- **Discussions**: Use GitHub Discussions
+- **Security**: Report security issues privately
 
 ---
 
-**⚠️ Remember: These applications contain intentional vulnerabilities. Use responsibly and only in controlled environments!** 
+**Remember**: These applications are intentionally vulnerable. Use responsibly and only in controlled environments for learning and testing purposes. 
