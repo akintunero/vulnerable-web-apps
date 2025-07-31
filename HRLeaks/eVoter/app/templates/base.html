@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-VoteNow{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="https://api.dicebear.com/7.x/identicon/svg?seed=VoteNowLogo">
+    <meta name="description" content="E-VoteNow - Secure, modern online voting platform.">
+    <meta name="theme-color" content="#2563eb">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="refresh" content="30"> <!-- Vulnerable: Auto-refresh for real-time updates -->
+    <style>
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Smooth Transitions */
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: none;
+            }
+            .mobile-nav.active {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg flex items-center space-x-4">
+            <div class="spinner"></div>
+            <span class="text-lg font-semibold">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=VoteNowLogo" alt="E-VoteNow Logo" class="w-8 h-8 rounded-full bg-white p-1">
+                    <h1 class="text-2xl font-bold tracking-tight">E-VoteNow</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    {% set path = request.url.path %}
+                    {% if request.cookies.get("session_id") %}
+                        <a href="/dashboard" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/dashboard' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Go to Dashboard">Dashboard</a>
+                        <a href="/results" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/results' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="View Results">Results</a>
+                        <a href="/candidates" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/candidates' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Candidate Information">Candidates</a>
+                        <a href="/faq" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/faq' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Frequently Asked Questions">FAQ</a>
+                        <a href="/logout" class="hover:text-blue-200 px-2 py-1 rounded transition-colors" aria-label="Logout">Logout</a>
+                    {% else %}
+                        <a href="/login" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/login' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Login">Login</a>
+                        <a href="/register" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/register' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Register">Register</a>
+                        <a href="/candidates" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/candidates' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Candidate Information">Candidates</a>
+                        <a href="/faq" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/faq' %}bg-white text-blue-600 font-bold{% endif %}" aria-label="Frequently Asked Questions">FAQ</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded hover:bg-blue-700" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-nav" class="mobile-nav md:hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    {% set path = request.url.path %}
+                    {% if request.cookies.get("session_id") %}
+                        <a href="/dashboard" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/dashboard' %}bg-white text-blue-600 font-bold{% endif %}">Dashboard</a>
+                        <a href="/results" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/results' %}bg-white text-blue-600 font-bold{% endif %}">Results</a>
+                        <a href="/candidates" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/candidates' %}bg-white text-blue-600 font-bold{% endif %}">Candidates</a>
+                        <a href="/faq" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/faq' %}bg-white text-blue-600 font-bold{% endif %}">FAQ</a>
+                        <a href="/logout" class="hover:text-blue-200 px-2 py-1 rounded transition-colors">Logout</a>
+                    {% else %}
+                        <a href="/login" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/login' %}bg-white text-blue-600 font-bold{% endif %}">Login</a>
+                        <a href="/register" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/register' %}bg-white text-blue-600 font-bold{% endif %}">Register</a>
+                        <a href="/candidates" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/candidates' %}bg-white text-blue-600 font-bold{% endif %}">Candidates</a>
+                        <a href="/faq" class="hover:text-blue-200 px-2 py-1 rounded transition-colors {% if path == '/faq' %}bg-white text-blue-600 font-bold{% endif %}">FAQ</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
+                &copy; {{ 2024 }} E-VoteNow. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Loading overlay functions
+        window.showLoading = function() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        };
+
+        window.hideLoading = function() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        };
+
+        // Toast notification system
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+            
+            toast.className = `toast ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg`;
+            toast.textContent = message;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 300);
+            }, 3000);
+        };
+
+        // Auto-hide loading on page load
+        window.addEventListener('load', function() {
+            hideLoading();
+        });
+
+        // Session timeout warning
+        let sessionTimeout;
+        function resetSessionTimeout() {
+            clearTimeout(sessionTimeout);
+            sessionTimeout = setTimeout(() => {
+                showToast('Session expired. Please log in again.', 'error');
+                setTimeout(() => {
+                    window.location.href = '/logout';
+                }, 2000);
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Reset timeout on user activity
+        document.addEventListener('click', resetSessionTimeout);
+        document.addEventListener('keypress', resetSessionTimeout);
+        resetSessionTimeout();
+    </script>
+</body>
+</html> 

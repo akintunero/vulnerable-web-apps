@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Election Results - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8 shadow-lg">
+        <h1 class="text-4xl font-bold mb-4">Election Results</h1>
+        <p class="text-xl">Live results from the current presidential election</p>
+    </div>
+
+    <!-- Election Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600 mb-2">{{ total_votes | number_format }}</div>
+            <div class="text-gray-600">Total Votes Cast</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-green-600 mb-2" id="turnout-percentage">Loading...</div>
+            <div class="text-gray-600">Voter Turnout</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-purple-600 mb-2">5</div>
+            <div class="text-gray-600">Candidates</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-red-600 mb-2" id="time-remaining">Loading...</div>
+            <div class="text-gray-600">Hours Left</div>
+        </div>
+    </div>
+
+    <!-- Leading Candidate Summary -->
+    {% set sorted_candidates = candidates | sort(attribute='id') %}
+    {% set max_votes = vote_counts.values() | max %}
+    {% for candidate in sorted_candidates %}
+        {% if vote_counts[candidate.id] == max_votes %}
+        <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg p-6 mb-8 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">🏆 Current Leader</h2>
+                    <p class="text-xl">{{ candidate.name }} - {{ candidate.party }}</p>
+                    <p class="text-yellow-100">{{ vote_counts[candidate.id] | number_format }} votes ({{ (vote_counts[candidate.id] / total_votes * 100) | round(1) }}%)</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-4xl font-bold">{{ (vote_counts[candidate.id] / total_votes * 100) | round(1) }}%</div>
+                    <div class="text-yellow-100">of total votes</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Results Table -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-800">Detailed Results</h2>
+            <div class="flex space-x-2">
+                <a href="/api/export-results?format=json" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors">
+                    Export JSON
+                </a>
+                <a href="/api/export-results?format=csv" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-colors">
+                    Export CSV
+                </a>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visual</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% set sorted_votes = vote_counts.items() | sort(attribute='1', reverse=true) %}
+                    {% for candidate_id, vote_count in sorted_votes %}
+                    {% set candidate = candidates | selectattr('id', 'equalto', candidate_id) | first %}
+                    {% set rank = loop.index %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                {% if rank == 1 %}
+                                <span class="text-2xl mr-2">🥇</span>
+                                {% elif rank == 2 %}
+                                <span class="text-2xl mr-2">🥈</span>
+                                {% elif rank == 3 %}
+                                <span class="text-2xl mr-2">🥉</span>
+                                {% else %}
+                                <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm font-bold mr-2">{{ rank }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed={{ candidate.name }}" alt="{{ candidate.name }}" class="w-10 h-10 rounded-full mr-3">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ candidate.name }}</div>
+                                    <div class="text-sm text-gray-500">ID: {{ candidate.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                {% if candidate.name == 'DeeJustDee' %}bg-blue-100 text-blue-800
+                                {% elif candidate.name == 'CyberChef' %}bg-purple-100 text-purple-800
+                                {% elif candidate.name == 'Cisco Nerd' %}bg-green-100 text-green-800
+                                {% elif candidate.name == 'Farouk U' %}bg-yellow-100 text-yellow-800
+                                {% elif candidate.name == 'Segoslavia' %}bg-red-100 text-red-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {% if candidate.name == 'Cisco Nerd' %}Tech Alliance
+                                {% elif candidate.name == 'Farouk U' %}Unity Group
+                                {% elif candidate.name == 'Segoslavia' %}Progressive Front
+                                {% elif candidate.name == 'DeeJustDee' %}Vision Collective
+                                {% elif candidate.name == 'CyberChef' %}Digital Pioneers
+                                {% else %}{{ candidate.party }}{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                            {{ vote_count | number_format }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {% if total_votes > 0 %}
+                            {{ (vote_count / total_votes * 100) | round(1) }}%
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                {% if total_votes > 0 %}
+                                <div class="h-2 rounded-full transition-all duration-300
+                                    {% if candidate.name == 'DeeJustDee' %}bg-blue-600
+                                    {% elif candidate.name == 'CyberChef' %}bg-purple-600
+                                    {% elif candidate.name == 'Cisco Nerd' %}bg-green-600
+                                    {% elif candidate.name == 'Farouk U' %}bg-yellow-600
+                                    {% elif candidate.name == 'Segoslavia' %}bg-red-600
+                                    {% else %}bg-gray-600{% endif %}"
+                                    style="width: {{ (vote_count / total_votes * 100) | round(1) }}%">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Geographic Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Regional Results</h3>
+            <div id="geographic-breakdown" class="space-y-4">
+                <div class="text-center">
+                    <div class="spinner mx-auto"></div>
+                    <p class="text-gray-600 mt-2">Loading regional data...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Voting Trends</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Early Voting</span>
+                    <span class="font-semibold">45%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Election Day</span>
+                    <span class="font-semibold">55%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 55%"></div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-800 mb-2">📊 Key Insights</h4>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Highest turnout in North Region (32%)</li>
+                        <li>• Strong youth voter participation (18-35 age group)</li>
+                        <li>• Mobile voting accounts for 68% of total votes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Election Timeline -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-6">Election Timeline</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-3">✓</div>
+                <h4 class="font-semibold text-gray-800">Registration Opens</h4>
+                <p class="text-sm text-gray-600">Nov 1, 2024</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-3">→</div>
+                <h4 class="font-semibold text-gray-800">Voting Begins</h4>
+                <p class="text-sm text-gray-600">Nov 15, 2024</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-3">→</div>
+                <h4 class="font-semibold text-gray-800">Election Ends</h4>
+                <p class="text-sm text-gray-600" id="election-end">Loading...</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold mx-auto mb-3">→</div>
+                <h4 class="font-semibold text-gray-800">Results Certified</h4>
+                <p class="text-sm text-gray-600">TBD</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update election stats
+    async function updateElectionStats() {
+        try {
+            const response = await fetch('/api/election-status');
+            const data = await response.json();
+            
+            document.getElementById('turnout-percentage').textContent = data.voter_turnout + '%';
+            document.getElementById('time-remaining').textContent = data.time_remaining_hours;
+            
+            // Calculate election end date
+            const endDate = new Date();
+            endDate.setHours(endDate.getHours() + data.time_remaining_hours);
+            document.getElementById('election-end').textContent = endDate.toLocaleDateString();
+        } catch (error) {
+            console.error('Error fetching election stats:', error);
+        }
+    }
+
+    // Load geographic breakdown
+    async function loadGeographicBreakdown() {
+        try {
+            const response = await fetch('/api/geographic-results');
+            const data = await response.json();
+            
+            const container = document.getElementById('geographic-breakdown');
+            container.innerHTML = '';
+            
+            Object.entries(data).forEach(([region, votes]) => {
+                const totalRegionVotes = Object.values(votes).reduce((a, b) => a + b, 0);
+                const regionDiv = document.createElement('div');
+                regionDiv.className = 'border border-gray-200 rounded-lg p-4';
+                regionDiv.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-3">${region}</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>DeeJustDee:</span>
+                            <span class="font-semibold">${votes.DeeJustDee.toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>CyberChef:</span>
+                            <span class="font-semibold">${votes.CyberChef.toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Cisco Nerd:</span>
+                            <span class="font-semibold">${votes['Cisco Nerd'].toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Farouk U:</span>
+                            <span class="font-semibold">${votes['Farouk U'].toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Segoslavia:</span>
+                            <span class="font-semibold">${votes.Segoslavia.toLocaleString()}</span>
+                        </div>
+                        <div class="border-t pt-2 mt-2">
+                            <div class="flex justify-between font-semibold">
+                                <span>Total:</span>
+                                <span>${totalRegionVotes.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(regionDiv);
+            });
+        } catch (error) {
+            console.error('Error loading geographic breakdown:', error);
+        }
+    }
+
+    // Initialize
+    updateElectionStats();
+    loadGeographicBreakdown();
+    
+    // Update every 30 seconds
+    setInterval(updateElectionStats, 30000);
+</script>
+{% endblock %} 

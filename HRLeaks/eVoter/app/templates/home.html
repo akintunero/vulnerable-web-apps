@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}E-VoteNow - Secure Online Voting Platform{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white rounded-lg p-8 md:p-12 mb-8 shadow-lg">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">E-VoteNow</h1>
+            <p class="text-xl md:text-2xl mb-8">Secure, transparent, and accessible online voting for modern democracy</p>
+            
+            <!-- Election Timer -->
+            <div class="bg-white bg-opacity-20 rounded-lg p-6 mb-8 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold mb-4">Presidential Election 2024</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="days-remaining">Loading...</div>
+                        <div class="text-sm">Days</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="hours-remaining">Loading...</div>
+                        <div class="text-sm">Hours</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="minutes-remaining">Loading...</div>
+                        <div class="text-sm">Minutes</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="seconds-remaining">Loading...</div>
+                        <div class="text-sm">Seconds</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                {% if request.cookies.get("session_id") %}
+                <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+                    Go to Dashboard
+                </a>
+                {% else %}
+                <a href="/register" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+                    Register to Vote
+                </a>
+                <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors">
+                    Login
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600 mb-2" id="total-votes">Loading...</div>
+            <div class="text-gray-600">Total Votes Cast</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-green-600 mb-2" id="voter-turnout">Loading...</div>
+            <div class="text-gray-600">Voter Turnout</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-purple-600 mb-2">5</div>
+            <div class="text-gray-600">Candidates</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-3xl font-bold text-red-600 mb-2">2.5M</div>
+            <div class="text-gray-600">Registered Voters</div>
+        </div>
+    </div>
+
+    <!-- Candidate Preview -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Meet the Candidates</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {% for candidate in candidates %}
+            <div class="text-center">
+                <img src="https://api.dicebear.com/7.x/identicon/svg?seed={{ candidate.name }}" alt="{{ candidate.name }}" class="w-20 h-20 rounded-full mx-auto mb-4 bg-white p-2 shadow-md">
+                <h3 class="font-bold text-gray-800 mb-1">{{ candidate.name }}</h3>
+                <p class="text-sm text-gray-600 mb-3">
+                {% if candidate.name == 'Cisco Nerd' %}Tech Alliance
+                {% elif candidate.name == 'Farouk U' %}Unity Group
+                {% elif candidate.name == 'Segoslavia' %}Progressive Front
+                {% elif candidate.name == 'DeeJustDee' %}Vision Collective
+                {% elif candidate.name == 'CyberChef' %}Digital Pioneers
+                {% else %}{{ candidate.party }}{% endif %}
+                </p>
+                <a href="/candidates" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">Learn More →</a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-6">
+            <a href="/candidates" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">
+                View All Candidates
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Secure Voting</h3>
+            <p class="text-gray-600">Advanced encryption and security protocols ensure your vote is protected and anonymous.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Real-time Results</h3>
+            <p class="text-gray-600">Watch live vote tallies and election results as they come in from across the nation.</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Mobile Friendly</h3>
+            <p class="text-gray-600">Vote from anywhere using your smartphone, tablet, or computer with our responsive design.</p>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4">1</div>
+                <h3 class="font-bold text-gray-800 mb-2">Register</h3>
+                <p class="text-gray-600 text-sm">Create your account with a valid email address</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4">2</div>
+                <h3 class="font-bold text-gray-800 mb-2">Learn</h3>
+                <p class="text-gray-600 text-sm">Review candidate information and policies</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4">3</div>
+                <h3 class="font-bold text-gray-800 mb-2">Vote</h3>
+                <p class="text-gray-600 text-sm">Cast your vote securely online</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4">4</div>
+                <h3 class="font-bold text-gray-800 mb-2">Track</h3>
+                <p class="text-gray-600 text-sm">Monitor live results and outcomes</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg p-8 text-center">
+        <h2 class="text-3xl font-bold mb-4">Ready to Make Your Voice Heard?</h2>
+        <p class="text-xl mb-6">Join millions of voters in shaping the future of our democracy.</p>
+        {% if request.cookies.get("session_id") %}
+        <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+            Go to Dashboard
+        </a>
+        {% else %}
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/register" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors">
+                Register Now
+            </a>
+            <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors">
+                Login
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Update election timer
+    function updateTimer() {
+        const now = new Date();
+        const electionEnd = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days from now
+        const timeLeft = electionEnd - now;
+        
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        document.getElementById('days-remaining').textContent = days;
+        document.getElementById('hours-remaining').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('minutes-remaining').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('seconds-remaining').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Update election stats
+    async function updateElectionStats() {
+        try {
+            const response = await fetch('/api/election-status');
+            const data = await response.json();
+            
+            document.getElementById('total-votes').textContent = data.total_voted.toLocaleString();
+            document.getElementById('voter-turnout').textContent = data.voter_turnout + '%';
+        } catch (error) {
+            console.error('Error fetching election stats:', error);
+        }
+    }
+
+    // Initialize
+    updateTimer();
+    updateElectionStats();
+    
+    // Update timer every second
+    setInterval(updateTimer, 1000);
+    
+    // Update stats every 30 seconds
+    setInterval(updateElectionStats, 30000);
+</script>
+{% endblock %} 

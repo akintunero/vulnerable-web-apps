@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8 shadow-lg">
+        <h1 class="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+        <p class="text-xl">Find answers to common questions about voting and the election process.</p>
+    </div>
+
+    <!-- FAQ Sections -->
+    <div class="space-y-8">
+        <!-- How to Vote -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">How to Vote</h2>
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">1. Register for an Account</h3>
+                    <p class="text-gray-600">Create your account using a valid email address and secure password. You'll receive a confirmation email.</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">2. Log In to Your Account</h3>
+                    <p class="text-gray-600">Use your email and password to access your voting dashboard.</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">3. Review Candidates</h3>
+                    <p class="text-gray-600">Read about each candidate's background, policies, and vision before making your decision.</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">4. Cast Your Vote</h3>
+                    <p class="text-gray-600">Select your preferred candidate and confirm your vote. You can only vote once per election.</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">5. View Results</h3>
+                    <p class="text-gray-600">Check the results page to see live vote tallies and election outcomes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Questions -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Common Questions</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Can I change my vote after submitting?</h3>
+                    <p class="text-gray-600">No, votes cannot be changed once submitted. Please review your choice carefully before confirming.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">How do I know my vote was counted?</h3>
+                    <p class="text-gray-600">You'll receive a confirmation message after voting. You can also check the results page to see updated vote counts.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What if I forget my password?</h3>
+                    <p class="text-gray-600">Contact our support team at support@evotnow.com for password recovery assistance.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Is my vote anonymous?</h3>
+                    <p class="text-gray-600">Yes, individual votes are encrypted and anonymous. Only aggregate results are publicly displayed.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">When does the election end?</h3>
+                    <p class="text-gray-600">The current election ends in 7 days. Check the dashboard for the exact countdown timer.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Can I vote from my mobile device?</h3>
+                    <p class="text-gray-600">Yes, our platform is fully responsive and works on all devices including smartphones and tablets.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Information -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Security & Privacy</h2>
+            <div class="space-y-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">🔒 Advanced Encryption</h3>
+                    <p class="text-blue-700">All votes are encrypted using industry-standard protocols to ensure security and privacy.</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800 mb-2">✅ Audit Trail</h3>
+                    <p class="text-green-700">Every vote is logged with a unique identifier for verification and audit purposes.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-purple-800 mb-2">🛡️ Rate Limiting</h3>
+                    <p class="text-purple-700">Our system prevents multiple votes from the same account to maintain election integrity.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Support -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Technical Support</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Contact Information</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li><strong>Email:</strong> support@evotnow.com</li>
+                        <li><strong>Phone:</strong> 1-800-VOTE-NOW</li>
+                        <li><strong>Hours:</strong> 24/7 during election period</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Browser Requirements</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li>Chrome 90+</li>
+                        <li>Firefox 88+</li>
+                        <li>Safari 14+</li>
+                        <li>Edge 90+</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Timeline -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Election Timeline</h2>
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Registration Opens</h3>
+                        <p class="text-gray-600">Voter registration is now open</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">→</div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Voting Period</h3>
+                        <p class="text-gray-600">Currently active - 7 days remaining</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold">→</div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Election Ends</h3>
+                        <p class="text-gray-600">Voting closes and final results are calculated</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold">→</div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800">Results Certification</h3>
+                        <p class="text-gray-600">Official results are certified and announced</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-8 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg p-6 text-center">
+        <h2 class="text-2xl font-bold mb-4">Ready to Vote?</h2>
+        <p class="text-lg mb-6">Join millions of voters in making your voice heard.</p>
+        {% if user %}
+        <a href="/dashboard" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+            Go to Dashboard
+        </a>
+        {% else %}
+        <div class="space-x-4">
+            <a href="/register" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+                Register Now
+            </a>
+            <a href="/login" class="border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors">
+                Login
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

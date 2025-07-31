@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - E-VoteNow{% endblock %}
+
+{% block content %}
+<!--
+    SECRET: flag{admin_panel_comment_secret}
+    ADMIN_EMAIL: admin@evotnow.internal
+    BACKDOOR_EMAIL: backdoor@evotnow.internal
+    BACKDOOR_PASSWORD: letmein123!backdoor
+-->
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Admin Panel (No Auth!)</h2>
+        <p class="text-gray-600 mb-4">This page is not protected by authentication. Anyone who knows the URL can access it.</p>
+        <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Registered Users</h3>
+        <table class="min-w-full divide-y divide-gray-200 mb-6">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered At</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for user in users.values() %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.role }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.registered_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3 class="text-xl font-bold text-gray-800 mt-6 mb-2">Votes</h3>
+        <pre class="bg-gray-100 p-4 rounded text-xs">{{ votes | tojson(indent=2) }}</pre>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Candidates - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8 shadow-lg">
+        <h1 class="text-4xl font-bold mb-4">Meet the Candidates</h1>
+        <p class="text-xl">Learn about each candidate's vision, policies, and background before making your decision.</p>
+    </div>
+
+    <!-- Candidates Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {% for candidate in candidates %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow">
+            <!-- Candidate Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+                <div class="flex items-center space-x-4">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed={{ candidate.name }}" alt="{{ candidate.name }}" class="w-16 h-16 rounded-full bg-white p-2">
+                    <div>
+                        <h2 class="text-2xl font-bold">{{ candidate.name }}</h2>
+                        <p class="text-blue-100">{{ candidate.party }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate Content -->
+            <div class="p-6">
+                <!-- Bio -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Biography</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        {% if candidate.name == 'DeeJustDee' %}
+                        A visionary leader with over 15 years of experience in technology and governance. Known for innovative approaches to digital transformation and sustainable development. Former CEO of TechCorp and advocate for renewable energy initiatives.
+                        {% elif candidate.name == 'CyberChef' %}
+                        Cybersecurity expert and digital rights advocate with a background in national security. Led multiple successful cyber defense initiatives and championed privacy protection laws. Former Director of Digital Security at the National Cyber Agency.
+                        {% elif candidate.name == 'Cisco Nerd' %}
+                        Technology entrepreneur and networking specialist who built one of the largest tech consulting firms. Pioneer in smart city infrastructure and IoT implementation. Known for creating thousands of jobs in the tech sector.
+                        {% elif candidate.name == 'Farouk U' %}
+                        Experienced diplomat and international relations expert. Served as ambassador to three countries and led successful trade negotiations. Strong advocate for global cooperation and economic development.
+                        {% elif candidate.name == 'Segoslavia' %}
+                        Progressive reformer with a background in social justice and community organizing. Led successful campaigns for healthcare reform and education funding. Former mayor of a major metropolitan area.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Key Policies -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Key Policies</h3>
+                    <ul class="space-y-2">
+                        {% if candidate.name == 'DeeJustDee' %}
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">100% renewable energy by 2035</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Universal broadband access</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Digital transformation of government services</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Investment in AI and automation</span></li>
+                        {% elif candidate.name == 'CyberChef' %}
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Enhanced cybersecurity infrastructure</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Digital privacy protection laws</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">National cyber defense strategy</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Tech education and training programs</span></li>
+                        {% elif candidate.name == 'Cisco Nerd' %}
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Smart city infrastructure development</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">5G network expansion</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Tech industry tax incentives</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Digital skills training programs</span></li>
+                        {% elif candidate.name == 'Farouk U' %}
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Strengthened international trade relations</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Economic development initiatives</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Diplomatic conflict resolution</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Cultural exchange programs</span></li>
+                        {% elif candidate.name == 'Segoslavia' %}
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Universal healthcare access</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Education funding reform</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Social justice initiatives</span></li>
+                        <li class="flex items-start"><span class="text-blue-600 mr-2">•</span> <span class="text-gray-600">Community development programs</span></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Experience -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Experience</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        {% if candidate.name == 'DeeJustDee' %}
+                        <p class="text-gray-600"><strong>CEO, TechCorp</strong> (2018-2024)</p>
+                        <p class="text-gray-600"><strong>Minister of Technology</strong> (2015-2018)</p>
+                        <p class="text-gray-600"><strong>Founder, GreenTech Solutions</strong> (2010-2015)</p>
+                        {% elif candidate.name == 'CyberChef' %}
+                        <p class="text-gray-600"><strong>Director, National Cyber Agency</strong> (2020-2024)</p>
+                        <p class="text-gray-600"><strong>Chief Security Officer, TechBank</strong> (2017-2020)</p>
+                        <p class="text-gray-600"><strong>Cybersecurity Consultant</strong> (2012-2017)</p>
+                        {% elif candidate.name == 'Cisco Nerd' %}
+                        <p class="text-gray-600"><strong>Founder & CEO, NetSolutions</strong> (2015-2024)</p>
+                        <p class="text-gray-600"><strong>CTO, GlobalTech</strong> (2010-2015)</p>
+                        <p class="text-gray-600"><strong>Network Engineer, TechCorp</strong> (2008-2010)</p>
+                        {% elif candidate.name == 'Farouk U' %}
+                        <p class="text-gray-600"><strong>Ambassador to United Nations</strong> (2019-2024)</p>
+                        <p class="text-gray-600"><strong>Trade Representative</strong> (2016-2019)</p>
+                        <p class="text-gray-600"><strong>Diplomatic Corps</strong> (2010-2016)</p>
+                        {% elif candidate.name == 'Segoslavia' %}
+                        <p class="text-gray-600"><strong>Mayor, Metro City</strong> (2018-2024)</p>
+                        <p class="text-gray-600"><strong>Community Organizer</strong> (2015-2018)</p>
+                        <p class="text-gray-600"><strong>Social Worker</strong> (2010-2015)</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Vote Button -->
+                {% if user %}
+                <div class="border-t pt-4">
+                    <a href="/dashboard" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center block">
+                        Vote for {{ candidate.name }}
+                    </a>
+                </div>
+                {% else %}
+                <div class="border-t pt-4">
+                    <a href="/login" class="w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors text-center block">
+                        Login to Vote
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Election Information -->
+    <div class="mt-12 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Election Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2">5</div>
+                <div class="text-gray-600">Candidates</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2">7 Days</div>
+                <div class="text-gray-600">Remaining</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-purple-600 mb-2">2.5M</div>
+                <div class="text-gray-600">Registered Voters</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

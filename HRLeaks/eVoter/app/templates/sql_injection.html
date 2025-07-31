@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}SQL Injection - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Database Query Interface</h2>
+        <p class="text-gray-600">Search for users in the system database</p>
+        <div class="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
+            <h4 class="font-bold text-red-800 mb-2">⚠️ VULNERABLE ENDPOINT:</h4>
+            <p class="text-red-700 text-sm">This endpoint is vulnerable to SQL injection attacks. No input validation or sanitization is performed.</p>
+        </div>
+    </div>
+
+    <!-- Query Form -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Search Users</h3>
+        <form method="GET" action="/api/query" class="space-y-4">
+            <div>
+                <label for="q" class="block text-sm font-medium text-gray-700 mb-2">
+                    Query Parameter
+                </label>
+                <input 
+                    type="text" 
+                    id="q" 
+                    name="q" 
+                    value="{{ query }}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter search term or SQL injection payload"
+                >
+            </div>
+            <button 
+                type="submit" 
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                Execute Query
+            </button>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if results %}
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Query Results</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in results %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <code class="bg-gray-100 px-2 py-1 rounded">{{ user.password }}</code>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            {% if user.role == "admin" %}
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">ADMIN</span>
+                            {% elif user.role == "moderator" %}
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">MODERATOR</span>
+                            {% else %}
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">VOTER</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- SQL Injection Examples -->
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">SQL Injection Examples</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-2">Basic SQL Injection:</h4>
+                <div class="space-y-2">
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">' OR '1'='1</code>
+                        <p class="text-xs text-gray-600 mt-1">Returns all users</p>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">' UNION SELECT * FROM users</code>
+                        <p class="text-xs text-gray-600 mt-1">Union-based injection</p>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">admin</code>
+                        <p class="text-xs text-gray-600 mt-1">Find admin users</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-2">Advanced Payloads:</h4>
+                <div class="space-y-2">
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">' OR role='admin</code>
+                        <p class="text-xs text-gray-600 mt-1">Filter by admin role</p>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">' OR email LIKE '%admin%</code>
+                        <p class="text-xs text-gray-600 mt-1">Find admin emails</p>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded">
+                        <code class="text-sm">' OR 1=1 --</code>
+                        <p class="text-xs text-gray-600 mt-1">Comment-based injection</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Admin Credentials Hint -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <h3 class="text-lg font-bold text-yellow-800 mb-4">🎯 Challenge: Find the Hidden Admin Account</h3>
+        <p class="text-yellow-700 mb-4">
+            There's a hidden admin account in the database with elevated privileges. 
+            Use SQL injection techniques to discover the admin credentials.
+        </p>
+        <div class="bg-yellow-100 p-4 rounded-md">
+            <h4 class="font-semibold text-yellow-800 mb-2">Hints:</h4>
+            <ul class="text-sm text-yellow-700 space-y-1">
+                <li>• Try searching for "admin" role users</li>
+                <li>• Use UNION-based injection to get all records</li>
+                <li>• Look for internal email addresses</li>
+                <li>• The admin account has a special internal domain</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="mt-6 flex justify-center space-x-4">
+        <a href="/dashboard" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+            Back to Dashboard
+        </a>
+        <a href="/" class="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">
+            Home
+        </a>
+    </div>
+</div>
+{% endblock %} 

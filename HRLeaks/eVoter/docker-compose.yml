@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  evotnow:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./app:/app/app  # For development - hot reload
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evotnow.rule=Host(`localhost`)"
+      - "traefik.http.services.evotnow.loadbalancer.server.port=8000" 

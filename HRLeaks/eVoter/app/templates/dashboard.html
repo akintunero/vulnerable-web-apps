@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-3">
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-6 mb-6 shadow-lg flex items-center justify-between">
+            <div>
+                <h2 class="text-3xl font-bold mb-2">Welcome, {{ user }}!</h2>
+                <p class="text-lg">Cast your vote in the current election below.</p>
+            </div>
+            <div class="hidden md:block">
+                <span class="bg-white text-blue-600 px-4 py-2 rounded-lg font-bold shadow">Election Active</span>
+            </div>
+        </div>
+
+        <!-- Election Timer and Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-lg p-4 text-center">
+                <div class="text-2xl font-bold text-red-600 mb-1" id="timer">Loading...</div>
+                <div class="text-sm text-gray-600">Hours Remaining</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-4 text-center">
+                <div class="text-2xl font-bold text-green-600 mb-1">{{ total_votes | number_format }}</div>
+                <div class="text-sm text-gray-600">Total Votes Cast</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-4 text-center">
+                <div class="text-2xl font-bold text-blue-600 mb-1" id="turnout">Loading...</div>
+                <div class="text-sm text-gray-600">Voter Turnout</div>
+            </div>
+        </div>
+
+        <!-- Error/Success Messages -->
+        {% if request.query_params.get('vote_success') %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">Your vote has been recorded successfully.</span>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Real-time Poll Result Bar Graph -->
+        <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Real-time Poll Result</h3>
+            <div id="poll-graph" class="space-y-6">
+                {% set total = vote_counts[1] + vote_counts[2] + vote_counts[3] + vote_counts[4] + vote_counts[5] %}
+                <div class="flex items-center">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=DeeJustDee" alt="DeeJustDee" class="w-10 h-10 rounded-full mr-4">
+                    <span class="w-32 font-semibold">DeeJustDee</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-6 mx-2 relative">
+                        <div id="bar-dee" class="bg-blue-600 h-6 rounded-full transition-all duration-300" style="width: {{ (vote_counts[4] / total * 100) | round(1) }}%"></div>
+                        <span id="val-dee" class="absolute right-2 top-0 text-white font-bold h-6 flex items-center">{{ (vote_counts[4] / total * 100) | round(1) }}%</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=CyberChef" alt="CyberChef" class="w-10 h-10 rounded-full mr-4">
+                    <span class="w-32 font-semibold">CyberChef</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-6 mx-2 relative">
+                        <div id="bar-cyber" class="bg-blue-600 h-6 rounded-full transition-all duration-300" style="width: {{ (vote_counts[5] / total * 100) | round(1) }}%"></div>
+                        <span id="val-cyber" class="absolute right-2 top-0 text-white font-bold h-6 flex items-center">{{ (vote_counts[5] / total * 100) | round(1) }}%</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=CiscoNerd" alt="Cisco Nerd" class="w-10 h-10 rounded-full mr-4">
+                    <span class="w-32 font-semibold">Cisco Nerd</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-6 mx-2 relative">
+                        <div id="bar-cisco" class="bg-blue-600 h-6 rounded-full transition-all duration-300" style="width: {{ (vote_counts[1] / total * 100) | round(1) }}%"></div>
+                        <span id="val-cisco" class="absolute right-2 top-0 text-white font-bold h-6 flex items-center">{{ (vote_counts[1] / total * 100) | round(1) }}%</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=FaroukU" alt="Farouk U" class="w-10 h-10 rounded-full mr-4">
+                    <span class="w-32 font-semibold">Farouk U</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-6 mx-2 relative">
+                        <div id="bar-farouk" class="bg-blue-600 h-6 rounded-full transition-all duration-300" style="width: {{ (vote_counts[2] / total * 100) | round(1) }}%"></div>
+                        <span id="val-farouk" class="absolute right-2 top-0 text-white font-bold h-6 flex items-center">{{ (vote_counts[2] / total * 100) | round(1) }}%</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <img src="https://api.dicebear.com/7.x/identicon/svg?seed=Segoslavia" alt="Segoslavia" class="w-10 h-10 rounded-full mr-4">
+                    <span class="w-32 font-semibold">Segoslavia</span>
+                    <div class="flex-1 bg-gray-200 rounded-full h-6 mx-2 relative">
+                        <div id="bar-sego" class="bg-blue-600 h-6 rounded-full transition-all duration-300" style="width: {{ (vote_counts[3] / total * 100) | round(1) }}%"></div>
+                        <span id="val-sego" class="absolute right-2 top-0 text-white font-bold h-6 flex items-center">{{ (vote_counts[3] / total * 100) | round(1) }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Candidates Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for candidate in candidates %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-2xl border border-gray-100">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+                    <h3 class="text-xl font-bold text-white">{{ candidate.name }}</h3>
+                    <p class="text-blue-100">
+                    {% if candidate.name == 'Cisco Nerd' %}Tech Alliance
+                    {% elif candidate.name == 'Farouk U' %}Unity Group
+                    {% elif candidate.name == 'Segoslavia' %}Progressive Front
+                    {% elif candidate.name == 'DeeJustDee' %}Vision Collective
+                    {% elif candidate.name == 'CyberChef' %}Digital Pioneers
+                    {% else %}{{ candidate.party }}{% endif %}
+                    </p>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Votes:</span>
+                            <span class="font-bold text-2xl text-blue-600">{{ vote_counts[candidate.id] | number_format }}</span>
+                        </div>
+                        {% if total_votes > 0 %}
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ (vote_counts[candidate.id] / total_votes * 100) | round(1) }}%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">{{ (vote_counts[candidate.id] / total_votes * 100) | round(1) }}%</p>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="/vote" class="space-y-3" onsubmit="return confirmVote('{{ candidate.name }}')">
+                        <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+                        <input type="hidden" name="candidate_name" value="{{ candidate.name }}">
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                            Vote for {{ candidate.name }}
+                        </button>
+                    </form>
+                    <p class="text-xs text-gray-400 mt-2">Candidate ID: {{ candidate.id }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Geographic Results -->
+        <div class="mt-8 bg-white shadow-lg rounded-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Regional Results</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="geographic-results">
+                <div class="text-center">
+                    <div class="spinner mx-auto"></div>
+                    <p class="text-gray-600 mt-2">Loading regional data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="bg-white rounded-lg shadow-lg p-6 flex flex-col gap-4 border border-gray-100">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Election Info</h3>
+        <ul class="text-gray-700 text-sm space-y-2">
+            <li><span class="font-semibold">Status:</span> <span class="text-green-600 font-bold">Active</span></li>
+            <li><span class="font-semibold">Type:</span> Presidential Election</li>
+            <li><span class="font-semibold">Voting Method:</span> Online</li>
+            <li><span class="font-semibold">Total Votes:</span> {{ total_votes | number_format }}</li>
+            <li><span class="font-semibold">Your Session:</span> <span class="break-all">{{ request.cookies.get('session_id', 'N/A') }}</span></li>
+        </ul>
+        <div class="mt-4">
+            <h4 class="font-semibold text-gray-700 mb-1">Next Election</h4>
+            <p class="text-xs text-gray-500">Coming soon: City Council Elections (2025)</p>
+        </div>
+        <div class="mt-4">
+            <h4 class="font-semibold text-gray-700 mb-2">Quick Actions</h4>
+            <div class="space-y-2">
+                <a href="/candidates" class="block text-blue-600 hover:text-blue-800 text-sm">View Candidate Details</a>
+                <a href="/results" class="block text-blue-600 hover:text-blue-800 text-sm">View Full Results</a>
+                <a href="/api/export-results?format=csv" class="block text-blue-600 hover:text-blue-800 text-sm">Download Results (CSV)</a>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<!-- Vote Confirmation Modal -->
+<div id="vote-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Your Vote</h3>
+        <p class="text-gray-600 mb-6">Are you sure you want to vote for <span id="confirm-candidate" class="font-semibold"></span>? This action cannot be undone.</p>
+        <div class="flex space-x-4">
+            <button onclick="closeVoteModal()" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitVote()" class="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                Confirm Vote
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Election timer and stats
+    async function updateElectionStats() {
+        try {
+            const response = await fetch('/api/election-status');
+            const data = await response.json();
+            
+            document.getElementById('timer').textContent = data.time_remaining_hours;
+            document.getElementById('turnout').textContent = data.voter_turnout + '%';
+        } catch (error) {
+            console.error('Error fetching election stats:', error);
+        }
+    }
+
+    // Geographic results
+    async function loadGeographicResults() {
+        try {
+            const response = await fetch('/api/geographic-results');
+            const data = await response.json();
+            
+            const container = document.getElementById('geographic-results');
+            container.innerHTML = '';
+            
+            Object.entries(data).forEach(([region, votes]) => {
+                const regionDiv = document.createElement('div');
+                regionDiv.className = 'text-center';
+                regionDiv.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">${region}</h4>
+                    <div class="text-sm text-gray-600">
+                        <div>DeeJustDee: ${votes.DeeJustDee.toLocaleString()}</div>
+                        <div>CyberChef: ${votes.CyberChef.toLocaleString()}</div>
+                        <div>Cisco Nerd: ${votes['Cisco Nerd'].toLocaleString()}</div>
+                    </div>
+                `;
+                container.appendChild(regionDiv);
+            });
+        } catch (error) {
+            console.error('Error loading geographic results:', error);
+        }
+    }
+
+    // Vote confirmation
+    let currentVoteForm = null;
+    
+    function confirmVote(candidateName) {
+        document.getElementById('confirm-candidate').textContent = candidateName;
+        document.getElementById('vote-modal').classList.remove('hidden');
+        currentVoteForm = event.target.closest('form');
+        return false; // Prevent form submission
+    }
+    
+    function closeVoteModal() {
+        document.getElementById('vote-modal').classList.add('hidden');
+        currentVoteForm = null;
+    }
+    
+    function submitVote() {
+        if (currentVoteForm) {
+            showLoading();
+            currentVoteForm.submit();
+        }
+        closeVoteModal();
+    }
+
+    // Initialize
+    updateElectionStats();
+    loadGeographicResults();
+    
+    // Update stats every 30 seconds
+    setInterval(updateElectionStats, 30000);
+    
+    // Auto-hide success message
+    if (window.location.search.includes('vote_success')) {
+        setTimeout(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 5000);
+    }
+</script>
+{% endblock %} 

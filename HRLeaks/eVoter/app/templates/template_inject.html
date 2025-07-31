@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Template Injection Demo - E-VoteNow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Jinja2 Template Injection Demo</h2>
+        <p class="text-gray-600 mb-4">This endpoint is <span class="text-red-600 font-bold">vulnerable</span> to server-side template injection. Enter a Jinja2 expression below and see the result rendered by the server.</p>
+        <form method="GET" action="/template-inject" class="mb-4">
+            <label for="payload" class="block text-sm font-medium text-gray-700 mb-2">Jinja2 Expression</label>
+            <input type="text" id="payload" name="payload" value="{{ payload }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. {{ 7*7 }} or {{ config }}">
+            <button type="submit" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">Render</button>
+        </form>
+        {% if output is not none %}
+        <div class="mt-4 p-4 bg-gray-100 rounded">
+            <h4 class="font-bold text-gray-700 mb-2">Rendered Output:</h4>
+            <div class="text-sm text-gray-800">{{ output|safe }}</div>
+        </div>
+        {% endif %}
+        <div class="mt-6 p-4 bg-yellow-100 border border-yellow-400 rounded-md">
+            <h4 class="font-bold text-yellow-800 mb-2">⚠️ Security Notice:</h4>
+            <ul class="text-sm text-yellow-700 space-y-1">
+                <li>• This endpoint renders user input as a Jinja2 template.</li>
+                <li>• Try payloads like <code>{{ '{{ 7*7 }}' }}</code> or <code>{{ '{{ config }}' }}</code>.</li>
+                <li>• This is similar to CVE-2019-16759 (vBulletin RCE via template injection).</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 
