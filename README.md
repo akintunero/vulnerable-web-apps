@@ -170,15 +170,6 @@ You can run apps independently. Default ports:
 | JWT Tampering     | Modify JWT tokens to escalate access  | SkyHack                   |
 ---
 
-### 🧭 Suggested Learning Path
-
-| Level      | Projects             |
-|------------|----------------------|
-| 🟢 Beginner | HRLeaks, VoteVault   |
-| 🟡 Intermediate | ConfusedCloud, CyberMart |
-| 🔴 Advanced  | SkyHack, FakeCrypto |
-
----
 
 ## 🤝 Contribution Guide
 
