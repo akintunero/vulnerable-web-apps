@@ -122,21 +122,6 @@ Then visit `http://localhost:5000` (or as specified).
 
 ---
 
-### 🐍 Manual Setup (Python)
-
-```bash
-# Clone the repo
-git clone https://github.com/akintunero/vulnerable-web-apps.git
-cd vulnerable-web-apps/FakeCrypto
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the app
-python app.py
-```
-
----
 
 ## 🎮 Usage
 
@@ -225,7 +210,7 @@ Thanks to:
 **Made for the cybersecurity community. Practice responsibly.**
 
 [![GitHub](https://img.shields.io/badge/GitHub-akintunero-181717?style=for-the-badge&logo=github)](https://github.com/akintunero)  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-akintunero007-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/akintunero007)  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-akintunero007-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/olumayowaa)  
 [![Twitter](https://img.shields.io/badge/Twitter-@akintunero-1DA1F2?style=for-the-badge&logo=twitter)](https://twitter.com/akintunero)
 
 </div>
