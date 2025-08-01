@@ -210,7 +210,7 @@ Thanks to:
 **Made for the cybersecurity community. Practice responsibly.**
 
 [![GitHub](https://img.shields.io/badge/GitHub-akintunero-181717?style=for-the-badge&logo=github)](https://github.com/akintunero)  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-akintunero007-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/olumayowaa)  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-olumayowaa-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/olumayowaa)  
 [![Twitter](https://img.shields.io/badge/Twitter-@akintunero-1DA1F2?style=for-the-badge&logo=twitter)](https://twitter.com/akintunero)
 
 </div>
