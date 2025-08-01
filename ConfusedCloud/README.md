@@ -34,7 +34,7 @@ cd vulnerable-web-apps/OpenSource/ConfusedCloud
 docker-compose up -d
 
 # Access the application
-# URL: http://localhost:5000
+# URL: http://localhost:8001
 ```
 
 ## 🏗️ Architecture

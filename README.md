@@ -35,46 +35,46 @@ This repository contains a comprehensive collection of intentionally vulnerable 
 ## 🚀 Projects
 
 ### [🔧 ConfusedCloud](./ConfusedCloud/)
-**Cloud Management Platform** | *Oct 17, 2024 - Jan 16, 2025*
+**Cloud Management Platform** 
 - **Vulnerabilities**: SQL Injection, XSS, CSRF, Authentication Bypass
 - **Features**: Multi-tenant cloud management, resource provisioning, billing system
 - **Tech Stack**: Python Flask, SQLite, Docker
-- **Difficulty**: ⭐⭐⭐
+
 
 ### [🛒 CyberMart](./CyberMart/)
-**E-commerce Platform** | *Jan 2, 2025 - Jul 19, 2025*
+**E-commerce Platform** 
 - **Vulnerabilities**: NoSQL Injection, Command Injection, Deserialization
 - **Features**: Shopping cart, payment processing, admin panel, product management
 - **Tech Stack**: Python Flask, MongoDB, Docker
-- **Difficulty**: ⭐⭐⭐⭐
+
 
 ### [💰 FakeCrypto](./FakeCrypto/)
-**Cryptocurrency Exchange** | *Dec 13, 2024 - Apr 2, 2025*
+**Cryptocurrency Exchange** 
 - **Vulnerabilities**: SSRF, XXE, Log Injection, Session Management
 - **Features**: Trading platform, wallet management, NFT marketplace, order book
 - **Tech Stack**: Python Flask, SQLite, Web3 integration
-- **Difficulty**: ⭐⭐⭐⭐⭐
+
 
 ### [👥 HRLeaks](./HRLeaks/)
-**HR Management System** | *Jan 2, 2025 - Apr 15, 2025*
+**HR Management System** 
 - **Vulnerabilities**: Information Disclosure, Access Control, Data Exposure
 - **Features**: Employee management, payroll system, resume uploads, audit logs
 - **Tech Stack**: Python Flask, SQLite, File upload handling
-- **Difficulty**: ⭐⭐
+
 
 ### [✈️ SkyHack](./SkyHack/)
-**Airline Booking System** | *Dec 22, 2024 - Apr 12, 2025*
+**Airline Booking System** 
 - **Vulnerabilities**: JWT Manipulation, IDOR, API Security, Honeypot
 - **Features**: Flight booking, boarding passes, check-in system, admin panel
 - **Tech Stack**: Python Flask, SQLite, JWT authentication
-- **Difficulty**: ⭐⭐⭐⭐
+
 
 ### [🗳️ VoteVault](./VoteVault/)
-**Voting Platform** | *May 29, 2025 - Aug 15, 2025*
+**Voting Platform** 
 - **Vulnerabilities**: Vote Manipulation, Authentication Flaws, Data Integrity
 - **Features**: Secure voting, result verification, admin dashboard, audit trails
 - **Tech Stack**: Python Flask, SQLite, Blockchain concepts
-- **Difficulty**: ⭐⭐⭐
+
 
 ## 🚀 Quick Start
 
@@ -103,7 +103,7 @@ python app.py
 
 ## 📦 Installation
 
-### Method 1: Docker (Recommended)
+### Docker (Recommended)
 
 ```bash
 # Clone the repository
@@ -115,70 +115,49 @@ cd ConfusedCloud
 docker-compose up -d
 ```
 
-### Method 2: Local Development
-
-```bash
-# Clone the repository
-git clone https://github.com/akintunero/vulnerable-web-apps.git
-cd vulnerable-web-apps
-
-# Set up virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies for specific project
-cd ConfusedCloud
-pip install -r requirements.txt
-
-# Run the application
-python app.py
-```
 
 ## 🎮 Usage
 
 ### Running Individual Projects
 
-Each project can be run independently:
+Each project can be run independently using the provided `start.sh` scripts:
 
 ```bash
 # ConfusedCloud
 cd ConfusedCloud
-docker-compose up -d
-# Access at http://localhost:5000
+./start.sh
+# Access at http://localhost:8001
 
 # CyberMart
 cd CyberMart
-docker-compose up -d
-# Access at http://localhost:5001
+./start.sh
+# Access at http://localhost:5002
 
 # FakeCrypto
 cd FakeCrypto
-docker-compose up -d
-# Access at http://localhost:5002
+./start.sh
+# Access at http://localhost:7004
 
 # HRLeaks
 cd HRLeaks
-docker-compose up -d
-# Access at http://localhost:5003
+./start.sh
+# Access at http://localhost:8000
 
 # SkyHack
 cd SkyHack
-docker-compose up -d
-# Access at http://localhost:5004
+./start.sh
+# Access at http://localhost:8080
 
 # VoteVault
 cd VoteVault
-docker-compose up -d
-# Access at http://localhost:5005
+./start.sh
+# Access at http://localhost:5003
 ```
 
-### Default Credentials
+**Alternative Methods:**
+- Use `docker-compose up -d` directly in each project directory
+- CyberMart also has `./run.sh` for advanced management features
 
-Most applications include default test accounts:
-
-- **Username**: `admin` / **Password**: `admin`
-- **Username**: `user` / **Password**: `password`
-- **Username**: `test` / **Password**: `test123`
 
 ## 🛡️ Security Features
 
@@ -287,7 +266,7 @@ SOFTWARE.
 
 <div align="center">
 
-**Made with ❤️ for the security community**
+**Made for the security community! Happy Hunting for Vulnerabilities**
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akintunero)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/akintunero)

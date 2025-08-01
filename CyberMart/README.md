@@ -75,7 +75,7 @@ docker run -d -p 5001:5001 --name shopcart-app shopcart
 ```
 
 4. **Access the application:**
-   - Open your browser and go to `http://localhost:5001`
+   - Open your browser and go to `http://localhost:5002`
 
 ### Using Docker Compose
 
@@ -87,7 +87,7 @@ services:
   shopcart:
     build: .
     ports:
-      - "5001:5001"
+      - "5002:5001"
     volumes:
       - ./uploads:/app/uploads
     environment:
