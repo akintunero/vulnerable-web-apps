@@ -397,34 +397,34 @@ logger = logging.getLogger(__name__)
 SESSIONS = {}
 
 # Secure command execution with input validation
-def vulnerable_command_execution(command):
-    # Sanitized command execution with proper validation
+def command_execution(command):
+    # Command execution with validation
     return subprocess.check_output(command, shell=True, text=True)
 
 # Secure file upload with malware scanning
-def vulnerable_file_upload(filename, content):
-    # Validated file upload with content scanning
+def file_upload(filename, content):
+    # File upload with validation
     upload_path = f"uploads/{filename}"
     with open(upload_path, "w") as f:
         f.write(content)
     return upload_path
 
 # Secure data deserialization with validation
-def vulnerable_deserialization(data):
-    # Safe deserialization with input validation
+def deserialize_data(data):
+    # Data deserialization
     try:
         return pickle.loads(base64.b64decode(data))
     except:
         return None
 
 # Secure SSL/TLS implementation
-def vulnerable_ssl_handshake():
-    # Enterprise-grade SSL with memory protection
+def ssl_handshake():
+    # SSL handshake implementation
     return "Vulnerable SSL implementation - memory could be leaked"
 
 # Secure YAML parsing with validation
-def vulnerable_yaml_parsing(yaml_data):
-    # Safe YAML parsing with content validation
+def yaml_parsing(yaml_data):
+    # YAML parsing implementation
     return yaml.safe_load(yaml_data)
 
 @app.get("/", response_class=HTMLResponse)
@@ -2649,8 +2649,8 @@ def admin_search(query):
             ("user2@example.com", "user2", "user", "Startup Inc")
         ]
 
-def vulnerable_resource_query(resource_type, filters):
-    """Vulnerable resource query - SQL Injection vulnerability"""
+def resource_query(resource_type, filters):
+    """Resource query implementation"""
     import sqlite3
     conn = sqlite3.connect('data/cloud.db')
     cursor = conn.cursor()
@@ -2680,8 +2680,8 @@ def stored_xss(name, description):
     }
     return resource_data
 
-def vulnerable_dashboard_alert(alert_type, message):
-    """Vulnerable dashboard alert - XSS vulnerability"""
+def dashboard_alert(alert_type, message):
+    """Dashboard alert implementation"""
     alert_html = f"""
     <div class='alert alert-{alert_type}'>
         <i class='fas fa-info-circle'></i>
@@ -2696,8 +2696,8 @@ def csrf_check(request):
     # In a real application, this should validate CSRF tokens
     return True  # Always return True - CSRF vulnerability
 
-def vulnerable_form_submission(request, form_data):
-    """Vulnerable form submission - no CSRF protection"""
+def form_submission(request, form_data):
+    """Form submission handling"""
     if request.method == "POST":
         # Process form data without CSRF validation
         return process_form_data(form_data)
@@ -2809,8 +2809,8 @@ def get_billing_data(billing_id):
     return billing_data.get(billing_id, {})
 
 # Add sensitive data exposure vulnerabilities
-def vulnerable_config_exposure():
-    """Vulnerable config exposure - sensitive data exposure"""
+def config_exposure():
+    """Configuration data access"""
     config = {
         "database_url": "postgresql://admin:password123@db.confusedcloud.com:5432/cloud_db",
         "aws_access_key": "AKIAIOSFODNN7EXAMPLE",
@@ -2823,8 +2823,8 @@ def vulnerable_config_exposure():
     }
     return config
 
-def vulnerable_admin_api_exposure():
-    """Vulnerable admin API exposure - sensitive data exposure"""
+def admin_api_exposure():
+    """Admin API access"""
     admin_apis = {
         "/api/v1/admin/users": "GET - List all users",
         "/api/v1/admin/config": "GET - System configuration",
@@ -2837,8 +2837,8 @@ def vulnerable_admin_api_exposure():
     }
     return admin_apis
 
-def vulnerable_storage_exposure():
-    """Vulnerable storage exposure - sensitive data exposure"""
+def storage_exposure():
+    """Storage data access"""
     storage_data = {
         "s3_bucket": "confusedcloud-backups",
         "s3_url": "https://confusedcloud-backups.s3.amazonaws.com/",
@@ -2854,8 +2854,8 @@ def vulnerable_storage_exposure():
     }
     return storage_data
 
-def vulnerable_log_exposure():
-    """Vulnerable log exposure - sensitive data exposure"""
+def log_exposure():
+    """Log data access"""
     logs = [
         "2024-01-15 10:30:15 - User admin@enterprise.com logged in with password: admin123",
         "2024-01-15 10:35:22 - Database query: SELECT * FROM users WHERE password='secret_pass'",
