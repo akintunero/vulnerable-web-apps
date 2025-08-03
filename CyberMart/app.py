@@ -806,6 +806,7 @@ def guest_checkout():
         guest_name = request.form.get('name')
         guest_address = request.form.get('address')
         guest_phone = request.form.get('phone')
+        payment_info = request.form.get('payment_info', '')
         
         # Create guest order
         cart = get_guest_cart()
@@ -835,6 +836,10 @@ def guest_checkout():
                     price=product.price
                 )
                 db.session.add(order_item)
+        
+        # VULNERABLE: Store payment info in session for guest orders
+        if payment_info:
+            session['guest_payment_info'] = payment_info
         
         db.session.commit()
         

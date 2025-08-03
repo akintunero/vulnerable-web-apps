@@ -4,98 +4,286 @@
 
 {% block content %}
 <div class="row justify-content-center mb-5">
-    <div class="col-lg-7">
+    <div class="col-lg-10">
         <div class="card shadow-sm micro-anim">
             <div class="card-header bg-primary text-white d-flex align-items-center">
-                <i class="fas fa-user me-2"></i>
-                <h4 class="mb-0">Guest Information</h4>
+                <i class="fas fa-credit-card me-2"></i>
+                <h4 class="mb-0">Guest Checkout</h4>
             </div>
             <div class="card-body">
                 <form method="POST" autocomplete="off">
-                    <div class="mb-3">
-                        <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
-                        <input type="tel" id="phone" name="phone" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label fw-bold">Shipping Address <span class="text-danger">*</span></label>
-                        <textarea id="address" name="address" rows="3" class="form-control" required placeholder="Enter your complete shipping address"></textarea>
-                    </div>
-                    <div class="alert alert-info mb-4">
-                        <strong>Guest Checkout Benefits:</strong>
-                        <ul class="mb-0 ps-3">
-                            <li>No account required</li>
-                            <li>Quick and easy checkout</li>
-                            <li>Order tracking via email</li>
-                            <li>Secure payment processing</li>
-                        </ul>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 micro-anim">
-                        <i class="fas fa-credit-card me-2"></i>Complete Order - ${{ "%.2f"|format(total) }}
-                    </button>
-                </form>
-                <div class="mt-4 text-center">
-                    <span class="text-muted">Already have an account?</span>
-                    <a href="{{ url_for('login') }}" class="fw-bold text-primary">Sign in</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-5 mt-4 mt-lg-0">
-        <div class="card shadow-sm micro-anim">
-            <div class="card-header bg-dark text-white d-flex align-items-center">
-                <i class="fas fa-shopping-cart me-2"></i>
-                <h4 class="mb-0">Order Summary</h4>
-            </div>
-            <div class="card-body">
-                {% if cart_items %}
-                <ul class="list-group mb-3">
-                    {% for item in cart_items %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="fw-bold">{{ item.product.name }}</span>
-                            <br><small class="text-muted">Qty: {{ item.quantity }}</small>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <!-- Guest Information -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Guest Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                                                <input type="text" id="name" name="name" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
+                                                <input type="email" id="email" name="email" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="phone" class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
+                                                <input type="tel" id="phone" name="phone" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="card_holder" class="form-label fw-bold">Cardholder Name <span class="text-danger">*</span></label>
+                                                <input type="text" id="card_holder" name="card_holder" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label fw-bold">Shipping Address <span class="text-danger">*</span></label>
+                                        <textarea id="address" name="address" rows="3" class="form-control" required placeholder="Enter your complete shipping address"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- VULNERABLE: No CSRF protection -->
+                                    <!-- VULNERABLE: Collecting sensitive data without encryption -->
+                                    <div class="mb-3">
+                                        <label for="card_number" class="form-label fw-bold">Credit Card Number <span class="text-danger">*</span></label>
+                                        <input type="text" id="card_number" name="card_number" class="form-control" 
+                                               placeholder="1234 5678 9012 3456" required>
+                                        <small class="form-text text-muted">We store this securely (NOT!)</small>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="cvv" class="form-label fw-bold">CVV <span class="text-danger">*</span></label>
+                                                <input type="text" id="cvv" name="cvv" class="form-control" 
+                                                       placeholder="123" maxlength="4" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="expiry_month" class="form-label fw-bold">Expiry Month <span class="text-danger">*</span></label>
+                                                <select class="form-control" id="expiry_month" name="expiry_month" required>
+                                                    <option value="">Month</option>
+                                                    <option value="01">01</option>
+                                                    <option value="02">02</option>
+                                                    <option value="03">03</option>
+                                                    <option value="04">04</option>
+                                                    <option value="05">05</option>
+                                                    <option value="06">06</option>
+                                                    <option value="07">07</option>
+                                                    <option value="08">08</option>
+                                                    <option value="09">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11">11</option>
+                                                    <option value="12">12</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="expiry_year" class="form-label fw-bold">Expiry Year <span class="text-danger">*</span></label>
+                                                <select class="form-control" id="expiry_year" name="expiry_year" required>
+                                                    <option value="">Year</option>
+                                                    <option value="2024">2024</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2027">2027</option>
+                                                    <option value="2028">2028</option>
+                                                    <option value="2029">2029</option>
+                                                    <option value="2030">2030</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Hidden field for payment_info -->
+                                    <input type="hidden" id="payment_info" name="payment_info" value="">
+                                    
+                                    <div class="alert alert-info">
+                                        <strong>Guest Checkout Benefits:</strong>
+                                        <ul class="mb-0 ps-3">
+                                            <li>No account required</li>
+                                            <li>Quick and easy checkout</li>
+                                            <li>Order tracking via email</li>
+                                            <li>Secure payment processing</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <span class="price">${{ "%.2f"|format(item.subtotal) }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Subtotal:</span>
-                    <span>${{ "%.2f"|format(total) }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Shipping:</span>
-                    <span>Free</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Tax:</span>
-                    <span>${{ "%.2f"|format(total * 0.08) }}</span>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-3">
-                    <strong>Total:</strong>
-                    <strong class="price">${{ "%.2f"|format(total * 1.08) }}</strong>
-                </div>
-                {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                    <h4>Your cart is empty</h4>
-                    <p class="text-muted">Add some products to get started!</p>
-                    <a href="{{ url_for('index') }}" class="btn btn-primary">
-                        <i class="fas fa-shopping-bag"></i> Start Shopping
-                    </a>
-                </div>
-                {% endif %}
+                        
+                        <div class="col-lg-4">
+                            <!-- Order Summary -->
+                            <div class="card">
+                                <div class="card-header bg-dark text-white d-flex align-items-center">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    <h5 class="mb-0">Order Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if cart_items %}
+                                    <ul class="list-group mb-3">
+                                        {% for item in cart_items %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">{{ item.product.name }}</span>
+                                                <br><small class="text-muted">Qty: {{ item.quantity }}</small>
+                                            </div>
+                                            <span class="price">${{ "%.2f"|format(item.subtotal) }}</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <span>${{ "%.2f"|format(total) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Shipping:</span>
+                                        <span>Free</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tax:</span>
+                                        <span>${{ "%.2f"|format(total * 0.08) }}</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <strong>Total:</strong>
+                                        <strong class="price">${{ "%.2f"|format(total * 1.08) }}</strong>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success btn-lg w-100 micro-anim">
+                                        <i class="fas fa-lock me-2"></i>Complete Order - ${{ "%.2f"|format(total * 1.08) }}
+                                    </button>
+                                    {% else %}
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                        <h4>Your cart is empty</h4>
+                                        <p class="text-muted">Add some products to get started!</p>
+                                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                            <i class="fas fa-shopping-bag"></i> Start Shopping
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <span class="text-muted">Already have an account?</span>
+                                <a href="{{ url_for('login') }}" class="fw-bold text-primary">Sign in</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- VULNERABLE: Client-side validation that can be bypassed -->
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const cardNumber = document.getElementById('card_number').value;
+        const cardHolder = document.getElementById('card_holder').value;
+        const cvv = document.getElementById('cvv').value;
+        const expiryMonth = document.getElementById('expiry_month').value;
+        const expiryYear = document.getElementById('expiry_year').value;
+        
+        // VULNERABLE: Client-side validation can be bypassed
+        if (name.length < 2) {
+            alert('Please enter a valid name');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (cardHolder.length < 2) {
+            alert('Please enter a valid cardholder name');
+            e.preventDefault();
+            return false;
+        }
+        
+        // VULNERABLE: Basic credit card validation (can be bypassed)
+        const ccRegex = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/;
+        if (!ccRegex.test(cardNumber.replace(/\s/g, ''))) {
+            alert('Please enter a valid credit card number');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (cvv.length < 3 || cvv.length > 4) {
+            alert('Please enter a valid CVV');
+            e.preventDefault();
+            return false;
+        }
+        
+        if (!expiryMonth || !expiryYear) {
+            alert('Please select expiry month and year');
+            e.preventDefault();
+            return false;
+        }
+        
+        // VULNERABLE: Combine credit card data into payment_info field
+        const paymentInfo = {
+            card_number: cardNumber.replace(/\s/g, ''),
+            card_holder: cardHolder,
+            cvv: cvv,
+            expiry_month: expiryMonth,
+            expiry_year: expiryYear
+        };
+        document.getElementById('payment_info').value = JSON.stringify(paymentInfo);
+        
+        // VULNERABLE: Logging sensitive data to console
+        console.log('Guest checkout data:', {
+            name: name,
+            email: email,
+            phone: phone,
+            cardHolder: cardHolder,
+            cardNumber: cardNumber,
+            cvv: cvv,
+            paymentInfo: paymentInfo
+        });
+    });
+    
+    // VULNERABLE: Auto-fill demo data
+    function fillDemoData() {
+        document.getElementById('name').value = 'John Doe';
+        document.getElementById('email').value = 'john.doe@example.com';
+        document.getElementById('phone').value = '+1-555-123-4567';
+        document.getElementById('address').value = '123 Main St, Anytown, USA 12345';
+        document.getElementById('card_holder').value = 'John Doe';
+        document.getElementById('card_number').value = '4111111111111111';
+        document.getElementById('cvv').value = '123';
+        document.getElementById('expiry_month').value = '12';
+        document.getElementById('expiry_year').value = '2025';
+    }
+    
+    // Add demo data button
+    const demoButton = document.createElement('button');
+    demoButton.type = 'button';
+    demoButton.className = 'btn btn-outline-secondary mt-3 w-100';
+    demoButton.textContent = 'Fill Demo Data';
+    demoButton.onclick = fillDemoData;
+    document.querySelector('form').appendChild(demoButton);
+</script>
 {% endblock %} 
