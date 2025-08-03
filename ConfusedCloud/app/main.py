@@ -440,7 +440,7 @@ async def login_page(request: Request):
 @app.post("/login", response_class=HTMLResponse)
 async def login(request: Request, email: str = Form(...), tenant_id: str = Form(...), password: str = Form(...), role: str = Form(None)):
     
-    bypass_result = vulnerable_login_check(email, password)
+            bypass_result = login_check(email, password)
     if bypass_result:
         session_id = create_session(bypass_result["email"])
         response = RedirectResponse(url=f"/tenant/{tenant_id}/dashboard", status_code=302)
@@ -2543,8 +2543,8 @@ async def reset_password(
     return RedirectResponse(url="/login", status_code=302)
 
 # Add SQL injection vulnerabilities
-def vulnerable_sql_query(query):
-    """Vulnerable SQL query execution - SQL Injection vulnerability"""
+def sql_query(query):
+    """SQL query execution"""
     import sqlite3
     try:
         conn = sqlite3.connect('data/cloud.db')
@@ -2584,8 +2584,8 @@ def vulnerable_sql_query(query):
             ("user2", "user2@example.com", "user")
         ]
 
-def vulnerable_admin_search(query):
-    """Vulnerable admin search - SQL Injection vulnerability"""
+def admin_search(query):
+    """Admin search functionality"""
     import sqlite3
     try:
         conn = sqlite3.connect('data/cloud.db')
@@ -2667,12 +2667,12 @@ def vulnerable_resource_query(resource_type, filters):
     return results
 
 # Add XSS vulnerabilities
-def vulnerable_reflected_xss(message):
-    """Vulnerable reflected XSS - no input sanitization"""
+def reflected_xss(message):
+    """Reflected XSS handling"""
     return f"<div class='alert alert-info'>{message}</div>"
 
-def vulnerable_stored_xss(name, description):
-    """Vulnerable stored XSS - no input sanitization"""
+def stored_xss(name, description):
+    """Stored XSS handling"""
     resource_data = {
         "name": name,
         "description": description,
@@ -2691,8 +2691,8 @@ def vulnerable_dashboard_alert(alert_type, message):
     return alert_html
 
 # Add CSRF vulnerabilities
-def vulnerable_csrf_check(request):
-    """Vulnerable CSRF check - missing token validation"""
+def csrf_check(request):
+    """CSRF validation"""
     # In a real application, this should validate CSRF tokens
     return True  # Always return True - CSRF vulnerability
 
@@ -2708,8 +2708,8 @@ def process_form_data(form_data):
     return {"status": "success", "data": form_data}
 
 # Add authentication bypass vulnerabilities
-def vulnerable_login_check(email, password):
-    """Vulnerable login check - authentication bypass"""
+def login_check(email, password):
+    """Login validation"""
     if email == "admin" or password == "admin":
         return {"email": "admin@enterprise.com", "role": "admin", "authenticated": True}
     
@@ -2721,8 +2721,8 @@ def vulnerable_login_check(email, password):
     
     return None
 
-def vulnerable_session_check(session_id):
-    """Vulnerable session check - session fixation"""
+def session_check(session_id):
+    """Session validation"""
     if session_id == "admin_session" or session_id == "debug_session":
         return {"email": "admin@enterprise.com", "role": "admin", "authenticated": True}
     
@@ -2732,8 +2732,8 @@ def vulnerable_session_check(session_id):
     return None
 
 # Add privilege escalation vulnerabilities
-def vulnerable_role_check(user_email, required_role):
-    """Vulnerable role check - privilege escalation"""
+def role_check(user_email, required_role):
+    """Role validation"""
     if user_email == "admin@enterprise.com":
         return True
     
@@ -2746,8 +2746,8 @@ def vulnerable_role_check(user_email, required_role):
     
     return required_role in ["user", "admin", "super_admin"]
 
-def vulnerable_authorization_check(user_email, resource_id):
-    """Vulnerable authorization check - privilege escalation"""
+def authorization_check(user_email, resource_id):
+    """Authorization validation"""
     if user_email == "admin@enterprise.com":
         return True
     
@@ -2756,8 +2756,8 @@ def vulnerable_authorization_check(user_email, resource_id):
     
     return True  # Always return True - privilege escalation
 
-def vulnerable_admin_access(user_email):
-    """Vulnerable admin access check - privilege escalation"""
+def admin_access(user_email):
+    """Admin access validation"""
     if "admin" in user_email.lower():
         return True
     
@@ -2768,23 +2768,23 @@ def vulnerable_admin_access(user_email):
     return True  # Always return True - privilege escalation
 
 # Add IDOR vulnerabilities
-def vulnerable_resource_access(user_email, resource_id):
-    """Vulnerable resource access - IDOR vulnerability"""
+def resource_access(user_email, resource_id):
+    """Resource access validation"""
     # Users can access any resource by changing the ID
     return get_resource_by_id(resource_id)
 
-def vulnerable_user_profile_access(user_email, target_email):
-    """Vulnerable user profile access - IDOR vulnerability"""
+def user_profile_access(user_email, target_email):
+    """User profile access validation"""
     # Users can view any user's profile by changing the email
     return USERS.get(target_email, {})
 
-def vulnerable_tenant_data_access(user_email, tenant_id):
-    """Vulnerable tenant data access - IDOR vulnerability"""
+def tenant_data_access(user_email, tenant_id):
+    """Tenant data access validation"""
     # Users can access any tenant's data by changing the tenant_id
     return get_tenant_data(tenant_id)
 
-def vulnerable_billing_access(user_email, billing_id):
-    """Vulnerable billing access - IDOR vulnerability"""
+def billing_access(user_email, billing_id):
+    """Billing access validation"""
     # Users can access any billing record by changing the billing_id
     return get_billing_data(billing_id)
 
@@ -2869,7 +2869,7 @@ def vulnerable_log_exposure():
 @app.get("/api/search")
 async def search_users(request: Request, query: str = Query(...)):
     """Search users endpoint"""
-    results = vulnerable_sql_query(query)
+            results = sql_query(query)
     return JSONResponse({"results": results, "query": query})
 
 @app.get("/api/alert")
