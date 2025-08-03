@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import sqlite3
 import hashlib
@@ -285,6 +286,15 @@ def register():
             
             flash('Registration successful!')
             return redirect(url_for('login'))
+        except IntegrityError as e:
+            db.session.rollback()
+            if 'user.email' in str(e):
+                flash('Email already registered. Please use a different email or login.')
+            elif 'user.username' in str(e):
+                flash('Username already taken. Please choose a different username.')
+            else:
+                flash('Registration failed due to database constraint. Please try again.')
+            return render_template('register.html')
         except Exception as e:
             db.session.rollback()
             flash('Registration failed. Please try again.')
