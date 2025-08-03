@@ -1,191 +1,283 @@
-# ShopCart - E-commerce Application
+# 🛒 CyberMart - Vulnerable E-commerce Platform
 
-A Flask-based e-commerce application for learning web application security testing.
+A deliberately vulnerable e-commerce platform designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a realistic e-commerce environment.
 
-## Features
+## ⚠️ **SECURITY WARNING**
 
-- User registration and authentication
-- Product browsing and search
-- Shopping cart functionality
-- Order management
-- Admin panel
-- File upload capabilities
-- REST API endpoints
+**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## Vulnerabilities Included
+## 🎯 Overview
 
-This application contains various security issues for educational purposes:
+CyberMart is a vulnerable e-commerce platform that simulates a real-world online store with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities in an e-commerce context.
 
-- Authentication bypasses
-- Data exposure vulnerabilities
-- Input validation issues
-- Access control problems
-- File handling weaknesses
-- API security flaws
+### Key Features:
+- 🛍️ Complete e-commerce functionality
+- 👥 User account management
+- 📦 Product catalog with categories
+- 🛒 Shopping cart and wishlist
+- 💳 Checkout and payment processing
+- 📋 Order management and tracking
+- 💰 Discount code system
+- 📄 PDF invoice generation
+- 📧 Email notifications
+- ⭐ Product reviews and ratings
+- 🔧 Admin panel for management
 
-## Installation & Running
+## 🚀 Quick Start
 
 ### Prerequisites
+- Docker
+- Docker Compose
 
-- Docker installed on your system
-- Docker Compose (optional, for advanced usage)
-
-### Quick Start (Recommended)
-
-Use the provided management script for the easiest experience:
+### Installation & Setup
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd vuln-cart
+git clone git@github.com:akintunero/vulnerable-web-apps.git
+cd vulnerable-web-apps/CyberMart
 
-# Build and start the application
-./run.sh build
-./run.sh start
+# Start the application
+./start.sh
+
+# Access the application
+# URL: http://localhost:5002
 ```
 
-**Available script commands:**
-- `./run.sh build` - Build the Docker image
-- `./run.sh start` - Start the application
-- `./run.sh stop` - Stop the application
-- `./run.sh restart` - Restart the application
-- `./run.sh logs` - View application logs
-- `./run.sh status` - Check container status
-- `./run.sh remove` - Remove the container
-- `./run.sh help` - Show help information
+## 🏗️ Architecture
 
-### Manual Docker Commands
+### Components
+- **Frontend**: HTML/CSS/JavaScript with Bootstrap
+- **Backend**: Python Flask application
+- **Database**: SQLite (primary), MongoDB (NoSQL injection testing)
+- **Cache**: Redis (rate limiting)
+- **Container**: Docker with Python 3.9
 
-If you prefer to use Docker commands directly:
+### Directory Structure
+```
+CyberMart/
+├── app.py                 # Main Flask application
+├── templates/             # HTML templates
+├── static/               # CSS, JS, images
+├── uploads/              # File uploads
+├── docker-compose.yml    # Docker configuration
+├── Dockerfile           # Container definition
+├── requirements.txt     # Python dependencies
+└── start.sh            # Startup script
+```
 
-1. **Clone the repository:**
+## 🎓 Learning Objectives
+
+### Vulnerability Categories
+1. **NoSQL Injection**
+   - MongoDB query injection
+   - Parameter manipulation
+   - Data extraction techniques
+
+2. **Command Injection**
+   - Unsafe user input to shell
+   - System command execution
+   - Privilege escalation
+
+3. **Unsafe Deserialization**
+   - Pickle deserialization
+   - JSON deserialization
+   - Code execution via deserialization
+
+4. **Parameter Tampering**
+   - Price manipulation
+   - Quantity manipulation
+   - Discount code abuse
+
+5. **IDOR (Insecure Direct Object Reference)**
+   - Order access without authorization
+   - Invoice access bypass
+   - User data exposure
+
+6. **XSS (Cross-Site Scripting)**
+   - Cart field injection
+   - Product review injection
+   - Stored XSS in user content
+
+7. **Unvalidated Redirects**
+   - Checkout flow manipulation
+   - Open redirect vulnerabilities
+   - Phishing attack simulation
+
+8. **Local File Inclusion**
+   - Path traversal attacks
+   - File download vulnerabilities
+   - System file access
+
+9. **CSRF (Cross-Site Request Forgery)**
+   - Checkout form manipulation
+   - Order form attacks
+   - Admin action bypass
+
+10. **Weak Password Policies**
+    - Short password acceptance
+    - Common password allowance
+    - Brute force vulnerability
+
+11. **Open Redirects**
+    - Email redirect manipulation
+    - URL parameter injection
+    - Phishing simulation
+
+12. **Insufficient Rate Limiting**
+    - API brute force vulnerability
+    - Login attempt bypass
+    - Resource exhaustion
+
+## 🔍 Vulnerability Guide
+
+### 1. NoSQL Injection
+- **Location**: `/api/products/search`
+- **Technique**: MongoDB query injection
+- **Impact**: Data extraction and manipulation
+
+### 2. Command Injection
+- **Location**: `/api/command`
+- **Technique**: Shell command injection
+- **Impact**: System command execution
+
+### 3. Parameter Tampering
+- **Location**: `/api/cart/add`, `/api/checkout`
+- **Technique**: Price/quantity manipulation
+- **Impact**: Financial fraud
+
+### 4. IDOR
+- **Location**: `/api/invoice/{id}`, `/order/{id}`
+- **Technique**: Direct object access
+- **Impact**: Unauthorized data access
+
+### 5. XSS
+- **Location**: `/api/reviews/add`, cart fields
+- **Technique**: Stored XSS in user content
+- **Impact**: Session hijacking, data theft
+
+### 6. CSRF
+- **Location**: `/api/checkout`, order forms
+- **Technique**: Cross-site request forgery
+- **Impact**: Unauthorized actions
+
+## 🛠️ Testing with Burp Suite
+
+### Setup
+1. Configure Burp Suite proxy to `127.0.0.1:8080`
+2. Set browser proxy settings
+3. Install Burp CA certificate in browser
+
+### Test Cases
+
+#### NoSQL Injection
 ```bash
-git clone <repository-url>
-cd vuln-cart
+# Test MongoDB injection
+curl "http://localhost:5002/api/products/search?q=test"
+curl "http://localhost:5002/api/products/search?q={\"\$ne\":null}"
 ```
 
-2. **Build the Docker image:**
+#### Command Injection
 ```bash
-docker build -t shopcart .
+# Test command injection
+curl -X POST "http://localhost:5002/api/command" \
+  -H "Content-Type: application/json" \
+  -d '{"command":"ls -la"}'
 ```
 
-3. **Run the application:**
+#### Parameter Tampering
 ```bash
-docker run -d -p 5001:5001 --name shopcart-app shopcart
+# Test price manipulation
+curl -X POST "http://localhost:5002/api/cart/add" \
+  -H "Content-Type: application/json" \
+  -d '{"product_id":1,"quantity":1,"price":-10.00}'
 ```
 
-4. **Access the application:**
-   - Open your browser and go to `http://localhost:5002`
-
-### Using Docker Compose
-
-Create a `docker-compose.yml` file:
-
-```yaml
-version: '3.8'
-services:
-  shopcart:
-    build: .
-    ports:
-      - "5002:5001"
-    volumes:
-      - ./uploads:/app/uploads
-    environment:
-      - FLASK_ENV=development
-    restart: unless-stopped
-```
-
-Then run:
+#### IDOR Testing
 ```bash
-docker-compose up -d
+# Test invoice access
+curl "http://localhost:5002/api/invoice/1"
+curl "http://localhost:5002/api/invoice/999"
 ```
 
-### Container Management
+## 📊 Features
 
-**Stop the application:**
+### E-commerce Functionality
+- **Product Catalog**: Categories, search, filtering
+- **Shopping Cart**: Add/remove items, quantity management
+- **Wishlist**: Save products for later
+- **User Accounts**: Registration, login, profile management
+- **Checkout Process**: Address, payment, discount codes
+- **Order Management**: History, tracking, status updates
+- **Reviews & Ratings**: Product feedback system
+- **Admin Panel**: Product, order, user management
+- **PDF Invoices**: Downloadable order invoices
+- **Email Notifications**: Order confirmations, status updates
+
+### Security Testing Features
+- **Stealthy Vulnerabilities**: No obvious vulnerability hints
+- **Realistic Interface**: Professional e-commerce appearance
+- **Multiple Attack Vectors**: Various vulnerability types
+- **Educational Value**: Clear learning objectives
+- **Burp Suite Compatible**: Full proxy testing support
+
+## 🔧 Configuration
+
+### Environment Variables
 ```bash
-docker stop shopcart-app
+FLASK_ENV=development
+FLASK_DEBUG=1
+SECRET_KEY=your-secret-key
 ```
 
-**Start the application:**
+### Database Setup
 ```bash
-docker start shopcart-app
+# Initialize database
+python3 -c "from app import init_db; init_db()"
 ```
 
-**Remove the container:**
+## 📝 Usage
+
+### Starting the Application
 ```bash
-docker rm shopcart-app
+./start.sh
 ```
 
-**View logs:**
-```bash
-docker logs shopcart-app
-```
+### Accessing the Application
+- **Main Site**: http://localhost:5002
+- **Admin Panel**: http://localhost:5002/admin
+- **API Endpoints**: http://localhost:5002/api/*
 
-**Rebuild and restart:**
-```bash
-docker stop shopcart-app && docker rm shopcart-app
-docker build -t shopcart .
-docker run -d -p 5001:5001 --name shopcart-app shopcart
-```
+### Default Accounts
+- **Admin**: admin@cybermart.com / admin123
+- **User**: user@cybermart.com / password123
 
-## Default Credentials
+## 🛡️ Security Notes
 
-- **Admin User:**
-  - Username: `admin`
-  - Password: `admin123`
+- All vulnerabilities are intentionally implemented
+- No real payment processing
+- Mock data for testing
+- Isolated Docker environment
+- Educational purposes only
 
-## API Endpoints
+## 📚 Educational Resources
 
-- `GET /api/products` - List all products
-- `GET /api/products?category=<category>` - Filter products by category
-- `GET /api/user/<id>` - Get user information
+- OWASP Top 10
+- Web Application Security Testing
+- E-commerce Security Best Practices
+- Vulnerability Assessment Methodologies
 
-## Security Testing
+## 🤝 Contributing
 
-This application is designed for security testing and contains intentional vulnerabilities. Use only in controlled environments for educational purposes.
+This project is designed for educational purposes. Contributions should focus on:
+- Adding new vulnerability types
+- Improving educational content
+- Enhancing testing scenarios
+- Documentation improvements
 
-## Docker Benefits
+## 📄 License
 
-Using Docker ensures:
-- Consistent environment across different systems
-- Easy deployment and scaling
-- Isolated testing environment
-- No conflicts with local Python installations
-- Reproducible builds
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Troubleshooting
+---
 
-**Port already in use:**
-```bash
-# Check what's using port 5001
-lsof -i :5001
-
-# Use a different port
-docker run -d -p 5002:5001 --name shopcart-app shopcart
-```
-
-**Container won't start:**
-```bash
-# Check container logs
-docker logs shopcart-app
-
-# Rebuild the image
-docker build --no-cache -t shopcart .
-```
-
-**Permission issues:**
-```bash
-# Run with proper permissions
-docker run -d -p 5001:5001 --name shopcart-app --user root shopcart
-```
-
-**Script permission denied:**
-```bash
-# Make the script executable
-chmod +x run.sh
-```
-
-## Disclaimer
-
-This application is for educational purposes only. Do not use in production environments or on systems you do not own or have explicit permission to test. 
+**Remember**: This application is for educational purposes only. Never use these techniques on real systems without proper authorization. 
