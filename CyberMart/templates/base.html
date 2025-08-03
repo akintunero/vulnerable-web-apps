@@ -338,6 +338,63 @@
             appendAssistantMessage('bot', "Sorry, I'm having trouble connecting right now.");
         }
     };
+    
+    // Product filtering functions
+    function filterProducts() {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const products = document.querySelectorAll('.product-item');
+        const noResults = document.getElementById('noResults');
+        
+        if (!searchInput || !categoryFilter) return;
+        
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value.toLowerCase();
+        
+        let visibleCount = 0;
+        
+        products.forEach(product => {
+            const productName = product.getAttribute('data-name') || '';
+            const productCategory = product.getAttribute('data-category') || '';
+            
+            const matchesSearch = productName.includes(searchTerm);
+            const matchesCategory = !selectedCategory || productCategory === selectedCategory;
+            
+            if (matchesSearch && matchesCategory) {
+                product.style.display = 'block';
+                visibleCount++;
+            } else {
+                product.style.display = 'none';
+            }
+        });
+        
+        // Show/hide no results message
+        if (noResults) {
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+    }
+    
+    function filterByCategory(category) {
+        const categoryFilter = document.getElementById('categoryFilter');
+        if (categoryFilter) {
+            categoryFilter.value = category;
+        }
+        filterProducts();
+    }
+    
+    function clearFilters() {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        
+        filterProducts();
+    }
     </script>
     {% block scripts %}{% endblock %}
 </body>

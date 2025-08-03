@@ -414,6 +414,13 @@ def checkout():
                         })
                         total += product.price * quantity
             
+            # Process payment information
+            payment_info = request.form.get('payment_info', '')
+            if payment_info:
+                # VULNERABLE: Store payment info in user profile
+                current_user.payment_info = payment_info
+                db.session.commit()
+            
             # Create order
             order = Order(user_id=current_user.id, total_amount=total)
             db.session.add(order)

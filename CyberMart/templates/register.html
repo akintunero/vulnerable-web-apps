@@ -11,7 +11,6 @@
             </div>
             <div class="card-body">
                 <!-- VULNERABLE: No CSRF protection -->
-                <!-- VULNERABLE: Collecting sensitive data (credit card) -->
                 <form method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
@@ -35,59 +34,7 @@
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                     </div>
                     
-                    <!-- VULNERABLE: Collecting sensitive data without encryption -->
-                    <div class="mb-3">
-                        <label for="credit_card" class="form-label">Credit Card Number</label>
-                        <input type="text" class="form-control" id="credit_card" name="credit_card" 
-                               placeholder="1234 5678 9012 3456" required>
-                        <small class="form-text text-muted">We store this securely (NOT!)</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="cvv" class="form-label">CVV</label>
-                        <input type="text" class="form-control" id="cvv" name="cvv" 
-                               placeholder="123" maxlength="4" required>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="expiry_month" class="form-label">Expiry Month</label>
-                                <select class="form-control" id="expiry_month" name="expiry_month" required>
-                                    <option value="">Month</option>
-                                    <option value="01">01</option>
-                                    <option value="02">02</option>
-                                    <option value="03">03</option>
-                                    <option value="04">04</option>
-                                    <option value="05">05</option>
-                                    <option value="06">06</option>
-                                    <option value="07">07</option>
-                                    <option value="08">08</option>
-                                    <option value="09">09</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="expiry_year" class="form-label">Expiry Year</label>
-                                <select class="form-control" id="expiry_year" name="expiry_year" required>
-                                    <option value="">Year</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2026">2026</option>
-                                    <option value="2027">2027</option>
-                                    <option value="2028">2028</option>
-                                    <option value="2029">2029</option>
-                                    <option value="2030">2030</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Hidden field for payment_info -->
+                    <!-- Hidden field for payment_info (empty for registration) -->
                     <input type="hidden" id="payment_info" name="payment_info" value="">
                     
                     <!-- VULNERABLE: No terms and conditions validation -->
@@ -125,7 +72,6 @@
                 <p>We collect and store the following information:</p>
                 <ul>
                     <li>Username and email address</li>
-                    <li>Payment information for processing orders</li>
                     <li>Purchase history</li>
                     <li>IP address and browser information for security</li>
                 </ul>
@@ -150,10 +96,6 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm_password').value;
-        const creditCard = document.getElementById('credit_card').value;
-        const cvv = document.getElementById('cvv').value;
-        const expiryMonth = document.getElementById('expiry_month').value;
-        const expiryYear = document.getElementById('expiry_year').value;
         
         // VULNERABLE: Client-side validation can be bypassed
         if (username.length < 3) {
@@ -174,36 +116,10 @@
             return false;
         }
         
-        // VULNERABLE: Basic credit card validation (can be bypassed)
-        const ccRegex = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/;
-        if (!ccRegex.test(creditCard.replace(/\s/g, ''))) {
-            alert('Please enter a valid credit card number');
-            e.preventDefault();
-            return false;
-        }
-        
-        if (cvv.length < 3 || cvv.length > 4) {
-            alert('Please enter a valid CVV');
-            e.preventDefault();
-            return false;
-        }
-        
-        // VULNERABLE: Combine credit card data into payment_info field
-        const paymentInfo = {
-            card_number: creditCard.replace(/\s/g, ''),
-            cvv: cvv,
-            expiry_month: expiryMonth,
-            expiry_year: expiryYear
-        };
-        document.getElementById('payment_info').value = JSON.stringify(paymentInfo);
-        
-        // VULNERABLE: Logging sensitive data to console
+        // VULNERABLE: Logging registration data to console
         console.log('Registration data:', {
             username: username,
-            email: email,
-            creditCard: creditCard,
-            cvv: cvv,
-            paymentInfo: paymentInfo
+            email: email
         });
     });
     
@@ -213,10 +129,6 @@
         document.getElementById('email').value = 'test@rustybranch.io';
         document.getElementById('password').value = 'password123';
         document.getElementById('confirm_password').value = 'password123';
-        document.getElementById('credit_card').value = '4111111111111111';
-        document.getElementById('cvv').value = '123';
-        document.getElementById('expiry_month').value = '12';
-        document.getElementById('expiry_year').value = '2025';
         document.getElementById('terms').checked = true;
     }
     
