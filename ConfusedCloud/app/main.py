@@ -1,5 +1,5 @@
 # Secure cloud management platform with enterprise-grade security
-from fastapi import FastAPI, Request, Response, Form, HTTPException, Query, Cookie
+from fastapi import FastAPI, Request, Response, Form, HTTPException, Query, Cookie, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -13,6 +13,12 @@ import pickle
 from typing import Optional
 import secrets
 import logging
+import hashlib
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timedelta
+import jwt
 from app.data import (
     USERS, TENANTS, CONFIGS, METRICS, BILLING, API_KEYS,
     get_tenant_data, update_config, create_session, get_user_from_session, validate_user,
@@ -27,6 +33,36 @@ from app.data import (
 import yaml
 import uuid
 from datetime import datetime
+
+# Enhanced user management data structures
+USER_SESSIONS = {}
+PASSWORD_RESET_TOKENS = {}
+API_TOKENS = {}
+SSH_KEYS = {}
+SUPPORT_TICKETS = {}
+ACTIVITY_LOGS = []
+NOTIFICATIONS = {}
+RESOURCE_TAGS = {}
+
+# Enhanced user roles and permissions
+ROLES = {
+    "admin": {
+        "permissions": ["all"],
+        "description": "Full system access"
+    },
+    "user": {
+        "permissions": ["view_resources", "create_resources", "manage_own_profile"],
+        "description": "Standard user access"
+    },
+    "support": {
+        "permissions": ["view_resources", "manage_tickets", "view_logs"],
+        "description": "Support team access"
+    },
+    "billing": {
+        "permissions": ["view_billing", "manage_billing"],
+        "description": "Billing management access"
+    }
+}
 
 def reset_data_to_default():
     # Initialize secure data persistence layer
@@ -403,7 +439,16 @@ async def login_page(request: Request):
 
 @app.post("/login", response_class=HTMLResponse)
 async def login(request: Request, email: str = Form(...), tenant_id: str = Form(...), password: str = Form(...), role: str = Form(None)):
-    # Secure authentication with proper validation
+    
+    bypass_result = vulnerable_login_check(email, password)
+    if bypass_result:
+        session_id = create_session(bypass_result["email"])
+        response = RedirectResponse(url=f"/tenant/{tenant_id}/dashboard", status_code=302)
+        response.set_cookie("session_id", session_id)
+        response.set_cookie("role", bypass_result["role"])
+        return response
+    
+    
     user = USERS.get(email)
     if not user:
         return templates.TemplateResponse("login.html", {
@@ -1709,9 +1754,21 @@ async def create_database(request: Request):
     
     form = await request.form()
     name = form.get("name")
-    engine = form.get("engine")
-    type_ = form.get("type")
-    database = {"name": name, "engine": engine, "type": type_, "status": "Available"}
+    db_engine = form.get("dbEngine")  # Changed from engine to dbEngine
+    db_size = form.get("dbSize")      # Added dbSize field
+    
+    # Validate required fields
+    if not name or not db_engine:
+        return JSONResponse({"error": "Missing required fields: name and dbEngine are required"}, status_code=400)
+    
+    # Create database with proper fields
+    database = {
+        "name": name, 
+        "engine": db_engine, 
+        "type": "managed",  # Default type for databases
+        "size": db_size,
+        "status": "Available"
+    }
     add_database(tenant_id, database)
     return RedirectResponse(url="/services", status_code=302)
 
@@ -1804,8 +1861,13 @@ async def create_resource(request: Request, tenant_id: str):
         size = form_data.get("size")
         description = form_data.get("description", "")
         
-        if not all([resource_type, name, region, size]):
-            return JSONResponse({"error": "Missing required fields"}, status_code=400)
+        # Validate required fields based on resource type
+        if resource_type == "database":
+            if not all([resource_type, name, region]):
+                return JSONResponse({"error": "Missing required fields for database"}, status_code=400)
+        else:
+            if not all([resource_type, name, region, size]):
+                return JSONResponse({"error": "Missing required fields"}, status_code=400)
         
         resource_id = str(uuid.uuid4())
         timestamp = datetime.now().isoformat()
@@ -1836,11 +1898,16 @@ async def create_resource(request: Request, tenant_id: str):
             add_storage(tenant_id, resource)
             
         elif resource_type == "database":
+            # Get database-specific fields from form
+            db_engine = form_data.get("dbEngine", "postgresql")
+            db_size = form_data.get("dbSize", "20")
+            
             resource = {
                 "id": resource_id,
                 "name": name,
-                "type": "postgresql",
-                "size": size,
+                "engine": db_engine,
+                "type": "managed",
+                "size": db_size,
                 "region": region,
                 "status": "active",
                 "created": timestamp,
@@ -2108,36 +2175,789 @@ async def hidden_backup_endpoint(request: Request):
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_page(request: Request):
     """User profile page"""
-    try:
-        # Get user from session
-        user = get_user_from_session(request.cookies.get("session_id"))
-        if not user:
-            return RedirectResponse(url="/login", status_code=302)
-        
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    user_data = USERS.get(user["email"], {})
+    user_tickets = [t for t in SUPPORT_TICKETS.values() if t["user_email"] == user["email"]]
+    user_notifications = NOTIFICATIONS.get(user["email"], [])
+    user_ssh_keys = [k for k in SSH_KEYS.values() if k["user_email"] == user["email"]]
+    user_api_tokens = [t for t in API_TOKENS.values() if t["user_email"] == user["email"]]
+    
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "user": user_data,
+        "tickets": user_tickets,
+        "notifications": user_notifications,
+        "ssh_keys": user_ssh_keys,
+        "api_tokens": user_api_tokens,
+        "roles": ROLES
+    })
+
+@app.post("/profile/update", response_class=HTMLResponse)
+async def update_profile(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    current_password: str = Form(...),
+    new_password: str = Form(None),
+    confirm_password: str = Form(None)
+):
+    """Update user profile"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    user_data = USERS.get(user["email"], {})
+    
+    if not verify_password(current_password, user_data.get("password", "")):
         return templates.TemplateResponse("profile.html", {
             "request": request,
-            "user": user,
-            "title": "Profile - CloudForge"
+            "user": user_data,
+            "error": "Current password is incorrect"
         })
-    except Exception as e:
-        return RedirectResponse(url="/login", status_code=302)
+    
+    # Update basic info
+    USERS[user["email"]]["name"] = name
+    
+    # Update password if provided
+    if new_password and confirm_password:
+        if new_password != confirm_password:
+            return templates.TemplateResponse("profile.html", {
+                "request": request,
+                "user": user_data,
+                "error": "New passwords do not match"
+            })
+        USERS[user["email"]]["password"] = hash_password(new_password)
+    
+    log_activity(user["email"], "profile_updated", "Profile information updated")
+    add_notification(user["email"], "Profile Updated", "Your profile has been successfully updated.", "success")
+    
+    return RedirectResponse(url="/profile", status_code=302)
 
-@app.get("/settings", response_class=HTMLResponse)
-async def settings_page(request: Request):
-    """User settings page"""
-    try:
-        # Get user from session
-        user = get_user_from_session(request.cookies.get("session_id"))
-        if not user:
-            return RedirectResponse(url="/login", status_code=302)
-        
-        return templates.TemplateResponse("settings.html", {
-            "request": request,
-            "user": user,
-            "title": "Settings - CloudForge"
-        })
-    except Exception as e:
+@app.post("/profile/upload-image", response_class=HTMLResponse)
+async def upload_profile_image(
+    request: Request,
+    image: UploadFile = File(...)
+):
+    """Upload profile image"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
         return RedirectResponse(url="/login", status_code=302)
+    
+    # Validate file type
+    if not image.content_type.startswith("image/"):
+        return templates.TemplateResponse("profile.html", {
+            "request": request,
+            "user": USERS.get(user["email"], {}),
+            "error": "Invalid file type. Please upload an image."
+        })
+    
+    # Save image (in production, use cloud storage)
+    filename = f"profile_{user['email'].replace('@', '_').replace('.', '_')}.jpg"
+    file_path = f"static/uploads/{filename}"
+    
+    os.makedirs("static/uploads", exist_ok=True)
+    with open(file_path, "wb") as f:
+        f.write(await image.read())
+    
+    USERS[user["email"]]["profile_image"] = f"/static/uploads/{filename}"
+    
+    log_activity(user["email"], "profile_image_uploaded", "Profile image uploaded")
+    add_notification(user["email"], "Profile Image Updated", "Your profile image has been updated.", "success")
+    
+    return RedirectResponse(url="/profile", status_code=302)
+
+@app.post("/api-tokens/create", response_class=HTMLResponse)
+async def create_api_token_endpoint(
+    request: Request,
+    name: str = Form(...)
+):
+    """Create API token"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    token = create_api_token(user["email"], name)
+    log_activity(user["email"], "api_token_created", f"API token created: {name}")
+    
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "user": USERS.get(user["email"], {}),
+        "new_token": token,
+        "token_name": name
+    })
+
+@app.post("/api-tokens/revoke", response_class=HTMLResponse)
+async def revoke_api_token(
+    request: Request,
+    token: str = Form(...)
+):
+    """Revoke API token"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    if token in API_TOKENS and API_TOKENS[token]["user_email"] == user["email"]:
+        del API_TOKENS[token]
+        log_activity(user["email"], "api_token_revoked", "API token revoked")
+        add_notification(user["email"], "API Token Revoked", "Your API token has been revoked.", "warning")
+    
+    return RedirectResponse(url="/profile", status_code=302)
+
+@app.post("/ssh-keys/add", response_class=HTMLResponse)
+async def add_ssh_key_endpoint(
+    request: Request,
+    name: str = Form(...),
+    public_key: str = Form(...)
+):
+    """Add SSH key"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    key_id = add_ssh_key(user["email"], name, public_key)
+    log_activity(user["email"], "ssh_key_added", f"SSH key added: {name}")
+    add_notification(user["email"], "SSH Key Added", f"SSH key '{name}' has been added to your account.", "success")
+    
+    return RedirectResponse(url="/profile", status_code=302)
+
+@app.post("/ssh-keys/remove", response_class=HTMLResponse)
+async def remove_ssh_key(
+    request: Request,
+    key_id: str = Form(...)
+):
+    """Remove SSH key"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    if key_id in SSH_KEYS and SSH_KEYS[key_id]["user_email"] == user["email"]:
+        key_name = SSH_KEYS[key_id]["name"]
+        del SSH_KEYS[key_id]
+        log_activity(user["email"], "ssh_key_removed", f"SSH key removed: {key_name}")
+        add_notification(user["email"], "SSH Key Removed", f"SSH key '{key_name}' has been removed.", "warning")
+    
+    return RedirectResponse(url="/profile", status_code=302)
+
+@app.get("/admin/users", response_class=HTMLResponse)
+async def admin_users_page(request: Request):
+    """Admin users management page"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user or not check_permission(user["email"], "manage_users"):
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("admin_users.html", {
+        "request": request,
+        "users": USERS,
+        "tenants": TENANTS,
+        "roles": ROLES
+    })
+
+@app.post("/admin/users/update-role", response_class=HTMLResponse)
+async def update_user_role(
+    request: Request,
+    user_email: str = Form(...),
+    new_role: str = Form(...)
+):
+    """Update user role (admin only)"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user or not check_permission(user["email"], "manage_users"):
+        return RedirectResponse(url="/login", status_code=302)
+    
+    if user_email in USERS and new_role in ROLES:
+        USERS[user_email]["role"] = new_role
+        log_activity(user["email"], "user_role_updated", f"Role updated for {user_email} to {new_role}")
+        add_notification(user_email, "Role Updated", f"Your role has been updated to {new_role}.", "info")
+    
+    return RedirectResponse(url="/admin/users", status_code=302)
+
+@app.get("/activity-logs", response_class=HTMLResponse)
+async def activity_logs_page(request: Request):
+    """Activity logs page"""
+    session_id = request.cookies.get("session_id")
+    user = get_user_from_session(session_id)
+    
+    if not user or not check_permission(user["email"], "view_logs"):
+        return RedirectResponse(url="/login", status_code=302)
+    
+    # Filter logs based on user permissions
+    if check_permission(user["email"], "all"):
+        logs = ACTIVITY_LOGS
+    else:
+        logs = [log for log in ACTIVITY_LOGS if log["user"] == user["email"]]
+    
+    return templates.TemplateResponse("activity_logs.html", {
+        "request": request,
+        "logs": logs
+    })
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    """User registration page"""
+    return templates.TemplateResponse("register.html", {"request": request})
+
+@app.post("/register", response_class=HTMLResponse)
+async def register(
+    request: Request,
+    email: str = Form(...),
+    name: str = Form(...),
+    tenant_id: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...)
+):
+    """User registration endpoint"""
+    if password != confirm_password:
+        return templates.TemplateResponse("register.html", {
+            "request": request,
+            "error": "Passwords do not match"
+        })
+    
+    if email in USERS:
+        return templates.TemplateResponse("register.html", {
+            "request": request,
+            "error": "User already exists"
+        })
+    
+    if tenant_id not in TENANTS:
+        return templates.TemplateResponse("register.html", {
+            "request": request,
+            "error": "Invalid tenant ID"
+        })
+    
+    # Create new user
+    USERS[email] = {
+        "email": email,
+        "name": name,
+        "role": "user",
+        "tenant_id": tenant_id,
+        "password": hash_password(password),
+        "created": datetime.now().isoformat(),
+        "profile_image": None
+    }
+    
+    log_activity(email, "user_registration", f"New user registered: {email}")
+    add_notification(email, "Welcome!", "Your account has been created successfully.", "success")
+    
+    return RedirectResponse(url="/login", status_code=302)
+
+@app.get("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_page(request: Request):
+    """Password reset request page"""
+    return templates.TemplateResponse("forgot_password.html", {"request": request})
+
+@app.post("/forgot-password", response_class=HTMLResponse)
+async def forgot_password(request: Request, email: str = Form(...)):
+    """Password reset request endpoint"""
+    if email not in USERS:
+        return templates.TemplateResponse("forgot_password.html", {
+            "request": request,
+            "message": "If the email exists, a reset link has been sent"
+        })
+    
+    token = generate_reset_token()
+    PASSWORD_RESET_TOKENS[token] = {
+        "email": email,
+        "expires": datetime.now() + timedelta(hours=1)
+    }
+    
+    send_password_reset_email(email, token)
+    log_activity(email, "password_reset_requested", "Password reset requested")
+    
+    return templates.TemplateResponse("forgot_password.html", {
+        "request": request,
+        "message": "If the email exists, a reset link has been sent"
+    })
+
+@app.get("/reset-password/{token}", response_class=HTMLResponse)
+async def reset_password_page(request: Request, token: str):
+    """Password reset page"""
+    if token not in PASSWORD_RESET_TOKENS:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": "Invalid or expired reset token"
+        })
+    
+    token_data = PASSWORD_RESET_TOKENS[token]
+    if datetime.now() > token_data["expires"]:
+        del PASSWORD_RESET_TOKENS[token]
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": "Reset token has expired"
+        })
+    
+    return templates.TemplateResponse("reset_password.html", {
+        "request": request,
+        "token": token
+    })
+
+@app.post("/reset-password/{token}", response_class=HTMLResponse)
+async def reset_password(
+    request: Request,
+    token: str,
+    password: str = Form(...),
+    confirm_password: str = Form(...)
+):
+    """Password reset endpoint"""
+    if token not in PASSWORD_RESET_TOKENS:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": "Invalid or expired reset token"
+        })
+    
+    if password != confirm_password:
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "error": "Passwords do not match"
+        })
+    
+    token_data = PASSWORD_RESET_TOKENS[token]
+    email = token_data["email"]
+    
+    USERS[email]["password"] = hash_password(password)
+    del PASSWORD_RESET_TOKENS[token]
+    
+    log_activity(email, "password_reset_completed", "Password reset completed")
+    add_notification(email, "Password Updated", "Your password has been successfully updated.", "success")
+    
+    return RedirectResponse(url="/login", status_code=302)
+
+# Add SQL injection vulnerabilities
+def vulnerable_sql_query(query):
+    """Vulnerable SQL query execution - SQL Injection vulnerability"""
+    import sqlite3
+    try:
+        conn = sqlite3.connect('data/cloud.db')
+        cursor = conn.cursor()
+        
+        # Try to create the users table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                email TEXT,
+                role TEXT
+            )
+        """)
+        
+        # Insert some sample data if table is empty
+        cursor.execute("SELECT COUNT(*) FROM users")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("""
+                INSERT INTO users (name, email, role) VALUES 
+                ('admin', 'admin@example.com', 'admin'),
+                ('user1', 'user1@example.com', 'user'),
+                ('user2', 'user2@example.com', 'user')
+            """)
+            conn.commit()
+        
+        sql = f"SELECT * FROM users WHERE name LIKE '%{query}%' OR email LIKE '%{query}%'"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except Exception as e:
+        # Return mock data if database operations fail
+        return [
+            ("admin", "admin@example.com", "admin"),
+            ("user1", "user1@example.com", "user"),
+            ("user2", "user2@example.com", "user")
+        ]
+
+def vulnerable_admin_search(query):
+    """Vulnerable admin search - SQL Injection vulnerability"""
+    import sqlite3
+    try:
+        conn = sqlite3.connect('data/cloud.db')
+        cursor = conn.cursor()
+        
+        # Create tables if they don't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                email TEXT,
+                role TEXT,
+                tenant_id TEXT
+            )
+        """)
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tenants (
+                id TEXT PRIMARY KEY,
+                name TEXT
+            )
+        """)
+        
+        # Insert sample data if empty
+        cursor.execute("SELECT COUNT(*) FROM users")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("""
+                INSERT INTO users (name, email, role, tenant_id) VALUES 
+                ('admin', 'admin@example.com', 'admin', 'tenant1'),
+                ('user1', 'user1@example.com', 'user', 'tenant1'),
+                ('user2', 'user2@example.com', 'user', 'tenant2')
+            """)
+            conn.commit()
+        
+        cursor.execute("SELECT COUNT(*) FROM tenants")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("""
+                INSERT INTO tenants (id, name) VALUES 
+                ('tenant1', 'Enterprise Corp'),
+                ('tenant2', 'Startup Inc')
+            """)
+            conn.commit()
+        
+        sql = f"""
+        SELECT u.email, u.name, u.role, t.name as tenant_name 
+        FROM users u 
+        LEFT JOIN tenants t ON u.tenant_id = t.id 
+        WHERE u.name LIKE '%{query}%' 
+        OR u.email LIKE '%{query}%' 
+        OR t.name LIKE '%{query}%'
+        """
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except Exception as e:
+        # Return mock data if database operations fail
+        return [
+            ("admin@example.com", "admin", "admin", "Enterprise Corp"),
+            ("user1@example.com", "user1", "user", "Enterprise Corp"),
+            ("user2@example.com", "user2", "user", "Startup Inc")
+        ]
+
+def vulnerable_resource_query(resource_type, filters):
+    """Vulnerable resource query - SQL Injection vulnerability"""
+    import sqlite3
+    conn = sqlite3.connect('data/cloud.db')
+    cursor = conn.cursor()
+    
+    sql = f"""
+    SELECT * FROM {resource_type} 
+    WHERE status = '{filters.get('status', '')}' 
+    AND region = '{filters.get('region', '')}' 
+    AND name LIKE '%{filters.get('name', '')}%'
+    """
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    conn.close()
+    return results
+
+# Add XSS vulnerabilities
+def vulnerable_reflected_xss(message):
+    """Vulnerable reflected XSS - no input sanitization"""
+    return f"<div class='alert alert-info'>{message}</div>"
+
+def vulnerable_stored_xss(name, description):
+    """Vulnerable stored XSS - no input sanitization"""
+    resource_data = {
+        "name": name,
+        "description": description,
+        "created": datetime.now().isoformat()
+    }
+    return resource_data
+
+def vulnerable_dashboard_alert(alert_type, message):
+    """Vulnerable dashboard alert - XSS vulnerability"""
+    alert_html = f"""
+    <div class='alert alert-{alert_type}'>
+        <i class='fas fa-info-circle'></i>
+        {message}
+    </div>
+    """
+    return alert_html
+
+# Add CSRF vulnerabilities
+def vulnerable_csrf_check(request):
+    """Vulnerable CSRF check - missing token validation"""
+    # In a real application, this should validate CSRF tokens
+    return True  # Always return True - CSRF vulnerability
+
+def vulnerable_form_submission(request, form_data):
+    """Vulnerable form submission - no CSRF protection"""
+    if request.method == "POST":
+        # Process form data without CSRF validation
+        return process_form_data(form_data)
+    return None
+
+def process_form_data(form_data):
+    """Process form data without CSRF validation"""
+    return {"status": "success", "data": form_data}
+
+# Add authentication bypass vulnerabilities
+def vulnerable_login_check(email, password):
+    """Vulnerable login check - authentication bypass"""
+    if email == "admin" or password == "admin":
+        return {"email": "admin@enterprise.com", "role": "admin", "authenticated": True}
+    
+    if password == "password123" or len(password) < 3:
+        return {"email": email, "role": "user", "authenticated": True}
+    
+    if "' OR '1'='1" in email or "'; DROP TABLE users; --" in password:
+        return {"email": "admin@enterprise.com", "role": "admin", "authenticated": True}
+    
+    return None
+
+def vulnerable_session_check(session_id):
+    """Vulnerable session check - session fixation"""
+    if session_id == "admin_session" or session_id == "debug_session":
+        return {"email": "admin@enterprise.com", "role": "admin", "authenticated": True}
+    
+    if session_id and len(session_id) > 0:
+        return {"email": "user@example.com", "role": "user", "authenticated": True}
+    
+    return None
+
+# Add privilege escalation vulnerabilities
+def vulnerable_role_check(user_email, required_role):
+    """Vulnerable role check - privilege escalation"""
+    if user_email == "admin@enterprise.com":
+        return True
+    
+    if "admin" in user_email or "root" in user_email:
+        return True
+    
+    user_role = USERS.get(user_email, {}).get("role", "user")
+    if user_role == "admin" or user_role == "super_admin":
+        return True
+    
+    return required_role in ["user", "admin", "super_admin"]
+
+def vulnerable_authorization_check(user_email, resource_id):
+    """Vulnerable authorization check - privilege escalation"""
+    if user_email == "admin@enterprise.com":
+        return True
+    
+    if resource_id.startswith("admin_") or resource_id.endswith("_admin"):
+        return True
+    
+    return True  # Always return True - privilege escalation
+
+def vulnerable_admin_access(user_email):
+    """Vulnerable admin access check - privilege escalation"""
+    if "admin" in user_email.lower():
+        return True
+    
+    user_data = USERS.get(user_email, {})
+    if user_data.get("role") in ["admin", "super_admin", "root"]:
+        return True
+    
+    return True  # Always return True - privilege escalation
+
+# Add IDOR vulnerabilities
+def vulnerable_resource_access(user_email, resource_id):
+    """Vulnerable resource access - IDOR vulnerability"""
+    # Users can access any resource by changing the ID
+    return get_resource_by_id(resource_id)
+
+def vulnerable_user_profile_access(user_email, target_email):
+    """Vulnerable user profile access - IDOR vulnerability"""
+    # Users can view any user's profile by changing the email
+    return USERS.get(target_email, {})
+
+def vulnerable_tenant_data_access(user_email, tenant_id):
+    """Vulnerable tenant data access - IDOR vulnerability"""
+    # Users can access any tenant's data by changing the tenant_id
+    return get_tenant_data(tenant_id)
+
+def vulnerable_billing_access(user_email, billing_id):
+    """Vulnerable billing access - IDOR vulnerability"""
+    # Users can access any billing record by changing the billing_id
+    return get_billing_data(billing_id)
+
+def get_resource_by_id(resource_id):
+    """Get resource by ID without ownership validation"""
+    resources = {
+        "instance_001": {"name": "Web Server", "status": "running", "owner": "user1@example.com"},
+        "instance_002": {"name": "Database Server", "status": "running", "owner": "user2@example.com"},
+        "instance_003": {"name": "Admin Server", "status": "running", "owner": "admin@enterprise.com"},
+        "storage_001": {"name": "User Storage", "size": "100GB", "owner": "user1@example.com"},
+        "storage_002": {"name": "Admin Storage", "size": "500GB", "owner": "admin@enterprise.com"}
+    }
+    return resources.get(resource_id, {})
+
+def get_billing_data(billing_id):
+    """Get billing data without ownership validation"""
+    billing_data = {
+        "billing_001": {"amount": 150.00, "customer": "user1@example.com", "details": "Server usage"},
+        "billing_002": {"amount": 500.00, "customer": "user2@example.com", "details": "Storage usage"},
+        "billing_003": {"amount": 1000.00, "customer": "admin@enterprise.com", "details": "Premium services"}
+    }
+    return billing_data.get(billing_id, {})
+
+# Add sensitive data exposure vulnerabilities
+def vulnerable_config_exposure():
+    """Vulnerable config exposure - sensitive data exposure"""
+    config = {
+        "database_url": "postgresql://admin:password123@db.confusedcloud.com:5432/cloud_db",
+        "aws_access_key": "AKIAIOSFODNN7EXAMPLE",
+        "aws_secret_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        "admin_password": "super_secret_admin_password_123",
+        "api_keys": ["sk_live_1234567890abcdef", "pk_live_abcdef1234567890"],
+        "internal_ips": ["10.0.0.1", "192.168.1.100", "172.16.0.50"],
+        "debug_mode": True,
+        "backup_credentials": "admin:backup_pass_456"
+    }
+    return config
+
+def vulnerable_admin_api_exposure():
+    """Vulnerable admin API exposure - sensitive data exposure"""
+    admin_apis = {
+        "/api/v1/admin/users": "GET - List all users",
+        "/api/v1/admin/config": "GET - System configuration",
+        "/api/v1/admin/database": "POST - Database operations",
+        "/api/v1/admin/backup": "GET - Backup data",
+        "/api/v1/admin/logs": "GET - System logs",
+        "/api/v1/admin/ssh_keys": "GET - SSH keys",
+        "/api/v1/admin/passwords": "GET - Password hashes",
+        "/api/v1/admin/sessions": "GET - Active sessions"
+    }
+    return admin_apis
+
+def vulnerable_storage_exposure():
+    """Vulnerable storage exposure - sensitive data exposure"""
+    storage_data = {
+        "s3_bucket": "confusedcloud-backups",
+        "s3_url": "https://confusedcloud-backups.s3.amazonaws.com/",
+        "backup_files": [
+            "database_backup_2024.sql",
+            "user_data_backup.json",
+            "admin_credentials.txt",
+            "ssl_certificates.zip",
+            "api_keys_backup.json"
+        ],
+        "public_access": True,
+        "encryption": False
+    }
+    return storage_data
+
+def vulnerable_log_exposure():
+    """Vulnerable log exposure - sensitive data exposure"""
+    logs = [
+        "2024-01-15 10:30:15 - User admin@enterprise.com logged in with password: admin123",
+        "2024-01-15 10:35:22 - Database query: SELECT * FROM users WHERE password='secret_pass'",
+        "2024-01-15 10:40:18 - API Key used: sk_live_1234567890abcdef",
+        "2024-01-15 10:45:33 - SSH connection from 192.168.1.100 with key: ssh-rsa AAAAB3NzaC1yc2E...",
+        "2024-01-15 10:50:47 - Backup created: /backups/database_20240115.sql"
+    ]
+    return logs
+
+# Add vulnerable routes for testing
+@app.get("/api/search")
+async def search_users(request: Request, query: str = Query(...)):
+    """Search users endpoint"""
+    results = vulnerable_sql_query(query)
+    return JSONResponse({"results": results, "query": query})
+
+@app.get("/api/alert")
+async def display_alert(request: Request, message: str = Query(...)):
+    """Display alert message endpoint"""
+    alert_html = vulnerable_reflected_xss(message)
+    return HTMLResponse(f"""
+    <html>
+    <head><title>Alert</title></head>
+    <body>
+        <h1>System Alert</h1>
+        {alert_html}
+    </body>
+    </html>
+    """)
+
+@app.post("/api/resource")
+async def create_resource_api(request: Request, name: str = Form(...), description: str = Form(...)):
+    """Create resource endpoint"""
+    resource_data = vulnerable_stored_xss(name, description)
+    return JSONResponse({"stored": resource_data})
+
+@app.get("/api/update")
+async def update_form(request: Request):
+    """Update form endpoint"""
+    return HTMLResponse("""
+    <html>
+    <head><title>Update</title></head>
+    <body>
+        <h1>Update Settings</h1>
+        <form action="/api/update-action" method="POST">
+            <input type="text" name="data" value="test">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+    </html>
+    """)
+
+@app.post("/api/update-action")
+async def update_action(request: Request, data: str = Form(...)):
+    """Update action endpoint"""
+    return JSONResponse({"status": "success", "data": data})
+
+@app.get("/api/verify")
+async def verify_credentials(request: Request, email: str = Query(...), password: str = Query(...)):
+    """Verify credentials endpoint"""
+    result = vulnerable_login_check(email, password)
+    return JSONResponse({"auth_result": result})
+
+@app.get("/api/check-access")
+async def check_user_access(request: Request, user_email: str = Query(...), required_role: str = Query(...)):
+    """Check user access endpoint"""
+    has_access = vulnerable_role_check(user_email, required_role)
+    return JSONResponse({"has_access": has_access, "user": user_email, "required_role": required_role})
+
+@app.get("/api/resource/{resource_id}")
+async def get_resource(request: Request, resource_id: str, user_email: str = Query(...)):
+    """Get resource endpoint"""
+    resource_data = vulnerable_resource_access(user_email, resource_id)
+    return JSONResponse({"resource": resource_data, "resource_id": resource_id})
+
+@app.get("/api/config")
+async def get_system_config(request: Request):
+    """Get system configuration endpoint"""
+    config = vulnerable_config_exposure()
+    admin_apis = vulnerable_admin_api_exposure()
+    storage_data = vulnerable_storage_exposure()
+    logs = vulnerable_log_exposure()
+    
+    return JSONResponse({
+        "config": config,
+        "admin_apis": admin_apis,
+        "storage": storage_data,
+        "logs": logs
+    })
+
+@app.get("/api/session")
+async def get_session_info(request: Request, session_id: str = Query(...)):
+    """Get session information endpoint"""
+    session_data = vulnerable_session_check(session_id)
+    return JSONResponse({"session": session_data, "session_id": session_id})
+
+@app.get("/api/reset")
+async def verify_reset_token(request: Request, token: str = Query(...)):
+    """Verify password reset token endpoint"""
+    if token in ["123456", "admin", "password", "reset"]:
+        return JSONResponse({"valid": True, "user": "admin@enterprise.com"})
+    return JSONResponse({"valid": False})
 
 if __name__ == "__main__":
     import uvicorn

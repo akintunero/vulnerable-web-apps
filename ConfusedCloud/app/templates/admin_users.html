@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - ConfusedCloud</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+        }
+        .role-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-suspended {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+        .search-box {
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+            padding-left: 40px;
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-cloud me-2"></i>ConfusedCloud
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+                <a class="nav-link active" href="/admin/users">
+                    <i class="fas fa-users me-1"></i>Users
+                </a>
+                <a class="nav-link" href="/activity-logs">
+                    <i class="fas fa-list-alt me-1"></i>Activity Logs
+                </a>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-users me-2 text-primary"></i>User Management
+                                </h4>
+                                <p class="text-muted mb-0">Manage user accounts and permissions</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="position-relative">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control search-box" id="userSearch" 
+                                           placeholder="Search users by name or email...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Organization</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for email, user in users.items() %}
+                                    <tr class="user-row" data-email="{{ email }}" data-name="{{ user.name }}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if user.profile_image %}
+                                                <img src="{{ user.profile_image }}" class="rounded-circle me-2" 
+                                                     width="40" height="40" alt="Profile">
+                                                {% else %}
+                                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                                     style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-user text-white"></i>
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ user.name }}</div>
+                                                    <small class="text-muted">{{ user.role|title }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ email }}</td>
+                                        <td>
+                                            {% if user.tenant_id in tenants %}
+                                            <span class="badge bg-light text-dark">
+                                                {{ tenants[user.tenant_id].name }}
+                                            </span>
+                                            {% else %}
+                                            <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge role-badge 
+                                                {% if user.role == 'admin' %}bg-danger
+                                                {% elif user.role == 'support' %}bg-warning
+                                                {% elif user.role == 'billing' %}bg-info
+                                                {% else %}bg-secondary{% endif %}">
+                                                {{ user.role|title }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge status-active">
+                                                <i class="fas fa-check-circle me-1"></i>Active
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ user.created.split('T')[0] if user.created else 'N/A' }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                        onclick="editUser('{{ email }}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                                        onclick="viewUserDetails('{{ email }}')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                        onclick="resetUserPassword('{{ email }}')">
+                                                    <i class="fas fa-key"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Edit User
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editUserForm" method="POST" action="/admin/users/update-role">
+                    <div class="modal-body">
+                        <input type="hidden" id="editUserEmail" name="user_email">
+                        <div class="mb-3">
+                            <label for="editUserName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editUserName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editUserEmailDisplay" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editUserEmailDisplay" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editUserRole" class="form-label">Role</label>
+                            <select class="form-select" id="editUserRole" name="new_role" required>
+                                {% for role, details in roles.items() %}
+                                <option value="{{ role }}">{{ role|title }} - {{ details.description }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Permissions</label>
+                            <div id="rolePermissions" class="small text-muted">
+                                <!-- Permissions will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user me-2"></i>User Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="userDetailsContent">
+                    <!-- User details will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('userSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.user-row');
+            
+            rows.forEach(row => {
+                const email = row.getAttribute('data-email').toLowerCase();
+                const name = row.getAttribute('data-name').toLowerCase();
+                
+                if (email.includes(searchTerm) || name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Edit user function
+        function editUser(email) {
+            const user = {{ users|tojson }};
+            const userData = user[email];
+            
+            document.getElementById('editUserEmail').value = email;
+            document.getElementById('editUserName').value = userData.name;
+            document.getElementById('editUserEmailDisplay').value = email;
+            document.getElementById('editUserRole').value = userData.role;
+            
+            // Update permissions display
+            const roles = {{ roles|tojson }};
+            const roleData = roles[userData.role];
+            const permissionsDiv = document.getElementById('rolePermissions');
+            permissionsDiv.innerHTML = `
+                <strong>Current permissions:</strong><br>
+                ${roleData.permissions.map(p => `<span class="badge bg-light text-dark me-1">${p}</span>`).join('')}
+            `;
+            
+            // Show modal
+            new bootstrap.Modal(document.getElementById('editUserModal')).show();
+        }
+
+        // View user details function
+        function viewUserDetails(email) {
+            const user = {{ users|tojson }};
+            const userData = user[email];
+            
+            const content = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Basic Information</h6>
+                        <p><strong>Name:</strong> ${userData.name}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Role:</strong> ${userData.role}</p>
+                        <p><strong>Created:</strong> ${userData.created || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Account Status</h6>
+                        <p><span class="badge bg-success">Active</span></p>
+                        <p><strong>Last Login:</strong> Recently</p>
+                        <p><strong>Login Count:</strong> 15</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Recent Activity</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-sign-in-alt text-success me-2"></i>Login - 2 hours ago</li>
+                            <li><i class="fas fa-edit text-primary me-2"></i>Updated profile - 1 day ago</li>
+                            <li><i class="fas fa-server text-info me-2"></i>Created instance - 3 days ago</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('userDetailsContent').innerHTML = content;
+            new bootstrap.Modal(document.getElementById('userDetailsModal')).show();
+        }
+
+        // Reset user password function
+        function resetUserPassword(email) {
+            if (confirm(`Are you sure you want to reset the password for ${email}?`)) {
+                // In a real application, this would trigger a password reset email
+                alert('Password reset email has been sent to the user.');
+            }
+        }
+
+        // Role change handler
+        document.getElementById('editUserRole').addEventListener('change', function() {
+            const roles = {{ roles|tojson }};
+            const roleData = roles[this.value];
+            const permissionsDiv = document.getElementById('rolePermissions');
+            permissionsDiv.innerHTML = `
+                <strong>Permissions for ${this.value}:</strong><br>
+                ${roleData.permissions.map(p => `<span class="badge bg-light text-dark me-1">${p}</span>`).join('')}
+            `;
+        });
+    </script>
+</body>
+</html> 

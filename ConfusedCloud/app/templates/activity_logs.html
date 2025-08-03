@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - ConfusedCloud</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .log-entry {
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+        .log-entry:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .log-entry.login { border-left-color: #28a745; }
+        .log-entry.logout { border-left-color: #dc3545; }
+        .log-entry.create { border-left-color: #17a2b8; }
+        .log-entry.update { border-left-color: #ffc107; }
+        .log-entry.delete { border-left-color: #dc3545; }
+        .log-entry.error { border-left-color: #dc3545; }
+        .log-entry.warning { border-left-color: #ffc107; }
+        .log-entry.info { border-left-color: #17a2b8; }
+        .timestamp {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .user-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .action-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .filter-box {
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+            padding-left: 40px;
+        }
+        .filter-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-cloud me-2"></i>ConfusedCloud
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+                <a class="nav-link" href="/admin/users">
+                    <i class="fas fa-users me-1"></i>Users
+                </a>
+                <a class="nav-link active" href="/activity-logs">
+                    <i class="fas fa-list-alt me-1"></i>Activity Logs
+                </a>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4 class="mb-1">{{ logs|length }}</h4>
+                        <p class="mb-0">Total Activities</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user fa-2x mb-2"></i>
+                        <h4 class="mb-1">{{ logs|selectattr('action', 'equalto', 'user_registration')|list|length }}</h4>
+                        <p class="mb-0">New Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-server fa-2x mb-2"></i>
+                        <h4 class="mb-1">{{ logs|selectattr('action', 'search', 'create')|list|length }}</h4>
+                        <p class="mb-0">Resources Created</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <h4 class="mb-1">{{ logs|selectattr('action', 'search', 'error')|list|length }}</h4>
+                        <p class="mb-0">Errors</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-list-alt me-2 text-primary"></i>Activity Logs
+                                </h4>
+                                <p class="text-muted mb-0">Monitor system activities and user actions</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="position-relative">
+                                            <i class="fas fa-search filter-icon"></i>
+                                            <input type="text" class="form-control filter-box" id="logSearch" 
+                                                   placeholder="Search logs...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-select" id="actionFilter">
+                                            <option value="">All Actions</option>
+                                            <option value="login">Login</option>
+                                            <option value="logout">Logout</option>
+                                            <option value="create">Create</option>
+                                            <option value="update">Update</option>
+                                            <option value="delete">Delete</option>
+                                            <option value="error">Error</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="logsContainer">
+                            {% for log in logs %}
+                            <div class="log-entry p-3 {{ log.action.split('_')[0] if '_' in log.action else log.action }}" 
+                                 data-action="{{ log.action }}" data-user="{{ log.user }}" data-details="{{ log.details }}">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                {% if 'login' in log.action %}
+                                                    <i class="fas fa-sign-in-alt text-success"></i>
+                                                {% elif 'logout' in log.action %}
+                                                    <i class="fas fa-sign-out-alt text-danger"></i>
+                                                {% elif 'create' in log.action %}
+                                                    <i class="fas fa-plus-circle text-primary"></i>
+                                                {% elif 'update' in log.action %}
+                                                    <i class="fas fa-edit text-warning"></i>
+                                                {% elif 'delete' in log.action %}
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                {% elif 'error' in log.action %}
+                                                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                                                {% else %}
+                                                    <i class="fas fa-info-circle text-info"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <span class="action-badge badge 
+                                                    {% if 'login' in log.action %}bg-success
+                                                    {% elif 'logout' in log.action %}bg-danger
+                                                    {% elif 'create' in log.action %}bg-primary
+                                                    {% elif 'update' in log.action %}bg-warning
+                                                    {% elif 'delete' in log.action %}bg-danger
+                                                    {% elif 'error' in log.action %}bg-danger
+                                                    {% else %}bg-secondary{% endif %}">
+                                                    {{ log.action.replace('_', ' ').title() }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span class="user-badge">{{ log.user }}</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fw-bold">{{ log.details }}</div>
+                                        <div class="timestamp">{{ log.timestamp }}</div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <small class="text-muted">{{ log.ip }}</small>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button class="btn btn-sm btn-outline-info" 
+                                                onclick="viewLogDetails('{{ log|tojson }}')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if not logs %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-list-alt fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No activity logs found</h5>
+                            <p class="text-muted">Activity logs will appear here as users interact with the system.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Details Modal -->
+    <div class="modal fade" id="logDetailsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>Log Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="logDetailsContent">
+                    <!-- Log details will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('logSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const entries = document.querySelectorAll('.log-entry');
+            
+            entries.forEach(entry => {
+                const text = entry.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    entry.style.display = '';
+                } else {
+                    entry.style.display = 'none';
+                }
+            });
+        });
+
+        // Action filter functionality
+        document.getElementById('actionFilter').addEventListener('change', function() {
+            const selectedAction = this.value.toLowerCase();
+            const entries = document.querySelectorAll('.log-entry');
+            
+            entries.forEach(entry => {
+                const action = entry.getAttribute('data-action').toLowerCase();
+                if (!selectedAction || action.includes(selectedAction)) {
+                    entry.style.display = '';
+                } else {
+                    entry.style.display = 'none';
+                }
+            });
+        });
+
+        // View log details function
+        function viewLogDetails(logData) {
+            const log = JSON.parse(logData);
+            
+            const content = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Basic Information</h6>
+                        <p><strong>Action:</strong> ${log.action}</p>
+                        <p><strong>User:</strong> ${log.user}</p>
+                        <p><strong>Timestamp:</strong> ${log.timestamp}</p>
+                        <p><strong>IP Address:</strong> ${log.ip}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Details</h6>
+                        <p><strong>Description:</strong> ${log.details}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge bg-success">Success</span>
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Additional Information</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-clock me-2"></i>Processed in 0.05 seconds</li>
+                            <li><i class="fas fa-shield-alt me-2"></i>Security level: Standard</li>
+                            <li><i class="fas fa-database me-2"></i>Stored in audit log</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('logDetailsContent').innerHTML = content;
+            new bootstrap.Modal(document.getElementById('logDetailsModal')).show();
+        }
+
+        // Auto-refresh logs every 30 seconds
+        setInterval(function() {
+            // In a real application, this would fetch new logs from the server
+            console.log('Refreshing activity logs...');
+        }, 30000);
+
+        // Export logs functionality
+        function exportLogs() {
+            const logs = {{ logs|tojson }};
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Timestamp,User,Action,Details,IP\n"
+                + logs.map(log => 
+                    `${log.timestamp},${log.user},${log.action},${log.details},${log.ip}`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "activity_logs.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html> 
