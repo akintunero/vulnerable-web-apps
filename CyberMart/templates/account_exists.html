@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Account Already Exists - CyberMart{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="text-center mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Account Already Exists
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-times fa-3x text-warning mb-3"></i>
+                    <h4>Oops! This account already exists</h4>
+                    <p class="text-muted">
+                        {% if conflict_type == 'email' %}
+                            An account with the email <strong>{{ email }}</strong> is already registered.
+                        {% elif conflict_type == 'username' %}
+                            The username <strong>{{ username }}</strong> is already taken.
+                        {% else %}
+                            This account information conflicts with an existing account.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>What can you do?</h6>
+                    <ul class="mb-0">
+                        <li>Try logging in with your existing account</li>
+                        <li>Use a different email address or username</li>
+                        <li>Use the "Forgot Password" feature if you can't remember your login</li>
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login Instead
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-user-plus me-2"></i>Try Different Info
+                        </a>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="text-center">
+                    <h6>Quick Actions</h6>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="fillRandomData()">
+                            <i class="fas fa-random me-1"></i>Random Data
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="clearForm()">
+                            <i class="fas fa-eraser me-1"></i>Clear Form
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-home me-1"></i>Go Home
+                        </a>
+                    </div>
+                </div>
+
+                {% if existing_user %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6><i class="fas fa-user me-2"></i>Account Details</h6>
+                    <small class="text-muted">
+                        <strong>Username:</strong> {{ existing_user.username }}<br>
+                        <strong>Email:</strong> {{ existing_user.email }}<br>
+                        <strong>Account Type:</strong> {% if existing_user.is_admin %}Admin{% else %}Regular User{% endif %}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillRandomData() {
+        // Generate random data for testing
+        const randomId = Math.floor(Math.random() * 10000);
+        const randomUsername = 'user' + randomId;
+        const randomEmail = 'user' + randomId + '@example.com';
+        
+        // Store in sessionStorage for the registration form
+        sessionStorage.setItem('suggestedUsername', randomUsername);
+        sessionStorage.setItem('suggestedEmail', randomEmail);
+        
+        // Redirect to registration with suggested data
+        window.location.href = "{{ url_for('register') }}?suggest=1";
+    }
+    
+    function clearForm() {
+        // Clear any stored form data
+        sessionStorage.removeItem('suggestedUsername');
+        sessionStorage.removeItem('suggestedEmail');
+        window.location.href = "{{ url_for('register') }}";
+    }
+    
+    // Auto-fill form if coming from suggestion
+    if (window.location.search.includes('suggest=1')) {
+        const username = sessionStorage.getItem('suggestedUsername');
+        const email = sessionStorage.getItem('suggestedEmail');
+        
+        if (username && email) {
+            // This will be handled by the registration form
+            console.log('Suggested data available:', { username, email });
+        }
+    }
+</script>
+{% endblock %} 

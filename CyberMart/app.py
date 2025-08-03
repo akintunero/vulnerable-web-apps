@@ -269,13 +269,17 @@ def register():
         # Check if user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            flash('Email already registered. Please use a different email or login.')
-            return render_template('register.html')
+            return render_template('account_exists.html', 
+                                conflict_type='email', 
+                                email=email, 
+                                existing_user=existing_user)
         
         existing_username = User.query.filter_by(username=username).first()
         if existing_username:
-            flash('Username already taken. Please choose a different username.')
-            return render_template('register.html')
+            return render_template('account_exists.html', 
+                                conflict_type='username', 
+                                username=username, 
+                                existing_user=existing_username)
         
         try:
             hashed_password = generate_password_hash(password)
@@ -289,12 +293,22 @@ def register():
         except IntegrityError as e:
             db.session.rollback()
             if 'user.email' in str(e):
-                flash('Email already registered. Please use a different email or login.')
+                # Find the existing user with this email
+                existing_user = User.query.filter_by(email=email).first()
+                return render_template('account_exists.html', 
+                                    conflict_type='email', 
+                                    email=email, 
+                                    existing_user=existing_user)
             elif 'user.username' in str(e):
-                flash('Username already taken. Please choose a different username.')
+                # Find the existing user with this username
+                existing_user = User.query.filter_by(username=username).first()
+                return render_template('account_exists.html', 
+                                    conflict_type='username', 
+                                    username=username, 
+                                    existing_user=existing_user)
             else:
                 flash('Registration failed due to database constraint. Please try again.')
-            return render_template('register.html')
+                return render_template('register.html')
         except Exception as e:
             db.session.rollback()
             flash('Registration failed. Please try again.')

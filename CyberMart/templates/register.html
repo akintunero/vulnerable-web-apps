@@ -135,6 +135,37 @@
         document.getElementById('terms').checked = true;
     }
     
+    // Check for suggested data from account_exists page
+    function checkForSuggestedData() {
+        const suggestedUsername = sessionStorage.getItem('suggestedUsername');
+        const suggestedEmail = sessionStorage.getItem('suggestedEmail');
+        
+        if (suggestedUsername && suggestedEmail) {
+            document.getElementById('username').value = suggestedUsername;
+            document.getElementById('email').value = suggestedEmail;
+            document.getElementById('password').value = 'password123';
+            document.getElementById('confirm_password').value = 'password123';
+            document.getElementById('terms').checked = true;
+            
+            // Clear the suggested data after using it
+            sessionStorage.removeItem('suggestedUsername');
+            sessionStorage.removeItem('suggestedEmail');
+            
+            // Show a message that data was auto-filled
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-info alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="fas fa-info-circle me-2"></i>
+                Suggested data has been auto-filled to avoid conflicts.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.card-body').insertBefore(alertDiv, document.querySelector('form'));
+        }
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', checkForSuggestedData);
+    
     // Add demo data button
     const demoButton = document.createElement('button');
     demoButton.type = 'button';
