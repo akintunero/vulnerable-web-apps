@@ -563,7 +563,7 @@ def log4shell_endpoint():
         result = log4shell_sim.log_user_input(user_input)
         return jsonify({'result': result})
     
-    return render_template('log4shell.html')
+    return render_template('log_test.html')
 
 # CVE-2022-22965: Spring4Shell endpoint
 @app.route('/spring4shell', methods=['GET', 'POST'])
@@ -574,7 +574,7 @@ def spring4shell_endpoint():
         result = spring4shell_sim.process_request(data)
         return jsonify({'result': result})
     
-    return render_template('spring4shell.html')
+    return render_template('spring_test.html')
 
 # CVE-2021-45046: Deserialization vulnerability
 @app.route('/deserialize', methods=['GET', 'POST'])
@@ -590,7 +590,7 @@ def deserialize_endpoint():
         except Exception as e:
             return jsonify({'error': str(e)})
     
-    return render_template('deserialize.html')
+    return render_template('deserialize_test.html')
 
 # CVE-2021-45046: XXE vulnerability
 @app.route('/xxe', methods=['GET', 'POST'])
@@ -609,7 +609,7 @@ def xxe_endpoint():
         except Exception as e:
             return jsonify({'error': str(e)})
     
-    return render_template('xxe.html')
+    return render_template('xxe_test.html')
 
 # CVE-2021-45046: Command injection
 @app.route('/command_injection', methods=['GET', 'POST'])
@@ -625,7 +625,7 @@ def command_injection_endpoint():
             except Exception as e:
                 return jsonify({'error': str(e)})
     
-    return render_template('command_injection.html')
+    return render_template('cmd_test.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
@@ -683,7 +683,7 @@ def ssrf_endpoint():
             except Exception as e:
                 return jsonify({'error': str(e)})
     
-    return render_template('ssrf.html')
+    return render_template('ssrf_test.html')
 
 # CVE-2021-45046: NoSQL injection
 @app.route('/nosql_injection', methods=['GET', 'POST'])
@@ -698,7 +698,7 @@ def nosql_injection_endpoint():
             else:
                 return jsonify({'result': 'Query processed', 'query': query})
     
-    return render_template('nosql_injection.html')
+    return render_template('nosql_test.html')
 
 # Add guest user support
 class GuestUser:
