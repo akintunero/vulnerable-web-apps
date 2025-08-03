@@ -125,8 +125,10 @@
     
     // VULNERABLE: Auto-fill demo data
     function fillDemoData() {
-        document.getElementById('username').value = 'testuser';
-        document.getElementById('email').value = 'test@rustybranch.io';
+        // Generate random username and email to avoid conflicts
+        const randomId = Math.floor(Math.random() * 10000);
+        document.getElementById('username').value = 'testuser' + randomId;
+        document.getElementById('email').value = 'test' + randomId + '@rustybranch.io';
         document.getElementById('password').value = 'password123';
         document.getElementById('confirm_password').value = 'password123';
         document.getElementById('terms').checked = true;

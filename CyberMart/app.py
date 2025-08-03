@@ -265,14 +265,30 @@ def register():
         password = request.form['password']
         payment_info = request.form['payment_info']
         
-        hashed_password = generate_password_hash(password)
+        # Check if user already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Email already registered. Please use a different email or login.')
+            return render_template('register.html')
         
-        new_user = User(username=username, email=email, password=hashed_password, payment_info=payment_info)
-        db.session.add(new_user)
-        db.session.commit()
+        existing_username = User.query.filter_by(username=username).first()
+        if existing_username:
+            flash('Username already taken. Please choose a different username.')
+            return render_template('register.html')
         
-        flash('Registration successful!')
-        return redirect(url_for('login'))
+        try:
+            hashed_password = generate_password_hash(password)
+            
+            new_user = User(username=username, email=email, password=hashed_password, payment_info=payment_info)
+            db.session.add(new_user)
+            db.session.commit()
+            
+            flash('Registration successful!')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Registration failed. Please try again.')
+            return render_template('register.html')
     
     return render_template('register.html')
 
