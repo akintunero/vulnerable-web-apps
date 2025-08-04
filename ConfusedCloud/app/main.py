@@ -68,6 +68,7 @@ def reset_data_to_default():
     # Initialize secure data persistence layer
     import os
     import json
+    import shutil
     
     # Secure data storage paths with encryption
     DATA_DIR = "data"
@@ -78,6 +79,11 @@ def reset_data_to_default():
     KUBERNETES_FILE = os.path.join(DATA_DIR, "kubernetes.json")
     NETWORKS_FILE = os.path.join(DATA_DIR, "networks.json")
     SECURITY_GROUPS_FILE = os.path.join(DATA_DIR, "security_groups.json")
+    
+    # Clear all existing data for fresh start
+    print("🧹 Clearing all ConfusedCloud data for fresh start...")
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
     
     # Create secure data directory with proper permissions
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -374,6 +380,7 @@ def reset_data_to_default():
             json.dump(default_security_groups, f, indent=2)
         
         print("✅ ConfusedCloud data reset to default state")
+        print("🔄 All data cleared and fresh state initialized!")
         
     except Exception as e:
         print(f"❌ Error resetting data: {e}")
@@ -628,7 +635,7 @@ async def command_endpoint(request: Request, tenant_id: str, command: str = Form
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-        result = vulnerable_command_execution(command)
+        result = command_execution(command)
         return {
             "status": "success",
             "command": command,
@@ -654,7 +661,7 @@ async def upload_endpoint(request: Request, tenant_id: str, filename: str = Form
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-        upload_path = vulnerable_file_upload(filename, content)
+        upload_path = file_upload(filename, content)
         return {
             "status": "success",
             "filename": filename,
@@ -679,7 +686,7 @@ async def deserialize_endpoint(request: Request, tenant_id: str, data: str = For
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-        result = vulnerable_deserialization(data)
+        result = deserialize_data(data)
         return {
             "status": "success",
             "deserialized": str(result),
@@ -702,7 +709,7 @@ async def ssl_endpoint(request: Request, tenant_id: str):
     if not user:
         return RedirectResponse(url="/login", status_code=302)
     
-    result = vulnerable_ssl_handshake()
+            result = ssl_handshake()
     return {
         "status": "vulnerable",
         "ssl_info": result,
@@ -720,7 +727,7 @@ async def yaml_endpoint(request: Request, tenant_id: str, yaml_data: str = Form(
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-        result = vulnerable_yaml_parsing(yaml_data)
+        result = yaml_parsing(yaml_data)
         return {
             "status": "success",
             "parsed": result,
@@ -2875,7 +2882,7 @@ async def search_users(request: Request, query: str = Query(...)):
 @app.get("/api/alert")
 async def display_alert(request: Request, message: str = Query(...)):
     """Display alert message endpoint"""
-    alert_html = vulnerable_reflected_xss(message)
+    alert_html = reflected_xss(message)
     return HTMLResponse(f"""
     <html>
     <head><title>Alert</title></head>
@@ -2889,7 +2896,7 @@ async def display_alert(request: Request, message: str = Query(...)):
 @app.post("/api/resource")
 async def create_resource_api(request: Request, name: str = Form(...), description: str = Form(...)):
     """Create resource endpoint"""
-    resource_data = vulnerable_stored_xss(name, description)
+    resource_data = stored_xss(name, description)
     return JSONResponse({"stored": resource_data})
 
 @app.get("/api/update")
@@ -2916,28 +2923,28 @@ async def update_action(request: Request, data: str = Form(...)):
 @app.get("/api/verify")
 async def verify_credentials(request: Request, email: str = Query(...), password: str = Query(...)):
     """Verify credentials endpoint"""
-    result = vulnerable_login_check(email, password)
+    result = login_check(email, password)
     return JSONResponse({"auth_result": result})
 
 @app.get("/api/check-access")
 async def check_user_access(request: Request, user_email: str = Query(...), required_role: str = Query(...)):
     """Check user access endpoint"""
-    has_access = vulnerable_role_check(user_email, required_role)
+    has_access = role_check(user_email, required_role)
     return JSONResponse({"has_access": has_access, "user": user_email, "required_role": required_role})
 
 @app.get("/api/resource/{resource_id}")
 async def get_resource(request: Request, resource_id: str, user_email: str = Query(...)):
     """Get resource endpoint"""
-    resource_data = vulnerable_resource_access(user_email, resource_id)
+    resource_data = resource_access(user_email, resource_id)
     return JSONResponse({"resource": resource_data, "resource_id": resource_id})
 
 @app.get("/api/config")
 async def get_system_config(request: Request):
     """Get system configuration endpoint"""
-    config = vulnerable_config_exposure()
-    admin_apis = vulnerable_admin_api_exposure()
-    storage_data = vulnerable_storage_exposure()
-    logs = vulnerable_log_exposure()
+    config = config_exposure()
+    admin_apis = admin_api_exposure()
+    storage_data = storage_exposure()
+    logs = log_exposure()
     
     return JSONResponse({
         "config": config,
@@ -2949,7 +2956,7 @@ async def get_system_config(request: Request):
 @app.get("/api/session")
 async def get_session_info(request: Request, session_id: str = Query(...)):
     """Get session information endpoint"""
-    session_data = vulnerable_session_check(session_id)
+    session_data = session_check(session_id)
     return JSONResponse({"session": session_data, "session_id": session_id})
 
 @app.get("/api/reset")

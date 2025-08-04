@@ -1463,26 +1463,29 @@ def clear_all_carts():
 # Initialize database and add sample data
 def init_db():
     with app.app_context():
+        # Drop all tables and recreate them for fresh start
+        db.drop_all()
         db.create_all()
         
-        # Clear all carts on startup
+        print("Clearing all data on startup...")
+        
+        # Clear all carts
         clear_all_carts()
         
         # Create admin user
-        admin = User.query.filter_by(username='admin').first()
-        if not admin:
-            admin = User(
-                username='admin',
-                email='admin@enterprise.comm',
-                password=generate_password_hash('K8x#mP2qR9vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()'),
-                is_admin=True
-            )
-            db.session.add(admin)
+        admin = User(
+            username='admin',
+            email='admin@enterprise.com',
+            password=generate_password_hash('K8x#mP2qR9vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()'),
+            is_admin=True
+        )
+        db.session.add(admin)
         
         # Initialize realistic products
         init_realistic_products()
         
         db.session.commit()
+        print("All data cleared and fresh data initialized!")
 
 @app.route('/api/v1/internal/health')
 def hidden_health_check():
