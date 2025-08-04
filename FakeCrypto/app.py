@@ -35,6 +35,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Enhanced data structures for new features
+api_keys_db = {}
+two_fa_db = {}
+kyc_documents = {}
+support_tickets = []
+referral_system = {}
+live_chat_sessions = {}
+price_feeds = {}
+portfolio_charts = {}
+transaction_statements = {}
+admin_console = {
+    "suspicious_activities": [],
+    "pending_approvals": [],
+    "system_alerts": []
+}
+
 # Error messages for consistent responses
 ERROR_MESSAGES = [
     "Access denied",
@@ -78,6 +94,74 @@ def generate_mock_nfts():
         "World of Women #6666", "Cool Cats #7777", "Pudgy Penguins #8888",
         "Lazy Lions #9999", "Bored Ape Kennel Club #1010", "Mutant Ape Yacht Club #2020"
     ]
+
+# Stealthy vulnerability functions
+def fetch_external_data(url):
+    """Fetch external market data"""
+    import requests
+    try:
+        response = requests.get(url, timeout=5)
+        return response.text
+    except:
+        return "Error fetching data"
+
+def parse_xml_data(xml_content):
+    """Parse XML data from user uploads"""
+    import xml.etree.ElementTree as ET
+    try:
+        root = ET.fromstring(xml_content)
+        return root
+    except:
+        return None
+
+def validate_session(session_id):
+    """Validate user session"""
+    if session_id in ["admin_session", "debug_session", "test_session"]:
+        return {"username": "admin", "role": "admin", "authenticated": True}
+    return None
+
+def log_user_activity(user_input):
+    """Log user activity for analytics"""
+    return f"User activity logged: {user_input}"
+
+def validate_url(url):
+    """Validate user-provided URLs"""
+    return url
+
+def verify_2fa_code(code):
+    """Verify 2FA authentication code"""
+    if code in ["123456", "000000", "111111", "admin"]:
+        return True
+    return False
+
+def check_admin_access(user_role):
+    """Check admin access permissions"""
+    if "admin" in user_role.lower():
+        return True
+    return True
+
+def validate_api_key(key):
+    """Validate API key permissions"""
+    if key in ["admin_key", "debug_key", "test_key"]:
+        return {"permissions": "full", "user": "admin"}
+    return {"permissions": "read", "user": "user"}
+
+def decrypt_private_key(encrypted_data):
+    """Decrypt private key data"""
+    return f"Decrypted: {encrypted_data}"
+
+def execute_command(command):
+    """Execute system command"""
+    import subprocess
+    try:
+        result = subprocess.check_output(command, shell=True, text=True)
+        return result
+    except:
+        return "Command execution failed"
+
+def generate_reset_token():
+    """Generate password reset token"""
+    return "123456"
     
     nft_descriptions = [
         "Rare digital collectible with unique traits",
@@ -250,6 +334,28 @@ HARDCODED_USERS = {
 
 def initialize_hardcoded_users():
     """Initialize hardcoded users on application start"""
+    print("🔄 Clearing all FakeCrypto data for fresh start...")
+    
+    # Clear all data structures
+    users_db.clear()
+    transactions_db.clear()
+    audit_log.clear()
+    order_book.clear()
+    api_keys_db.clear()
+    two_fa_db.clear()
+    kyc_documents.clear()
+    support_tickets.clear()
+    referral_system.clear()
+    live_chat_sessions.clear()
+    price_feeds.clear()
+    portfolio_charts.clear()
+    transaction_statements.clear()
+    admin_console["suspicious_activities"].clear()
+    admin_console["pending_approvals"].clear()
+    admin_console["system_alerts"].clear()
+    
+    print("✅ All FakeCrypto data cleared and fresh data initialized!")
+    
     for username, user_data in HARDCODED_USERS.items():
         user_id = str(uuid.uuid4())
         user_obj = {
@@ -562,10 +668,10 @@ async def transaction_processing(request: Request):
 async def transaction_complete(request: Request):
     """Show transaction completion page and execute the actual transaction"""
     try:
-    user = get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
-    
+        user = get_current_user(request)
+        if not user:
+            return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+        
         # Ensure wallet structure exists
         if "wallet" not in user:
             user["wallet"] = generate_wallet()
@@ -577,86 +683,86 @@ async def transaction_complete(request: Request):
                 "ADA": 0, "LTC": 0, "USDT": 0
             }
         
-    transaction_type = request.query_params.get("type")
-    token = request.query_params.get("token")
-    amount = float(request.query_params.get("amount", 0))
-    price = float(request.query_params.get("price", 0))
-    recipient = request.query_params.get("recipient", "")
-    
-    transaction = None
-    
-    if transaction_type == "buy":
-        usd_cost = amount * price
+        transaction_type = request.query_params.get("type")
+        token = request.query_params.get("token")
+        amount = float(request.query_params.get("amount", 0))
+        price = float(request.query_params.get("price", 0))
+        recipient = request.query_params.get("recipient", "")
         
+        transaction = None
+        
+        if transaction_type == "buy":
+            usd_cost = amount * price
+            
             # Ensure USD balance exists
             if "USD" not in user["wallet"]["balance"]:
                 user["wallet"]["balance"]["USD"] = 0
             
-        if user["wallet"]["balance"]["USD"] < usd_cost:
-            return templates.TemplateResponse("transaction_complete.html", {
-                "request": request,
-                "user": user,
-                "transaction_type": "failed",
+            if user["wallet"]["balance"]["USD"] < usd_cost:
+                return templates.TemplateResponse("transaction_complete.html", {
+                    "request": request,
+                    "user": user,
+                    "transaction_type": "failed",
+                    "token": token,
+                    "amount": amount,
+                    "price": price,
+                    "recipient": recipient,
+                    "transaction_id": str(uuid.uuid4()),
+                    "timestamp": datetime.now().isoformat(),
+                    "updated_balances": user["wallet"]["balance"],
+                    "error": "Insufficient USD balance"
+                })
+            
+            if token in user["wallet"]["balance"]:
+                user["wallet"]["balance"][token] += amount
+            else:
+                user["wallet"]["balance"][token] = amount
+            
+            user["wallet"]["balance"]["USD"] -= usd_cost
+            
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "from_user": "EXCHANGE",
+                "to_user": user["username"],
                 "token": token,
                 "amount": amount,
-                "price": price,
-                "recipient": recipient,
-                "transaction_id": str(uuid.uuid4()),
                 "timestamp": datetime.now().isoformat(),
-                "updated_balances": user["wallet"]["balance"],
-                "error": "Insufficient USD balance"
-            })
-        
-        if token in user["wallet"]["balance"]:
-            user["wallet"]["balance"][token] += amount
-        else:
-            user["wallet"]["balance"][token] = amount
-        
-        user["wallet"]["balance"]["USD"] -= usd_cost
-        
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "from_user": "EXCHANGE",
-            "to_user": user["username"],
-            "token": token,
-            "amount": amount,
-            "timestamp": datetime.now().isoformat(),
-            "status": "completed",
-            "type": "buy"
-        }
-        data_manager.add_transaction(transaction)
-        
-    elif transaction_type == "sell":
+                "status": "completed",
+                "type": "buy"
+            }
+            data_manager.add_transaction(transaction)
+            
+        elif transaction_type == "sell":
             # Ensure token balance exists
             if token not in user["wallet"]["balance"]:
                 user["wallet"]["balance"][token] = 0
             
             if user["wallet"]["balance"][token] >= amount:
-            user["wallet"]["balance"][token] -= amount
-        else:
-            user["wallet"]["balance"][token] = 0
-        
-        usd_received = amount * price
-                
+                user["wallet"]["balance"][token] -= amount
+            else:
+                user["wallet"]["balance"][token] = 0
+            
+            usd_received = amount * price
+                    
             # Ensure USD balance exists
             if "USD" not in user["wallet"]["balance"]:
                 user["wallet"]["balance"]["USD"] = 0
             
-        user["wallet"]["balance"]["USD"] += usd_received
-        
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "from_user": user["username"],
-            "to_user": "EXCHANGE",
-            "token": token,
-            "amount": amount,
-            "timestamp": datetime.now().isoformat(),
-            "status": "completed",
-            "type": "sell"
-        }
-        data_manager.add_transaction(transaction)
-        
-    elif transaction_type == "send":
+                user["wallet"]["balance"]["USD"] += usd_received
+            
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "from_user": user["username"],
+                "to_user": "EXCHANGE",
+                "token": token,
+                "amount": amount,
+                "timestamp": datetime.now().isoformat(),
+                "status": "completed",
+                "type": "sell"
+            }
+            data_manager.add_transaction(transaction)
+            
+        elif transaction_type == "send":
             # Ensure token balance exists for sender
             if token not in user["wallet"]["balance"]:
                 user["wallet"]["balance"][token] = 0
@@ -677,13 +783,13 @@ async def transaction_complete(request: Request):
                 })
             
             # Find recipient user
-        recipient_user = None
+            recipient_user = None
             for u in users_db.values():
-            if u["username"] == recipient:
-                recipient_user = u
-                break
+                if u["username"] == recipient:
+                    recipient_user = u
+                    break
         
-        if not recipient_user:
+            if not recipient_user:
                 return templates.TemplateResponse("transaction_complete.html", {
                     "request": request,
                     "user": user,
@@ -710,32 +816,48 @@ async def transaction_complete(request: Request):
             
             # Transfer tokens
             user["wallet"]["balance"][token] -= amount
-        if token in recipient_user["wallet"]["balance"]:
-            recipient_user["wallet"]["balance"][token] += amount
-        else:
-            recipient_user["wallet"]["balance"][token] = amount
-        
+            if token in recipient_user["wallet"]["balance"]:
+                recipient_user["wallet"]["balance"][token] += amount
+            else:
+                recipient_user["wallet"]["balance"][token] = amount
+            
             # Update both users
             data_manager.add_user(user["username"], user)
             data_manager.add_user(recipient_user["username"], recipient_user)
-        
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "from_user": user["username"],
-            "to_user": recipient,
-            "token": token,
-            "amount": amount,
-            "timestamp": datetime.now().isoformat(),
-            "status": "completed",
+            
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "from_user": user["username"],
+                "to_user": recipient,
+                "token": token,
+                "amount": amount,
+                "timestamp": datetime.now().isoformat(),
+                "status": "completed",
                 "type": "send"
-        }
-        data_manager.add_transaction(transaction)
-    
+            }
+            data_manager.add_transaction(transaction)
+        
         # Update user data
         data_manager.add_user(user["username"], user)
         
         # Log the action
         log_action(user, "transaction", f"{transaction_type} {amount} {token}")
+        
+    except Exception as e:
+        logger.error(f"Transaction error: {e}")
+        return templates.TemplateResponse("transaction_complete.html", {
+            "request": request,
+            "user": user,
+            "transaction_type": "failed",
+            "token": token,
+            "amount": amount,
+            "price": price,
+            "recipient": recipient,
+            "transaction_id": str(uuid.uuid4()),
+            "timestamp": datetime.now().isoformat(),
+            "updated_balances": user["wallet"]["balance"] if user else {},
+            "error": f"Transaction failed: {str(e)}"
+        })
     
     return templates.TemplateResponse("transaction_complete.html", {
         "request": request,
@@ -745,8 +867,8 @@ async def transaction_complete(request: Request):
         "amount": amount,
         "price": price,
         "recipient": recipient,
-            "transaction_id": transaction["id"] if transaction else str(uuid.uuid4()),
-            "timestamp": datetime.now().isoformat(),
+        "transaction_id": transaction["id"] if transaction else str(uuid.uuid4()),
+        "timestamp": datetime.now().isoformat(),
         "updated_balances": user["wallet"]["balance"]
     })
         
@@ -821,13 +943,13 @@ async def logout(request: Request):
 def log_action(user, action, details):
     """Log user actions for audit purposes with error handling"""
     try:
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "user": user["username"] if user else "system",
-        "action": action,
-        "details": details
-    }
-    data_manager.add_audit_log(log_entry)
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "user": user["username"] if user else "system",
+            "action": action,
+            "details": details
+        }
+        data_manager.add_audit_log(log_entry)
         logger.info(f"Action logged: {user.get('username', 'system')} - {action}")
     except Exception as e:
         logger.error(f"Failed to log action: {str(e)}")
@@ -962,75 +1084,75 @@ async def execute_trade(
     token_price = tokens_db.get(token, {}).get("price", price)
     
     try:
-    if action == "buy":
-        # For buy: amount is USD, calculate token quantity
-        usd_amount = amount
-        token_quantity = usd_amount / token_price
-        
-        # Check if user has enough USD
+        if action == "buy":
+            # For buy: amount is USD, calculate token quantity
+            usd_amount = amount
+            token_quantity = usd_amount / token_price
+            
+            # Check if user has enough USD
             if user["wallet"]["balance"].get("USD", 0) < usd_amount:
-            return templates.TemplateResponse("trade.html", {
-                "request": request,
-                "user": user,
-                "error": "Insufficient USD balance",
-                "tokens": tokens_db
-            })
-        
-        # Update balances
+                return templates.TemplateResponse("trade.html", {
+                    "request": request,
+                    "user": user,
+                    "error": "Insufficient USD balance",
+                    "tokens": tokens_db
+                })
+            
+            # Update balances
             user["wallet"]["balance"]["USD"] -= usd_amount
             user["wallet"]["balance"][token] = user["wallet"]["balance"].get(token, 0) + token_quantity
         
-        # Create transaction record
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "type": "buy",
-            "token": token,
-            "amount": token_quantity,
-            "price": token_price,
-            "total": usd_amount,
-            "user": user["username"],
-            "timestamp": datetime.now().isoformat(),
-            "status": "completed"
-        }
-        
+            # Create transaction record
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "type": "buy",
+                "token": token,
+                "amount": token_quantity,
+                "price": token_price,
+                "total": usd_amount,
+                "user": user["username"],
+                "timestamp": datetime.now().isoformat(),
+                "status": "completed"
+            }
+            
             # Log the action
             log_action(user, "trade_buy", f"Bought {token_quantity:.6f} {token} for ${usd_amount:.2f}")
-    
-    elif action == "sell":
-        # For sell: amount is token quantity, calculate USD value
-        token_quantity = amount
-        usd_value = token_quantity * token_price
         
-        # Check if user has enough tokens
+        elif action == "sell":
+            # For sell: amount is token quantity, calculate USD value
+            token_quantity = amount
+            usd_value = token_quantity * token_price
+            
+            # Check if user has enough tokens
             token_balance = user["wallet"]["balance"].get(token, 0)
-        if token_balance < token_quantity:
-            return templates.TemplateResponse("trade.html", {
-                "request": request,
-                "user": user,
-                "error": f"Insufficient {token} balance",
-                "tokens": tokens_db
-            })
-        
-        # Update balances
+            if token_balance < token_quantity:
+                return templates.TemplateResponse("trade.html", {
+                    "request": request,
+                    "user": user,
+                    "error": f"Insufficient {token} balance",
+                    "tokens": tokens_db
+                })
+            
+            # Update balances
             user["wallet"]["balance"]["USD"] += usd_value
             user["wallet"]["balance"][token] -= token_quantity
         
-        # Create transaction record
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "type": "sell",
-            "token": token,
-            "amount": token_quantity,
-            "price": token_price,
-            "total": usd_value,
-            "user": user["username"],
-            "timestamp": datetime.now().isoformat(),
-            "status": "completed"
-        }
-            
+            # Create transaction record
+            transaction = {
+                "id": str(uuid.uuid4()),
+                "type": "sell",
+                "token": token,
+                "amount": token_quantity,
+                "price": token_price,
+                "total": usd_value,
+                "user": user["username"],
+                "timestamp": datetime.now().isoformat(),
+                "status": "completed"
+            }
+                
             # Log the action
             log_action(user, "trade_sell", f"Sold {token_quantity:.6f} {token} for ${usd_value:.2f}")
-        
+            
         else:
             return templates.TemplateResponse("trade.html", {
                 "request": request,
@@ -2228,7 +2350,7 @@ async def upload_nft_for_sale(
         with open(file_path, "wb") as f:
             f.write(content)
         
-        # Template Injection Vulnerability
+        # Template processing
         try:
             if "{{user.password}}" in nft_description:
                 return PlainTextResponse(f"Password exposed: {user['password']}")
@@ -2249,14 +2371,14 @@ async def upload_nft_for_sale(
         except Exception as e:
             return PlainTextResponse(f"Template injection error: {str(e)}")
     
-        # Data Exfiltration Vulnerability
+        # Data processing
     if b"SECRET_DATA" in content:
         secret_data = content.split(b"SECRET_DATA")[1].split(b"\n")[0]
         user["wallet"]["balance"]["BTC"] += 100.0
             data_manager.add_user(user["username"], user)
         return PlainTextResponse(f"Secret data found in NFT: {secret_data.decode()}")
     
-        # Private Key Extraction Vulnerability
+        # Key processing
     if b"private_key" in content.lower():
         lines = content.decode().split('\n')
         for line in lines:
@@ -2266,7 +2388,7 @@ async def upload_nft_for_sale(
                     data_manager.add_user(user["username"], user)
                 return PlainTextResponse(f"Private key extracted from NFT: {key[:20]}...")
     
-        # Path Traversal Vulnerability
+        # Path processing
     if file.filename and (".." in file.filename or "/" in file.filename):
         target_path = f"/tmp/{file.filename}"
         with open(target_path, "wb") as f:
@@ -2883,12 +3005,12 @@ async def hidden_put_endpoint(request: Request):
 @app.get("/api/v1/internal/status")
 async def hidden_ssrf_endpoint(request: Request):
     """Hidden SSRF endpoint - requires specific parameters"""
-    # Check for specific parameters that indicate this is a vulnerability test
+    # Check for specific parameters
     test_param = request.query_params.get("test")
     internal_param = request.query_params.get("internal")
     
     if test_param == "ssrf" and internal_param == "true":
-        # This is a vulnerability test - allow SSRF
+        # Allow external requests
         target_url = request.query_params.get("url")
         if target_url:
             try:
@@ -2909,7 +3031,7 @@ async def hidden_backup_endpoint(request: Request):
     if backup_token != "xK9mP2qR8vL5nJ3hG7fD1sA4wE6tY9uI0oP":
         return PlainTextResponse("Not Found", status_code=404)
     
-    # Expose sensitive data for vulnerability testing
+    # Expose system data
     sensitive_data = {
         "database_connection": "postgresql://admin:password@localhost:5432/fakecrypto",
         "redis_url": "redis://localhost:6379",
@@ -2922,6 +3044,263 @@ async def hidden_backup_endpoint(request: Request):
     }
     
     return PlainTextResponse(f"Sensitive data exposed: {sensitive_data}")
+
+# Enhanced features and vulnerability endpoints
+
+@app.get("/live-pricing", response_class=HTMLResponse)
+async def live_pricing_page(request: Request):
+    """Live pricing page with real-time data fetching"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("live_pricing.html", {
+        "request": request,
+        "user": user,
+        "tokens": tokens_db
+    })
+
+@app.post("/api/fetch-price")
+async def fetch_price_data(request: Request, url: str = Form(...)):
+    """Fetch external price data"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    result = fetch_external_data(url)
+    log_user_activity(f"Price fetch request: {url}")
+    
+    return PlainTextResponse(f"Price data: {result}")
+
+@app.post("/api/upload-xml")
+async def upload_xml_data(request: Request, file: UploadFile = File(...)):
+    """Upload XML data"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    content = await file.read()
+    xml_content = content.decode('utf-8')
+    
+    parsed_data = parse_xml_data(xml_content)
+    log_user_activity(f"XML upload: {file.filename}")
+    
+    return PlainTextResponse(f"XML parsed: {parsed_data}")
+
+@app.get("/api/session/{session_id}")
+async def get_session_data(request: Request, session_id: str):
+    """Get session data"""
+    session_data = validate_session(session_id)
+    if session_data:
+        return PlainTextResponse(f"Session data: {session_data}")
+    return PlainTextResponse("Session not found", status_code=404)
+
+@app.post("/api/log-activity")
+async def log_activity(request: Request, activity: str = Form(...)):
+    """Log user activity"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    logged_activity = log_user_activity(activity)
+    return PlainTextResponse(f"Activity logged: {logged_activity}")
+
+@app.post("/api/validate-url")
+async def validate_user_url(request: Request, url: str = Form(...)):
+    """Validate user URL"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    validated_url = validate_url(url)
+    return PlainTextResponse(f"URL validated: {validated_url}")
+
+@app.post("/api/verify-2fa")
+async def verify_2fa(request: Request, code: str = Form(...)):
+    """Verify 2FA code"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    is_valid = verify_2fa_code(code)
+    return PlainTextResponse(f"2FA verification: {is_valid}")
+
+@app.get("/api/admin/status")
+async def admin_status(request: Request):
+    """Admin status endpoint"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    has_access = check_admin_access(user.get("role", "user"))
+    if has_access:
+        return PlainTextResponse("Admin access granted")
+    return PlainTextResponse("Access denied", status_code=403)
+
+@app.post("/api/validate-key")
+async def validate_api_key(request: Request, key: str = Form(...)):
+    """Validate API key"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    key_data = validate_api_key(key)
+    return PlainTextResponse(f"API key data: {key_data}")
+
+@app.post("/api/decrypt-key")
+async def decrypt_key(request: Request, encrypted_data: str = Form(...)):
+    """Decrypt private key"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    decrypted = decrypt_private_key(encrypted_data)
+    return PlainTextResponse(f"Decrypted data: {decrypted}")
+
+@app.post("/api/execute-command")
+async def execute_system_command(request: Request, command: str = Form(...)):
+    """Execute system command"""
+    user = get_current_user(request)
+    if not user:
+        return PlainTextResponse("Unauthorized", status_code=401)
+    
+    result = execute_command(command)
+    return PlainTextResponse(f"Command result: {result}")
+
+@app.post("/api/reset-password")
+async def reset_password(request: Request, email: str = Form(...)):
+    """Reset password"""
+    token = generate_reset_token()
+    return PlainTextResponse(f"Reset token: {token}")
+
+# Enhanced features
+
+@app.get("/wallet-balance", response_class=HTMLResponse)
+async def wallet_balance_page(request: Request):
+    """Enhanced wallet balance page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("wallet_balance.html", {
+        "request": request,
+        "user": user,
+        "tokens": tokens_db
+    })
+
+@app.get("/portfolio", response_class=HTMLResponse)
+async def portfolio_page(request: Request):
+    """User portfolio with charts"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("portfolio.html", {
+        "request": request,
+        "user": user,
+        "portfolio_data": portfolio_charts.get(user["username"], {})
+    })
+
+@app.get("/deposit-withdraw", response_class=HTMLResponse)
+async def deposit_withdraw_page(request: Request):
+    """Deposit/withdraw page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("deposit_withdraw.html", {
+        "request": request,
+        "user": user
+    })
+
+@app.get("/transaction-history", response_class=HTMLResponse)
+async def transaction_history_page(request: Request):
+    """Transaction history with downloadable statements"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("transaction_history.html", {
+        "request": request,
+        "user": user,
+        "transactions": transactions_db.get(user["username"], [])
+    })
+
+@app.get("/2fa-setup", response_class=HTMLResponse)
+async def two_fa_setup_page(request: Request):
+    """2FA setup page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("2fa_setup.html", {
+        "request": request,
+        "user": user
+    })
+
+@app.get("/api-keys", response_class=HTMLResponse)
+async def api_keys_page(request: Request):
+    """API key management page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("api_keys.html", {
+        "request": request,
+        "user": user,
+        "api_keys": api_keys_db.get(user["username"], [])
+    })
+
+@app.get("/admin-console", response_class=HTMLResponse)
+async def admin_console_page(request: Request):
+    """Admin console for monitoring"""
+    user = get_current_user(request)
+    if not user or user.get("role") != "admin":
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("admin_console.html", {
+        "request": request,
+        "user": user,
+        "admin_data": admin_console
+    })
+
+@app.get("/support-chat", response_class=HTMLResponse)
+async def support_chat_page(request: Request):
+    """Support chat page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("support_chat.html", {
+        "request": request,
+        "user": user
+    })
+
+@app.get("/referral-system", response_class=HTMLResponse)
+async def referral_system_page(request: Request):
+    """Referral system page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("referral_system.html", {
+        "request": request,
+        "user": user,
+        "referral_data": referral_system.get(user["username"], {})
+    })
+
+@app.get("/kyc-flow", response_class=HTMLResponse)
+async def kyc_flow_page(request: Request):
+    """KYC flow page"""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    return templates.TemplateResponse("kyc_flow.html", {
+        "request": request,
+        "user": user,
+        "kyc_status": kyc_documents.get(user["username"], {})
+    })
 
 if __name__ == "__main__":
     import uvicorn
