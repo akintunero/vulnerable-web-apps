@@ -1,21 +1,21 @@
-# 🗳️ VoteVault - Vulnerable Digital Voting System
+# 🗳️ VoteVault - Digital Voting System
 
-A deliberately vulnerable digital voting system designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a controlled, educational environment.
+A comprehensive digital voting system designed for security research and testing practice. This application demonstrates various web application concepts in a controlled, educational environment.
 
 ## ⚠️ **SECURITY WARNING**
 
-**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
+**This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
 ## 🎯 Overview
 
-VoteVault is a vulnerable digital voting system that simulates a real-world electronic voting platform with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities.
+VoteVault is a digital voting system that simulates a real-world electronic voting platform. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
 ### Key Features:
 - 🗳️ Digital voting functionality
 - 👥 Voter registration system
 - 📊 Election results management
-- 🔐 Authentication vulnerabilities
-- 📈 Data manipulation flaws
+- 🔐 Authentication systems
+- 📈 Data management
 
 ## 🚀 Quick Start
 
@@ -60,43 +60,43 @@ VoteVault/
 
 ## 🎓 Learning Objectives
 
-### Vulnerability Categories
-1. **Vote Manipulation**
-   - Vote tampering
-   - Ballot stuffing
-   - Result manipulation
+This application is designed to help users understand:
 
-2. **Authentication Flaws**
-   - Weak password policies
-   - Session management issues
-   - Privilege escalation
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
 
-3. **Data Exposure**
-   - Voter information leakage
-   - Election data exposure
-   - Result disclosure
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
 
-4. **Business Logic Vulnerabilities**
-   - Access control flaws
-   - Vote validation bypass
-   - Election manipulation
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
 
-5. **Information Disclosure**
-   - Error message exposure
-   - Debug information leakage
-   - System information disclosure
+## 🔍 Application Features
 
-## 🔍 Vulnerability Guide
+### 1. Voting System
+- Ballot creation and management
+- Voter registration and authentication
+- Vote casting and validation
+- Result calculation and display
 
-### 1. Vote Manipulation
-- **Location**: Voting interface
-- **Technique**: Parameter manipulation
-- **Impact**: Unauthorized vote modification
+### 2. User Management
+- Voter registration and authentication
+- Admin panel access
+- Session management
+- Access control
 
-### 2. Authentication Bypass
-- **Location**: Login system
-- **Technique**: Various authentication bypass methods
-- **Impact**: Unauthorized access to voting functions
+### 3. Administrative Functions
+- Election management
+- Voter administration
+- Result monitoring
+- System administration
 
 ### 3. Data Exposure
 - **Location**: Election results and voter data
@@ -170,7 +170,38 @@ FLASK_ENV=development
 FLASK_DEBUG=True
 SECRET_KEY=your-secret-key
 DATABASE_URL=sqlite:///votevault.db
+PORT=5003
+UPLOAD_FOLDER=uploads/
 ```
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /login` - Voter authentication
+- `POST /register` - Voter registration
+- `GET /logout` - User logout
+
+### Elections
+- `GET /api/elections` - Get available elections
+- `GET /api/elections/<id>` - Get election details
+- `POST /api/elections` - Create election (admin)
+
+### Voting
+- `GET /api/ballots` - Get available ballots
+- `POST /api/vote` - Cast vote
+- `GET /api/vote/<election_id>` - Get user vote
+- `PUT /api/vote/<election_id>` - Change vote
+
+### Results
+- `GET /api/results` - Get election results
+- `GET /api/results/<election_id>` - Get specific results
+- `POST /api/results/export` - Export results
+
+### Admin Functions
+- `GET /admin/dashboard` - Admin dashboard
+- `GET /admin/elections` - Election management
+- `GET /admin/voters` - Voter management
+- `GET /admin/results` - Result management
 
 ### Docker Configuration
 ```yaml

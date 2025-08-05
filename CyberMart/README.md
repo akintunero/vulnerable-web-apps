@@ -1,14 +1,14 @@
-# 🛒 CyberMart - Vulnerable E-commerce Platform
+# 🛒 CyberMart - E-commerce Platform
 
-A deliberately vulnerable e-commerce platform designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a realistic e-commerce environment.
+A comprehensive e-commerce platform designed for security research and testing practice. This application demonstrates various web application concepts in a realistic e-commerce environment.
 
 ## ⚠️ **SECURITY WARNING**
 
-**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
+**This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
 ## 🎯 Overview
 
-CyberMart is a vulnerable e-commerce platform that simulates a real-world online store with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities in an e-commerce context.
+CyberMart is an e-commerce platform that simulates a real-world online store. It's designed to help security researchers, penetration testers, and students learn about web application security concepts in an e-commerce context.
 
 ### Key Features:
 - 🛍️ Complete e-commerce functionality
@@ -67,137 +67,49 @@ CyberMart/
 
 ## 🎓 Learning Objectives
 
-### Vulnerability Categories
-1. **NoSQL Injection**
-   - MongoDB query injection
-   - Parameter manipulation
-   - Data extraction techniques
+This application is designed to help users understand:
 
-2. **Command Injection**
-   - Unsafe user input to shell
-   - System command execution
-   - Privilege escalation
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
 
-3. **Unsafe Deserialization**
-   - Pickle deserialization
-   - JSON deserialization
-   - Code execution via deserialization
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
 
-4. **Parameter Tampering**
-   - Price manipulation
-   - Quantity manipulation
-   - Discount code abuse
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
 
-5. **IDOR (Insecure Direct Object Reference)**
-   - Order access without authorization
-   - Invoice access bypass
-   - User data exposure
+## 🔍 Application Features
 
-6. **XSS (Cross-Site Scripting)**
-   - Cart field injection
-   - Product review injection
-   - Stored XSS in user content
+### 1. E-commerce Functionality
+- Product catalog and search
+- Shopping cart management
+- Checkout and payment processing
+- Order tracking and management
 
-7. **Unvalidated Redirects**
-   - Checkout flow manipulation
-   - Open redirect vulnerabilities
-   - Phishing attack simulation
+### 2. User Management
+- User registration and authentication
+- Profile management
+- Session handling
+- Access control
 
-8. **Local File Inclusion**
-   - Path traversal attacks
-   - File download vulnerabilities
-   - System file access
+### 3. Administrative Functions
+- Product management
+- Order administration
+- User management
+- System monitoring
 
-9. **CSRF (Cross-Site Request Forgery)**
-   - Checkout form manipulation
-   - Order form attacks
-   - Admin action bypass
-
-10. **Weak Password Policies**
-    - Short password acceptance
-    - Common password allowance
-    - Brute force vulnerability
-
-11. **Open Redirects**
-    - Email redirect manipulation
-    - URL parameter injection
-    - Phishing simulation
-
-12. **Insufficient Rate Limiting**
-    - API brute force vulnerability
-    - Login attempt bypass
-    - Resource exhaustion
-
-## 🔍 Vulnerability Guide
-
-### 1. NoSQL Injection
-- **Location**: `/api/products/search`
-- **Technique**: MongoDB query injection
-- **Impact**: Data extraction and manipulation
-
-### 2. Command Injection
-- **Location**: `/api/command`
-- **Technique**: Shell command injection
-- **Impact**: System command execution
-
-### 3. Parameter Tampering
-- **Location**: `/api/cart/add`, `/api/checkout`
-- **Technique**: Price/quantity manipulation
-- **Impact**: Financial fraud
-
-### 4. IDOR
-- **Location**: `/api/invoice/{id}`, `/order/{id}`
-- **Technique**: Direct object access
-- **Impact**: Unauthorized data access
-
-### 5. XSS
-- **Location**: `/api/reviews/add`, cart fields
-- **Technique**: Stored XSS in user content
-- **Impact**: Session hijacking, data theft
-
-### 6. CSRF
-- **Location**: `/api/checkout`, order forms
-- **Technique**: Cross-site request forgery
-- **Impact**: Unauthorized actions
-
-## 🛠️ Testing with Burp Suite
-
-### Setup
-1. Configure Burp Suite proxy to `127.0.0.1:8080`
-2. Set browser proxy settings
-3. Install Burp CA certificate in browser
-
-### Test Cases
-
-#### NoSQL Injection
-```bash
-# Test MongoDB injection
-curl "http://localhost:5002/api/products/search?q=test"
-curl "http://localhost:5002/api/products/search?q={\"\$ne\":null}"
-```
-
-#### Command Injection
-```bash
-# Test command injection
-curl -X POST "http://localhost:5002/api/command" \
-  -H "Content-Type: application/json" \
-  -d '{"command":"ls -la"}'
-```
-
-#### Parameter Tampering
-```bash
-# Test price manipulation
-curl -X POST "http://localhost:5002/api/cart/add" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id":1,"quantity":1,"price":-10.00}'
-```
-
-#### IDOR Testing
-```bash
-# Test invoice access
-curl "http://localhost:5002/api/invoice/1"
-curl "http://localhost:5002/api/invoice/999"
-```
+### 4. Payment Processing
+- Payment method management
+- Transaction processing
+- Invoice generation
+- Financial data handling
 
 ## 📊 Features
 
@@ -213,12 +125,11 @@ curl "http://localhost:5002/api/invoice/999"
 - **PDF Invoices**: Downloadable order invoices
 - **Email Notifications**: Order confirmations, status updates
 
-### Security Testing Features
-- **Stealthy Vulnerabilities**: No obvious vulnerability hints
-- **Realistic Interface**: Professional e-commerce appearance
-- **Multiple Attack Vectors**: Various vulnerability types
+### Technical Features
+- **Professional Interface**: Modern e-commerce design
+- **Comprehensive Functionality**: Full e-commerce workflow
 - **Educational Value**: Clear learning objectives
-- **Burp Suite Compatible**: Full proxy testing support
+- **Testing Support**: Compatible with security testing tools
 
 ## 🔧 Configuration
 
@@ -227,6 +138,9 @@ curl "http://localhost:5002/api/invoice/999"
 FLASK_ENV=development
 FLASK_DEBUG=1
 SECRET_KEY=your-secret-key
+DATABASE_URL=sqlite:///shop.db
+UPLOAD_FOLDER=uploads/
+PORT=5002
 ```
 
 ### Database Setup
@@ -234,6 +148,42 @@ SECRET_KEY=your-secret-key
 # Initialize database
 python3 -c "from app import init_db; init_db()"
 ```
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /login` - User authentication
+- `POST /register` - User registration
+- `GET /logout` - User logout
+
+### Products
+- `GET /api/products` - Get all products
+- `GET /api/products/search` - Search products
+- `GET /api/products/<id>` - Get product details
+- `POST /api/products` - Add new product (admin)
+
+### Shopping Cart
+- `GET /api/cart` - Get user cart
+- `POST /api/cart/add` - Add item to cart
+- `PUT /api/cart/update` - Update cart item
+- `DELETE /api/cart/remove` - Remove item from cart
+
+### Orders
+- `GET /api/orders` - Get user orders
+- `POST /api/orders` - Create new order
+- `GET /api/orders/<id>` - Get order details
+- `GET /api/invoice/<id>` - Get order invoice
+
+### User Management
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update user profile
+- `GET /api/addresses` - Get user addresses
+
+### Admin Functions
+- `GET /admin/dashboard` - Admin dashboard
+- `GET /admin/products` - Product management
+- `GET /admin/orders` - Order management
+- `GET /admin/users` - User management
 
 ## 📝 Usage
 
@@ -247,13 +197,14 @@ python3 -c "from app import init_db; init_db()"
 - **Admin Panel**: http://localhost:5002/admin
 - **API Endpoints**: http://localhost:5002/api/*
 
-### Default Accounts
-- **Admin**: admin@cybermart.com / admin123
-- **User**: user@cybermart.com / password123
+### User Accounts
+- User registration and login functionality
+- Admin panel access management
+- Role-based access control
 
 ## 🛡️ Security Notes
 
-- All vulnerabilities are intentionally implemented
+- Designed for educational purposes
 - No real payment processing
 - Mock data for testing
 - Isolated Docker environment

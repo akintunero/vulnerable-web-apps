@@ -1,21 +1,21 @@
-# 👥 HRLeaks - Vulnerable Human Resources Management System
+# 👥 EnterpriseHR - Human Resources Management System
 
-A deliberately vulnerable human resources management system designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a controlled, educational environment.
+A comprehensive human resources management system designed for security research and testing practice. This application demonstrates various web application concepts in a controlled, educational environment.
 
 ## ⚠️ **SECURITY WARNING**
 
-**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
+**This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
 ## 🎯 Overview
 
-HRLeaks is a vulnerable HR management system that simulates a real-world human resources platform with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities.
+EnterpriseHR is an HR management system that simulates a real-world human resources platform. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
 ### Key Features:
 - 👤 Employee management system
 - 📊 Payroll processing
 - 📝 Resume management
-- 🔐 Authentication vulnerabilities
-- 📈 Data exposure flaws
+- 🔐 Authentication systems
+- 📈 Data management
 
 ## 🚀 Quick Start
 
@@ -60,43 +60,43 @@ HRLeaks/
 
 ## 🎓 Learning Objectives
 
-### Vulnerability Categories
-1. **Data Exposure**
-   - Employee information leakage
-   - Payroll data exposure
-   - Resume file access
+This application is designed to help users understand:
 
-2. **Authentication Flaws**
-   - Weak password policies
-   - Session management issues
-   - Privilege escalation
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
 
-3. **File Upload Vulnerabilities**
-   - Malicious file uploads
-   - Path traversal attacks
-   - File type validation bypass
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
 
-4. **Business Logic Vulnerabilities**
-   - Access control flaws
-   - Data manipulation
-   - Privilege escalation
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
 
-5. **Information Disclosure**
-   - Error message exposure
-   - Debug information leakage
-   - System information disclosure
+## 🔍 Application Features
 
-## 🔍 Vulnerability Guide
+### 1. HR Management
+- Employee directory and profiles
+- Payroll processing and management
+- Leave request handling
+- Performance review system
 
-### 1. Data Exposure
-- **Location**: Employee and payroll pages
-- **Technique**: Direct object reference
-- **Impact**: Unauthorized access to sensitive data
+### 2. User Management
+- Employee registration and authentication
+- Role-based access control
+- Session management
+- Profile administration
 
-### 2. Authentication Bypass
-- **Location**: Login system
-- **Technique**: Various authentication bypass methods
-- **Impact**: Unauthorized access to HR functions
+### 3. Administrative Functions
+- Employee administration
+- Payroll management
+- System monitoring
+- Data management
 
 ### 3. File Upload Vulnerabilities
 - **Location**: Resume upload functionality
@@ -171,7 +171,43 @@ FLASK_DEBUG=True
 SECRET_KEY=your-secret-key
 DATABASE_URL=sqlite:///hrleaks.db
 UPLOAD_FOLDER=./uploads
+PORT=8000
 ```
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /login` - Employee authentication
+- `POST /register` - Employee registration
+- `GET /logout` - User logout
+
+### Employee Management
+- `GET /api/employees` - Get all employees
+- `GET /api/employees/<id>` - Get employee details
+- `POST /api/employees` - Add new employee
+- `PUT /api/employees/<id>` - Update employee
+
+### Payroll
+- `GET /api/payroll` - Get payroll data
+- `GET /api/payroll/<employee_id>` - Get employee payroll
+- `POST /api/payroll/export` - Export payroll data
+
+### Leave Management
+- `GET /api/leave` - Get leave requests
+- `POST /api/leave` - Submit leave request
+- `PUT /api/leave/<id>` - Update leave request
+- `GET /api/leave/<id>` - Get leave details
+
+### File Management
+- `POST /api/upload` - Upload documents
+- `GET /api/files` - Get uploaded files
+- `GET /api/files/<id>` - Download file
+
+### Admin Functions
+- `GET /admin/dashboard` - Admin dashboard
+- `GET /admin/employees` - Employee management
+- `GET /admin/payroll` - Payroll management
+- `GET /admin/reports` - Report generation
 
 ### Docker Configuration
 ```yaml

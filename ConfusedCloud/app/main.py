@@ -82,8 +82,21 @@ def reset_data_to_default():
     
     # Clear all existing data for fresh start
     print("🧹 Clearing all ConfusedCloud data for fresh start...")
-    if os.path.exists(DATA_DIR):
-        shutil.rmtree(DATA_DIR)
+    try:
+        if os.path.exists(DATA_DIR):
+            shutil.rmtree(DATA_DIR)
+    except OSError as e:
+        print(f"⚠️  Could not remove data directory (may be mounted): {e}")
+        # Clear individual files instead
+        for filename in os.listdir(DATA_DIR):
+            filepath = os.path.join(DATA_DIR, filename)
+            try:
+                if os.path.isfile(filepath):
+                    os.unlink(filepath)
+                elif os.path.isdir(filepath):
+                    shutil.rmtree(filepath)
+            except OSError:
+                pass
     
     # Create secure data directory with proper permissions
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -447,7 +460,7 @@ async def login_page(request: Request):
 @app.post("/login", response_class=HTMLResponse)
 async def login(request: Request, email: str = Form(...), tenant_id: str = Form(...), password: str = Form(...), role: str = Form(None)):
     
-            bypass_result = login_check(email, password)
+    bypass_result = login_check(email, password)
     if bypass_result:
         session_id = create_session(bypass_result["email"])
         response = RedirectResponse(url=f"/tenant/{tenant_id}/dashboard", status_code=302)
@@ -709,7 +722,7 @@ async def ssl_endpoint(request: Request, tenant_id: str):
     if not user:
         return RedirectResponse(url="/login", status_code=302)
     
-            result = ssl_handshake()
+    result = ssl_handshake()
     return {
         "status": "vulnerable",
         "ssl_info": result,
@@ -2876,7 +2889,7 @@ def log_exposure():
 @app.get("/api/search")
 async def search_users(request: Request, query: str = Query(...)):
     """Search users endpoint"""
-            results = sql_query(query)
+    results = sql_query(query)
     return JSONResponse({"results": results, "query": query})
 
 @app.get("/api/alert")

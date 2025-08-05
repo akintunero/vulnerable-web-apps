@@ -1,11 +1,13 @@
-# 🚨 VULNERABLE AIRLINE WEB APPLICATION 🚨
+# ✈️ SkyHack Airlines - Airline Booking Portal
+
+A comprehensive airline booking system built with Flask to demonstrate web application concepts and security training.
 
 ## ⚠️ DISCLAIMER ⚠️
 
-**THIS APPLICATION IS INTENTIONALLY VULNERABLE AND SHOULD ONLY BE USED FOR:**
+**THIS APPLICATION IS DESIGNED FOR:**
 
 - Educational purposes
-- Ethical hacking training
+- Security training
 - CTF (Capture The Flag) challenges
 - Security research in controlled environments
 - Penetration testing practice
@@ -16,7 +18,7 @@
 
 ## ⚠️ Security Warning
 
-> **This application is intentionally vulnerable. For your safety, always run it inside Docker.**
+> **This application is designed for educational purposes. For your safety, always run it inside Docker.**
 >
 > - **Never run on your host system or a public network.**
 > - **Use only in isolated, controlled environments.**
@@ -24,196 +26,210 @@
 
 ---
 
-## 🛩️ SkyHack Airlines - Vulnerable Web Application
+## 🛩️ SkyHack Airlines - Web Application
 
-A deliberately vulnerable airline booking system built with Flask to demonstrate common web application security vulnerabilities.
+A comprehensive airline booking system built with Flask to demonstrate web application concepts and security training.
 
-## 🎯 Features (With Intentional Vulnerabilities)
+## 🎯 Features
 
 ### ✈️ Core Systems
-- **Flight Booking System** - SQL Injection, XSS vulnerabilities
-- **Check-In System** - IDOR vulnerabilities
-- **Admin Panel** - Default credentials, RCE via file upload
-- **Frequent Flyer Portal** - IDOR, CSRF vulnerabilities
-- **Mock Payment System** - Insecure payment logic, hardcoded bypasses
-- **Mobile API** - JWT token leakage, weak authentication
+- **Flight Booking System** - Complete booking functionality
+- **Check-In System** - Passenger check-in management
+- **Admin Panel** - Administrative interface
+- **Frequent Flyer Portal** - Loyalty program management
+- **Payment System** - Payment processing simulation
+- **Mobile API** - Mobile application support
 
-### 🔓 Documented Vulnerabilities
+### 🔧 Technical Features
 
-#### 1. SQL Injection (CVE-2024-1234)
-- **Location**: Flight search functionality
-- **Impact**: Database compromise, data exfiltration
-- **Payload**: `' UNION SELECT * FROM users --`
+#### 1. Flight Management
+- Flight search and booking
+- Seat selection
+- Booking management
+- Flight status updates
 
-#### 2. Cross-Site Scripting (CVE-2024-5678)
-- **Location**: Passenger name input
-- **Impact**: Session hijacking, credential theft
-- **Payload**: `<script>alert('XSS')</script>`
+#### 2. User Management
+- User registration and authentication
+- Profile management
+- Session handling
+- Access control
 
-#### 3. Insecure Direct Object Reference (CVE-2024-9012)
-- **Location**: Check-in system, frequent flyer portal
-- **Impact**: Unauthorized access to other users' data
-- **Exploit**: Change booking ID parameter
+#### 3. Payment Processing
+- Payment method management
+- Transaction processing
+- Receipt generation
+- Financial data handling
 
-#### 4. Remote Code Execution (CVE-2024-3456)
-- **Location**: Admin file upload
-- **Impact**: Server compromise
-- **Payload**: Upload malicious Python file
-
-#### 5. Cross-Site Request Forgery (CVE-2024-7890)
-- **Location**: Points transfer functionality
-- **Impact**: Unauthorized actions on behalf of user
-- **Exploit**: Malicious form submission
-
-#### 6. JWT Token Weakness (CVE-2024-2345)
-- **Location**: Mobile API authentication
-- **Impact**: Token forgery, session hijacking
-- **Exploit**: Weak secret key
-
-#### 7. Hardcoded Credentials (CVE-2024-6789)
-- **Location**: Admin panel
-- **Impact**: Unauthorized admin access
-- **Credentials**: admin@airline.co:admin123
-
-#### 8. Insecure File Upload (CVE-2024-0123)
-- **Location**: Admin manifest upload
-- **Impact**: Malicious file execution
-- **Exploit**: Upload executable files
-
-#### 9. Weak Password Policy (CVE-2024-4567)
-- **Location**: User registration
-- **Impact**: Account compromise
-- **Exploit**: Use weak passwords
-
-#### 10. Information Disclosure (CVE-2024-8901)
-- **Location**: Error pages
-- **Impact**: System information leakage
-- **Exploit**: Trigger errors to see stack traces
-
-#### 11. Session Fixation (CVE-2024-2345)
-- **Location**: Login system
-- **Impact**: Session hijacking
-- **Exploit**: Predictable session IDs
-
-#### 12. Directory Traversal (CVE-2024-5678)
-- **Location**: File access endpoints
-- **Impact**: Unauthorized file access
-- **Exploit**: `../../../etc/passwd`
-
-#### 13. XML External Entity (CVE-2024-9012)
-- **Location**: Flight data parsing
-- **Impact**: Server-side request forgery
-- **Exploit**: XXE payload in XML input
-
-#### 14. Server-Side Template Injection (CVE-2024-3456)
-- **Location**: Email templates
-- **Impact**: Remote code execution
-- **Exploit**: Template injection payloads
-
-#### 15. Insecure Deserialization (CVE-2024-7890)
-- **Location**: Session management
-- **Impact**: Remote code execution
-- **Exploit**: Malicious pickle objects
-
-## New Features & Vulnerabilities
-
-- Decoy endpoints: `/admin/secure`, `/api/siem`, `/api/fake-status`, `/api/audit-log`
-- Decoy admin account: `decoy_admin@airline.co` triggers fake SIEM alert
-- Loyalty tier endpoints: `/loyalty-status`, `/upgrade-tier`, `/api/loyalty/tiers` (with logic flaws)
-- Vulnerable file download: `/download` (path traversal)
-- Race condition: `/checkin` (double check-in possible)
-- Fake rate limiting headers (not enforced)
-- Boarding pass endpoint: `/boarding-pass/<booking_id>` (IDOR)
-- Flight status API: `/api/flight-status` (data exposure)
+#### 4. Administrative Functions
+- Flight management
+- User administration
+- System monitoring
+- Data management
 
 ## 🚀 Quick Start
 
-### Using Docker (Recommended)
+### Prerequisites
+- Docker
+- Docker Compose
+
+### Installation & Setup
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd vuln-airline
+git clone https://github.com/akintunero/vulnerable-web-apps.git
+cd vulnerable-web-apps/SkyHack
 
-# Build and run with Docker Compose (all setup is automatic)
-docker compose up --build
+# Start the application
+docker-compose up -d
 
 # Access the application
-open http://localhost:8080
+# URL: http://localhost:8080
 ```
 
-> **Note:** All dependencies are installed, the database is initialized, and the app runs automatically inside the container. No manual setup is required!
+## 🏗️ Architecture
 
-### Manual Setup (For Developers)
+### Components
+- **Frontend**: HTML/CSS/JavaScript
+- **Backend**: Python Flask application
+- **Database**: SQLite
+- **Container**: Docker with Python 3.9
 
+### Directory Structure
+```
+SkyHack/
+├── app.py              # Main Flask application
+├── airports.json       # Airport data
+├── templates/          # HTML templates
+├── static/            # CSS, JS, images
+├── database/          # Database files
+├── logs/              # Application logs
+├── docker-compose.yml # Docker configuration
+├── Dockerfile         # Container definition
+└── requirements.txt   # Python dependencies
+```
+
+## 🎓 Learning Objectives
+
+This application is designed to help users understand:
+
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
+
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
+
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
+
+## 🔍 Application Features
+
+### 1. Flight Booking
+- Flight search and filtering
+- Seat selection
+- Booking management
+- Payment processing
+
+### 2. User Management
+- User registration and authentication
+- Profile management
+- Session handling
+- Access control
+
+### 3. Administrative Functions
+- Flight management
+- User administration
+- System monitoring
+- Data management
+
+### 4. API Integration
+- Mobile application support
+- External service integration
+- Data exchange protocols
+
+## 🛠️ Development
+
+### Local Development
 ```bash
 # Install dependencies
 pip install -r requirements.txt
-
-# Initialize database
-python init_db.py
 
 # Run the application
 python app.py
 ```
 
-## 🎮 Usage
-
-### Default Credentials
-- **Admin**: admin@airline.co / admin123
-- **Test User**: user@secf0rtress.com / password123
-
-### Sample Vulnerable Endpoints
-- `/search` - SQL Injection
-- `/checkin` - IDOR
-- `/admin` - Default credentials
-- `/api/checkin` - JWT issues
-- `/frequent-flyer` - CSRF
-
-## 📁 Project Structure
-
-```
-vuln-airline/
-├── app.py                 # Main Flask application
-├── init_db.py            # Database initialization
-├── requirements.txt      # Python dependencies
-├── Dockerfile           # Docker configuration
-├── docker-compose.yml   # Docker Compose setup
-├── static/              # Static files (CSS, JS, images)
-├── templates/           # Jinja2 templates
-├── logs/               # Fake application logs
-├── uploads/            # File upload directory
-└── database/           # SQLite database files
+### Docker Development
+```bash
+# Build and run with Docker
+docker-compose up --build
 ```
 
-## 🛡️ Security Notes
+## 🔧 Configuration
 
-This application contains multiple intentional vulnerabilities for educational purposes:
+### Environment Variables
+```bash
+FLASK_ENV=development
+FLASK_DEBUG=True
+SECRET_KEY=your-secret-key
+DATABASE_URL=sqlite:///skyhack.db
+PORT=8080
+UPLOAD_FOLDER=uploads/
+```
 
-1. **Never use in production**
-2. **Isolate in controlled environment**
-3. **Use only for authorized testing**
-4. **Follow responsible disclosure if finding new issues**
+## 📡 API Endpoints
 
-## 📚 Learning Resources
+### Authentication
+- `POST /login` - User authentication
+- `POST /register` - User registration
+- `GET /logout` - User logout
 
-- OWASP Top 10
-- Web Application Security Testing
-- Ethical Hacking Fundamentals
-- CTF Challenges
+### Flight Management
+- `GET /api/flights` - Get available flights
+- `GET /api/flights/search` - Search flights
+- `GET /api/flights/<id>` - Get flight details
+- `POST /api/flights` - Create flight (admin)
+
+### Booking
+- `GET /api/bookings` - Get user bookings
+- `POST /api/bookings` - Create booking
+- `GET /api/bookings/<id>` - Get booking details
+- `PUT /api/bookings/<id>` - Update booking
+- `DELETE /api/bookings/<id>` - Cancel booking
+
+### Passenger Management
+- `GET /api/passengers` - Get passenger profiles
+- `POST /api/passengers` - Create passenger profile
+- `PUT /api/passengers/<id>` - Update passenger profile
+
+### Check-in
+- `GET /api/checkin/<booking_id>` - Get check-in status
+- `POST /api/checkin/<booking_id>` - Perform check-in
+- `GET /api/boarding-pass/<booking_id>` - Get boarding pass
+
+### Admin Functions
+- `GET /admin/dashboard` - Admin dashboard
+- `GET /admin/flights` - Flight management
+- `GET /admin/bookings` - Booking management
+- `GET /admin/users` - User management
+
+## 📚 Documentation
+
+For detailed information about the application structure and features, refer to the inline code documentation and comments.
 
 ## 🤝 Contributing
 
-This is an educational project. Contributions should focus on:
-- Adding new vulnerability types
-- Improving documentation
-- Enhancing educational value
-- Fixing non-security bugs
+Contributions are welcome! Please read our contributing guidelines and ensure all changes maintain the educational nature of this application.
 
 ## 📄 License
 
-This project is for educational use only. Use at your own risk.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
----
+## ⚠️ Disclaimer
 
-**Remember: This application is intentionally vulnerable. Use responsibly!** 
+This application is for educational purposes only. The developers are not responsible for any misuse of this software. 

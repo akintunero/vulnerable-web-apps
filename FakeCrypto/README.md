@@ -1,21 +1,21 @@
-# 🪙 FakeCrypto - Vulnerable Cryptocurrency Trading Platform
+# 🪙 FakeCrypto - Cryptocurrency Trading Platform
 
-A deliberately vulnerable cryptocurrency trading platform designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a controlled, educational environment.
+A cryptocurrency trading platform designed for security research and testing practice. This application demonstrates various web application concepts in a controlled, educational environment.
 
 ## ⚠️ **SECURITY WARNING**
 
-**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
+**This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
 ## 🎯 Overview
 
-FakeCrypto is a vulnerable cryptocurrency trading platform that simulates a real-world crypto exchange with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities.
+FakeCrypto is a cryptocurrency trading platform that simulates a real-world crypto exchange. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
 ### Key Features:
 - 💰 Cryptocurrency trading simulation
-- 🔐 Authentication vulnerabilities
-- 💳 Payment processing flaws
-- 📊 Data manipulation vulnerabilities
-- 🎨 NFT marketplace with security issues
+- 🔐 Authentication systems
+- 💳 Payment processing
+- 📊 Data management
+- 🎨 NFT marketplace
 
 ## 🚀 Quick Start
 
@@ -61,58 +61,45 @@ FakeCrypto/
 
 ## 🎓 Learning Objectives
 
-### Vulnerability Categories
-1. **SQL Injection**
-   - Login form injection
-   - Search functionality injection
-   - Data retrieval vulnerabilities
+This application is designed to help users understand:
 
-2. **Cross-Site Scripting (XSS)**
-   - Reflected XSS in search
-   - Stored XSS in comments
-   - DOM-based XSS
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
 
-3. **Cross-Site Request Forgery (CSRF)**
-   - Transaction manipulation
-   - Account settings modification
-   - Payment processing flaws
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
 
-4. **Authentication Flaws**
-   - Weak password policies
-   - Session management issues
-   - Privilege escalation
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
 
-5. **Business Logic Vulnerabilities**
-   - Price manipulation
-   - Transaction race conditions
-   - Balance manipulation
+## 🔍 Application Features
 
-## 🔍 Vulnerability Guide
+### 1. User Management
+- User registration and authentication
+- Profile management
+- Session handling
 
-### 1. SQL Injection
-- **Location**: Login and search forms
-- **Technique**: SQL injection in input fields
-- **Impact**: Unauthorized access and data extraction
+### 2. Trading System
+- Cryptocurrency trading simulation
+- Portfolio management
+- Transaction history
 
-### 2. Cross-Site Scripting (XSS)
-- **Location**: Search functionality and user input
-- **Technique**: Script injection in search queries
-- **Impact**: Session hijacking and data theft
+### 3. Payment Processing
+- Payment method management
+- Transaction processing
+- Financial data handling
 
-### 3. CSRF Vulnerabilities
-- **Location**: Transaction and account forms
-- **Technique**: Cross-site request forgery
-- **Impact**: Unauthorized transactions and account modification
-
-### 4. Authentication Bypass
-- **Location**: Login system
-- **Technique**: Various authentication bypass methods
-- **Impact**: Unauthorized access to accounts
-
-### 5. Business Logic Flaws
-- **Location**: Trading and payment systems
-- **Technique**: Price manipulation and race conditions
-- **Impact**: Financial exploitation
+### 4. Data Management
+- User data storage
+- Transaction records
+- System logs
 
 ## 🛠️ Development
 
@@ -121,128 +108,78 @@ FakeCrypto/
 # Install dependencies
 pip install -r requirements.txt
 
-# Run locally (NOT recommended for production)
+# Run the application
 python app.py
 ```
 
 ### Docker Development
 ```bash
-# Build and run
+# Build and run with Docker
 docker-compose up --build
-
-# View logs
-docker-compose logs -f
-
-# Stop application
-docker-compose down
 ```
 
-## 📊 Features
+## 📚 Documentation
 
-### Trading Platform
-- Real-time cryptocurrency prices
-- Buy/sell functionality
-- Portfolio management
-- Transaction history
+For detailed information about the application structure and features, refer to the inline code documentation and comments.
 
-### NFT Marketplace
-- NFT creation and trading
-- Marketplace functionality
-- Digital asset management
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /login` - User authentication
+- `POST /register` - User registration
+- `GET /logout` - User logout
+
+### Trading
+- `GET /api/prices` - Get cryptocurrency prices
+- `POST /api/buy` - Buy cryptocurrency
+- `POST /api/sell` - Sell cryptocurrency
+- `GET /api/portfolio` - Get user portfolio
+- `GET /api/transactions` - Get transaction history
 
 ### User Management
-- User registration and login
-- Profile management
-- Account settings
-- Security preferences
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update user profile
+- `POST /api/deposit` - Deposit funds
+- `POST /api/withdraw` - Withdraw funds
 
-### Admin Panel
-- User management
-- System monitoring
-- Transaction oversight
-- Security settings
+### NFT Marketplace
+- `GET /api/nfts` - List available NFTs
+- `POST /api/nfts/buy` - Buy NFT
+- `POST /api/nfts/sell` - Sell NFT
+- `POST /api/nfts/upload` - Upload NFT
 
-## 🔧 Configuration
+### Admin
+- `GET /admin/users` - List all users
+- `GET /admin/transactions` - View all transactions
+- `POST /admin/approve` - Approve transactions
 
-### Environment Variables
+## ⚙️ Environment Variables
+
+### Required Variables
 ```bash
 FLASK_ENV=development
 FLASK_DEBUG=True
-SECRET_KEY=your-secret-key
+SECRET_KEY=your-secret-key-here
 DATABASE_URL=sqlite:///fakecrypto.db
+UPLOAD_FOLDER=./uploads
 ```
 
-### Docker Configuration
-```yaml
-version: '3.8'
-services:
-  fakecrypto:
-    build: .
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-    environment:
-      - FLASK_ENV=development
+### Optional Variables
+```bash
+LOG_LEVEL=INFO
+MAX_FILE_SIZE=16777216
+ALLOWED_EXTENSIONS=jpg,jpeg,png,gif
+SESSION_TIMEOUT=3600
 ```
-
-## 🎯 Use Cases
-
-### Security Research
-- Study cryptocurrency platform vulnerabilities
-- Practice financial application security testing
-- Learn about trading platform security
-
-### Educational Purposes
-- Security training programs
-- University cybersecurity courses
-- Capture-the-flag (CTF) challenges
-
-### Testing Environments
-- Security tool testing
-- Vulnerability scanner validation
-- Security assessment practice
-
-## 📈 Trading Features
-
-### Supported Cryptocurrencies
-- Bitcoin (BTC)
-- Ethereum (ETH)
-- Cardano (ADA)
-- Dogecoin (DOGE)
-
-### Trading Functions
-- Real-time price updates
-- Buy/sell orders
-- Portfolio tracking
-- Transaction history
-
-### NFT Marketplace
-- NFT creation
-- Marketplace trading
-- Digital asset management
-- Collection browsing
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Add new vulnerabilities or improvements
-4. Ensure Docker compatibility
-5. Update documentation
-6. Submit a pull request
+Contributions are welcome! Please read our contributing guidelines and ensure all changes maintain the educational nature of this application.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 📞 Contact
+## ⚠️ Disclaimer
 
-**Author:** Olúmáyòwá Akinkuehinmi  
-**Email:** akintunero101@gmail.com  
-**GitHub:** [@akintunero](https://github.com/akintunero)
-
----
-
-**⚠️ Remember: This application contains intentional vulnerabilities. Use only in controlled, educational environments!** 
+This application is for educational purposes only. The developers are not responsible for any misuse of this software. 

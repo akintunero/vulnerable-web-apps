@@ -28,7 +28,7 @@ import random
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="HRLeaks - Vulnerable HR Application", version="1.0.0")
+app = FastAPI(title="EnterpriseHR - HR Management System", version="1.0.0")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -39,17 +39,17 @@ templates = Jinja2Templates(directory="templates")
 # Security
 security = HTTPBasic()
 
-# In-memory data storage
+# In-memory data storage with weak password storage
 users_db = {
     "admin@enterprise.com.uk": {
-        "password": "K8x#mP2qR9vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()",
+        "password": "admin123",  # Password Storage Issues - plaintext passwords
         "role": "admin",
         "id": 1,
         "name": "Admin User",
         "email": "admin@enterprise.com.uk"
     },
     "hr@enterprise.com.uk": {
-        "password": "SecureHR2024!@#$%^&*()",
+        "password": "hr123",  # Password Storage Issues - plaintext passwords
         "role": "hr_officer",
         "id": 2,
         "name": "HR Officer",
@@ -150,9 +150,11 @@ def get_current_user(request: Request):
     return None
 
 def create_session(user_data):
-    """Create session with weak session ID generation"""
-    session_id = hashlib.md5(f"{user_data['email']}{datetime.now()}".encode()).hexdigest()
+    """Create session with predictable session ID generation"""
+    # Weak session generation - predictable based on user ID and role
+    session_id = f"session_{user_data['id']}_{user_data['role']}_{datetime.now().strftime('%Y%m%d')}"
     sessions[session_id] = user_data
+    # Sessions never expire - weak session management
     return session_id
 
 def ldap_auth(username: str, password: str) -> bool:
@@ -273,8 +275,14 @@ async def login(request: Request, response: Response, username: str = Form(...),
         session_id = create_session(user_data)
         response = RedirectResponse(url="/dashboard", status_code=302)
         response.set_cookie(key="session_id", value=session_id, httponly=False, secure=False)  # VULNERABLE: Insecure cookie
+        
+        # Improper Logging - logs sensitive data including passwords
+        logger.info(f"User login successful: {username}, password: {password}, session: {session_id}")
+        
         return response
     else:
+        # Improper Logging - logs failed login attempts with credentials
+        logger.warning(f"Failed login attempt: {username}, password: {password}")
         return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials. Try again or contact support."})
 
 @app.get("/dashboard", response_class=HTMLResponse)
@@ -321,11 +329,17 @@ async def employees_list(request: Request):
     if not user:
         return RedirectResponse(url="/", status_code=302)
     
+    # Unrestricted enumeration - show all employees regardless of role
     return templates.TemplateResponse("employees.html", {
         "request": request,
         "user": user,
         "employees": employees
     })
+
+@app.get("/api/employees/list", response_class=HTMLResponse)
+async def get_employees_list_api(request: Request):
+    # Employee listing API
+    return {"employees": employees, "total": len(employees)}
 
 @app.get("/employees/mock", response_class=HTMLResponse)
 async def mock_employees(request: Request):
@@ -446,9 +460,13 @@ async def employee_detail(request: Request, employee_id: int):
     if not user:
         return RedirectResponse(url="/", status_code=302)
     
+    # IDOR vulnerability - no authorization check, anyone can access any employee
     employee = next((emp for emp in employees if emp["id"] == employee_id), None)
     if not employee:
         raise HTTPException(status_code=404, detail="Employee not found")
+    
+    # Log sensitive data access without proper controls
+    logger.info(f"Employee data accessed: {employee_id} by user: {user.get('email', 'unknown')}")
     
     return templates.TemplateResponse("employee_detail.html", {
         "request": request,
@@ -580,21 +598,27 @@ async def upload_resume(request: Request, file: UploadFile = File(...), employee
     if not user:
         return RedirectResponse(url="/", status_code=302)
     
+    # File Upload Vulnerabilities - no file type/content scanning
     filename = file.filename or f"resume_{employee_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     file_path = save_uploaded_file(file, filename)
     
-    # Read file content for XSS vulnerability
-    content = file.file.read().decode('utf-8', errors='ignore')
+    # No validation of file type or content
+    # Vulnerable to malicious file uploads
+    content = await file.read()
     
+    # Create resume record with raw content
     new_resume = {
         "id": len(resumes) + 1,
         "employee_id": employee_id,
         "filename": filename,
-        "content": content,  # VULNERABLE: Storing raw content
+        "content": content.decode('utf-8', errors='ignore'),  # Store raw content
         "upload_date": datetime.now().strftime("%Y-%m-%d")
     }
     resumes.append(new_resume)
     save_data()
+    
+    # Log file upload without proper controls
+    logger.info(f"File uploaded: {filename} by user: {user.get('email', 'unknown')}")
     
     return RedirectResponse(url="/resumes", status_code=302)
 
@@ -770,14 +794,18 @@ async def export_payroll(request: Request):
     if not user:
         return RedirectResponse(url="/", status_code=302)
     
-    # Create CSV content
-    csv_content = "Employee ID,Name,Department,Base Salary,Bonus,Overtime,Commission,Deductions,Tax,Insurance,Net Pay\n"
+    # Export function abuse - no authorization checks, anyone can export sensitive data
+    csv_content = "Employee ID,Name,Email,SSN,Phone,Address,Department,Base Salary,Bonus,Overtime,Commission,Deductions,Tax,Insurance,Net Pay\n"
     
     for payroll in payroll_data:
         employee = next((emp for emp in employees if emp["id"] == payroll["employee_id"]), None)
         if employee:
             net_pay = payroll["salary"] + payroll["overtime"] + payroll["commission"] + payroll["bonus"] - payroll["deductions"] - payroll["tax"] - payroll["insurance"]
-            csv_content += f"{payroll['employee_id']},{employee['name']},{employee['department']},{payroll['salary']},{payroll['bonus']},{payroll['overtime']},{payroll['commission']},{payroll['deductions']},{payroll['tax']},{payroll['insurance']},{net_pay}\n"
+            # Export function abuse - includes sensitive PII without checks
+            csv_content += f"{payroll['employee_id']},{employee['name']},{employee['email']},{employee['ssn']},{employee['phone']},{employee['address']},{employee['department']},{payroll['salary']},{payroll['bonus']},{payroll['overtime']},{payroll['commission']},{payroll['deductions']},{payroll['tax']},{payroll['insurance']},{net_pay}\n"
+    
+    # Log sensitive data export without proper controls
+    logger.info(f"Sensitive payroll data exported by user: {user.get('email', 'unknown')}")
     
     return Response(content=csv_content, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=payroll_export.csv"})
 
@@ -1002,13 +1030,14 @@ async def admin_panel(request: Request):
         "timezone": "Europe/London"
     }
     
-    if user.get("role") != "admin":
-        return templates.TemplateResponse("admin_panel.html", {
-            "request": request, 
-            "error": "Access denied. Admin privileges required.",
-            "user": user,
-            "system_info": system_info
-        })
+    # Broken Access Controls - no proper role check, anyone can access admin panel
+    # if user.get("role") != "admin":
+    #     return templates.TemplateResponse("admin_panel.html", {
+    #         "request": request, 
+    #         "error": "Access denied. Admin privileges required.",
+    #         "user": user,
+    #         "system_info": system_info
+    #     })
     
     # Calculate admin stats
     admin_stats = {
@@ -1064,6 +1093,32 @@ async def forgot_password(request: Request, email: str = Form(...)):
         "request": request,
         "message": "Password reset link sent to your email (if it exists)."
     })
+
+@app.post("/api/send_email")
+async def send_hr_email(request: Request, 
+                       to_email: str = Form(...),
+                       subject: str = Form(...),
+                       message: str = Form(...),
+                       from_name: str = Form(...)):
+    # Phishing via Email Features - allows spoofed HR messages
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=302)
+    
+    # Vulnerable email sending - no validation of sender identity
+    email_data = {
+        "from": f"{from_name} <hr@enterprise.com.uk>",
+        "to": to_email,
+        "subject": subject,
+        "message": message,
+        "sent_by": user.get('email', 'unknown'),
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    # Log email sending without proper controls
+    logger.info(f"HR email sent: {email_data}")
+    
+    return {"status": "Email sent successfully", "email_data": email_data}
 
 # Additional vulnerability endpoints
 @app.get("/api/employees/search")
@@ -1133,6 +1188,23 @@ async def get_config(request: Request, key: str = ""):
     if key:
         return {key: config.get(key, "Not found")}
     return config
+
+@app.post("/api/assistant")
+async def hr_assistant(request: Request, message: str = Form(...)):
+    # HR assistant for queries
+    user = get_current_user(request)
+    
+    # HR assistant responses
+    if "salary" in message.lower():
+        return {"response": f"All employee salaries are stored in the database. Admin password is 'admin123'"}
+    elif "password" in message.lower():
+        return {"response": "Default admin password is 'admin123'. Default HR password is 'hr123'"}
+    elif "ssn" in message.lower() or "social security" in message.lower():
+        return {"response": "Employee SSNs are stored in the employee records. You can access them via /employee/{id}"}
+    elif "admin" in message.lower():
+        return {"response": "Admin credentials: admin@enterprise.com.uk / admin123"}
+    else:
+        return {"response": "I'm here to help with HR queries. What would you like to know?"}
 
 @app.get("/api/v1/internal/health")
 async def hidden_health_check(request: Request):

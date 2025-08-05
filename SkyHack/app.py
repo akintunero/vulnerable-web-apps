@@ -28,6 +28,7 @@ app = Flask(__name__)
 app.secret_key = 'xK9mP2qR8vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()_+{}|:<>?[]\\;'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['TITLE'] = 'SkyHack Airlines - Premium Air Travel'
 
 os.makedirs('uploads', exist_ok=True)
 os.makedirs('logs', exist_ok=True)
@@ -49,6 +50,22 @@ def init_db():
 
 JWT_SECRET = 'xK9mP2qR8vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()_+{}|:<>?[]\\;'
 
+# JWT token management
+def create_jwt_token(payload, algorithm='HS256'):
+    if algorithm == 'none':
+        return jwt.encode(payload, '', algorithm='none')
+    else:
+        return jwt.encode(payload, JWT_SECRET, algorithm=algorithm)
+
+def verify_jwt_token(token, algorithm='HS256'):
+    try:
+        if algorithm == 'none':
+            return jwt.decode(token, '', algorithms=['none'])
+        else:
+            return jwt.decode(token, JWT_SECRET, algorithms=[algorithm])
+    except:
+        return None
+
 ADMIN_EMAIL = 'admin@skyhack.com'
 ADMIN_PASSWORD = 'K8x#mP2qR9vL5nJ3hG7fD1sA4wE6tY9uI0oP!@#$%^&*()'
 
@@ -68,6 +85,8 @@ def fake_rate_limiter():
             rate_limit_counts[(ip, request.path)] += 1
             if rate_limit_counts[(ip, request.path)] > 3:
                 return 'Rate limit exceeded. Please try again later.', 429
+    
+    # Rate limiting configuration
 
 @app.route('/', endpoint='index')
 @fake_security_middleware
@@ -134,7 +153,10 @@ def search_flights():
 @fake_security_middleware
 def book_flight(flight_id):
     def generate_pnr(length=6):
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+        # Generate PNR reference
+        date_str = datetime.now().strftime('%y%m%d')
+        random_chars = ''.join(random.choices(string.ascii_uppercase, k=3))
+        return f"{date_str}{random_chars}"
     
     def create_dynamic_flight(flight_id, from_city=None, to_city=None, date=None):
         """Create a dynamic flight if the requested ID doesn't exist"""
@@ -274,6 +296,8 @@ def booking_confirmation(booking_id):
     # This allows users to manipulate the ticket price by adding ?price=X to the URL
     manipulated_price = request.args.get('price')
     
+    # Get booking details
+    
     db = get_db()
     booking = db.execute('''
         SELECT 
@@ -313,7 +337,15 @@ def booking_confirmation(booking_id):
     
     db.close()
     print(f"DEBUG: Booking row for confirmation: {dict(booking) if booking else None}")
-    return render_template('booking_confirmation.html', booking=booking, trip_type=trip_type, return_date=return_date)
+    
+    # Process user message
+    user_message = request.args.get('message', '')
+    
+    return render_template('booking_confirmation.html', 
+                         booking=booking, 
+                         trip_type=trip_type, 
+                         return_date=return_date,
+                         user_message=user_message)
 
 @app.route('/checkin', methods=['GET', 'POST'], endpoint='checkin')
 @fake_security_middleware
@@ -570,11 +602,59 @@ def register():
     
     return render_template('register.html')
 
+@app.route('/account-recovery', methods=['GET', 'POST'], endpoint='account_recovery')
+@fake_security_middleware
+def account_recovery():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        
+        # Generate reset token
+        reset_token = hashlib.md5(email.encode()).hexdigest()
+        
+        flash(f'Password reset link sent to {email}.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('account_recovery.html')
+
+@app.route('/account-reset/<token>', methods=['GET', 'POST'], endpoint='account_reset')
+@fake_security_middleware
+def account_reset(token):
+    if request.method == 'POST':
+        new_password = request.form.get('new_password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
+        
+        if not new_password or not confirm_password:
+            flash('All fields are required.', 'error')
+            return render_template('account_reset.html', token=token)
+        
+        if new_password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('account_reset.html', token=token)
+        
+        # Process password reset
+        
+        db = get_db()
+        user = db.execute('SELECT * FROM users WHERE email LIKE ?', (f'%{token[:8]}%',)).fetchone()
+        
+        if user:
+            hashed_password = generate_password_hash(new_password)
+            db.execute('UPDATE users SET password = ? WHERE id = ?', (hashed_password, user['id']))
+            db.commit()
+            flash('Password reset successful!', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Invalid reset token.', 'error')
+        
+        db.close()
+    
+    return render_template('account_reset.html', token=token)
+
 @app.route('/logout', endpoint='logout')
 @fake_security_middleware
 def logout():
-    # Do not clear session for session fixation vulnerability
-    flash('Logged out (but session not invalidated).', 'info')
+    # User logout
+    # session.clear()  # Session management
+    flash('Logged out successfully.', 'info')
     return redirect(url_for('index'))
 
 @app.route('/my-bookings', endpoint='my_bookings')
@@ -593,6 +673,24 @@ def my_bookings():
     db.close()
     
     return render_template('my_bookings.html', bookings=bookings)
+
+@app.route('/manage-booking/<int:booking_id>', methods=['POST'], endpoint='manage_booking')
+@fake_security_middleware
+def manage_booking(booking_id):
+    # Process booking cancellation
+    
+    db = get_db()
+    booking = db.execute('SELECT * FROM bookings WHERE id = ?', (booking_id,)).fetchone()
+    
+    if booking:
+        db.execute('UPDATE bookings SET status = ? WHERE id = ?', ('cancelled', booking_id))
+        db.commit()
+        flash('Booking cancelled successfully.', 'success')
+    else:
+        flash('Booking not found.', 'error')
+    
+    db.close()
+    return redirect(url_for('my_bookings'))
 
 @app.route('/xml-parser', methods=['POST'], endpoint='xml_parser')
 @fake_security_middleware
@@ -775,6 +873,8 @@ def api_audit_log():
 @app.route('/boarding-pass/<int:booking_id>', endpoint='boarding_pass')
 @fake_security_middleware
 def boarding_pass(booking_id):
+    # Generate boarding pass
+    
     db = get_db()
     booking = db.execute('''
         SELECT b.*, f.* FROM bookings b 
@@ -792,6 +892,9 @@ def boarding_pass(booking_id):
 @fake_security_middleware
 def api_flight_status():
     flight_number = request.args.get('flight', '')
+    
+    # Process flight status request
+    
     if flight_number:
         db = get_db()
         flight = db.execute('SELECT * FROM flights WHERE flight_number = ?', (flight_number,)).fetchone()
@@ -973,6 +1076,31 @@ def airport_autocomplete():
         return jsonify(results[:10])  # Limit to 10 results
     except Exception as e:
         return jsonify([])
+
+@app.route('/api/schedule', methods=['POST'], endpoint='schedule_flight')
+@fake_security_middleware
+def schedule_flight():
+    # Create new flight
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    flight_number = data.get('flight_number', '')
+    from_city = data.get('from_city', '')
+    to_city = data.get('to_city', '')
+    date = data.get('date', '')
+    price = data.get('price', 0)
+    
+    db = get_db()
+    db.execute('''
+        INSERT INTO flights (flight_number, from_city, to_city, date, price, available_seats)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (flight_number, from_city, to_city, date, price, 100))
+    db.commit()
+    db.close()
+    
+    return jsonify({'message': 'Flight created successfully', 'flight_number': flight_number})
 
 @app.route('/api/generate-flights')
 def generate_flights():

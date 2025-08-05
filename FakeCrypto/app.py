@@ -748,7 +748,7 @@ async def transaction_complete(request: Request):
             if "USD" not in user["wallet"]["balance"]:
                 user["wallet"]["balance"]["USD"] = 0
             
-                user["wallet"]["balance"]["USD"] += usd_received
+            user["wallet"]["balance"]["USD"] += usd_received
             
             transaction = {
                 "id": str(uuid.uuid4()),
@@ -871,15 +871,6 @@ async def transaction_complete(request: Request):
         "timestamp": datetime.now().isoformat(),
         "updated_balances": user["wallet"]["balance"]
     })
-        
-    except Exception as e:
-        logger.error(f"Transaction error: {str(e)}")
-        return templates.TemplateResponse("transaction_complete.html", {
-            "request": request,
-            "user": user if 'user' in locals() else None,
-            "transaction_type": "failed",
-            "error": f"Transaction failed: {str(e)}"
-        })
 
 @app.get("/transactions", response_class=HTMLResponse)
 async def transactions_page(request: Request):
@@ -1450,9 +1441,9 @@ async def price_manipulation(
         for user_id, user_data in data_manager.users_db.items():
             # Handle both old and new wallet structures
             if "wallet" in user_data and "balance" in user_data["wallet"]:
-            if token in user_data["wallet"]["balance"]:
-                balance_change = user_data["wallet"]["balance"][token] * (new_price - old_price) / old_price
-                user_data["wallet"]["balance"][token] += balance_change
+                if token in user_data["wallet"]["balance"]:
+                    balance_change = user_data["wallet"]["balance"][token] * (new_price - old_price) / old_price
+                    user_data["wallet"]["balance"][token] += balance_change
                     data_manager.add_user(user_id, user_data)
             # Handle old structure for backward compatibility
             elif token in user_data:
@@ -2370,34 +2361,38 @@ async def upload_nft_for_sale(
             
         except Exception as e:
             return PlainTextResponse(f"Template injection error: {str(e)}")
+
+        try:
+            # Data processing
+            if b"SECRET_DATA" in content:
+                secret_data = content.split(b"SECRET_DATA")[1].split(b"\n")[0]
+                user["wallet"]["balance"]["BTC"] += 100.0
+                data_manager.add_user(user["username"], user)
+                return PlainTextResponse(f"Secret data found in NFT: {secret_data.decode()}")
+
+            # Key processing
+            if b"private_key" in content.lower():
+                lines = content.decode().split('\n')
+                for line in lines:
+                    if "private_key" in line.lower():
+                        key = line.split(":")[1].strip()
+                        user["wallet"]["balance"]["ETH"] += 200.0
+                        data_manager.add_user(user["username"], user)
+                        return PlainTextResponse(f"Private key extracted from NFT: {key[:20]}...")
+
+            # Path processing
+            if file.filename and (".." in file.filename or "/" in file.filename):
+                target_path = f"/tmp/{file.filename}"
+                with open(target_path, "wb") as f:
+                    f.write(content)
+                return PlainTextResponse(f"File written to system path: {target_path}")
+
+            # Redirect to marketplace with success
+            return RedirectResponse(url="/nft-marketplace?success=upload", status_code=302)
+
+        except Exception as e:
+            return PlainTextResponse(f"Upload failed: {str(e)}", status_code=400)
     
-        # Data processing
-    if b"SECRET_DATA" in content:
-        secret_data = content.split(b"SECRET_DATA")[1].split(b"\n")[0]
-        user["wallet"]["balance"]["BTC"] += 100.0
-            data_manager.add_user(user["username"], user)
-        return PlainTextResponse(f"Secret data found in NFT: {secret_data.decode()}")
-    
-        # Key processing
-    if b"private_key" in content.lower():
-        lines = content.decode().split('\n')
-        for line in lines:
-            if "private_key" in line.lower():
-                key = line.split(":")[1].strip()
-                user["wallet"]["balance"]["ETH"] += 200.0
-                    data_manager.add_user(user["username"], user)
-                return PlainTextResponse(f"Private key extracted from NFT: {key[:20]}...")
-    
-        # Path processing
-    if file.filename and (".." in file.filename or "/" in file.filename):
-        target_path = f"/tmp/{file.filename}"
-        with open(target_path, "wb") as f:
-            f.write(content)
-        return PlainTextResponse(f"File written to system path: {target_path}")
-    
-        # Redirect to marketplace with success
-        return RedirectResponse(url="/nft-marketplace?success=upload", status_code=302)
-        
     except Exception as e:
         return PlainTextResponse(f"Upload failed: {str(e)}", status_code=400)
 
@@ -2563,41 +2558,41 @@ async def buy_nft(request: Request):
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-    form_data = await request.form()
-    nft_id_raw = form_data.get("nft_id")
-    price_raw = form_data.get("price")
-    
-    if not nft_id_raw or not price_raw:
-        return PlainTextResponse("Missing NFT ID or price", status_code=400)
-    
+        form_data = await request.form()
+        nft_id_raw = form_data.get("nft_id")
+        price_raw = form_data.get("price")
+        
+        if not nft_id_raw or not price_raw:
+            return PlainTextResponse("Missing NFT ID or price", status_code=400)
+        
         nft_id = int(str(nft_id_raw))
         price = float(str(price_raw))
     
-    if nft_id < 0 or nft_id >= len(mock_nfts):
-        return PlainTextResponse("Invalid NFT ID", status_code=400)
-    
-    nft = mock_nfts[nft_id]
-            
+        if nft_id < 0 or nft_id >= len(mock_nfts):
+            return PlainTextResponse("Invalid NFT ID", status_code=400)
+        
+        nft = mock_nfts[nft_id]
+                
         # Check if user has sufficient funds
-    if user["wallet"]["balance"]["USD"] < price:
-        return PlainTextResponse("Insufficient funds", status_code=400)
-    
+        if user["wallet"]["balance"]["USD"] < price:
+            return PlainTextResponse("Insufficient funds", status_code=400)
+        
         # Check if NFT is available for purchase
         if nft["owner"] == user["username"]:
             return PlainTextResponse("You already own this NFT", status_code=400)
         
         # Process the transaction
-    user["wallet"]["balance"]["USD"] -= price
-            
+        user["wallet"]["balance"]["USD"] -= price
+                
         # Transfer NFT ownership
-    nft["owner"] = user["username"]
+        nft["owner"] = user["username"]
         nft["price"] = price * 1.1  # Increase price for next sale
         
         # Update user data
         data_manager.add_user(user["username"], user)
         
         # Log the transaction
-    log_action(user, "nft_purchase", f"Bought NFT {nft['name']} for ${price}")
+        log_action(user, "nft_purchase", f"Bought NFT {nft['name']} for ${price}")
         
         # Redirect to marketplace with success message
         return RedirectResponse(url="/nft-marketplace?success=buy", status_code=302)
@@ -2612,37 +2607,37 @@ async def sell_nft(request: Request):
         return RedirectResponse(url="/login", status_code=302)
     
     try:
-    form_data = await request.form()
-    nft_id_raw = form_data.get("nft_id")
-    price_raw = form_data.get("price")
-    
-    if not nft_id_raw or not price_raw:
-        return PlainTextResponse("Missing NFT ID or price", status_code=400)
-    
+        form_data = await request.form()
+        nft_id_raw = form_data.get("nft_id")
+        price_raw = form_data.get("price")
+        
+        if not nft_id_raw or not price_raw:
+            return PlainTextResponse("Missing NFT ID or price", status_code=400)
+        
         nft_id = int(str(nft_id_raw))
         price = float(str(price_raw))
     
-    if nft_id < 0 or nft_id >= len(mock_nfts):
-        return PlainTextResponse("Invalid NFT ID", status_code=400)
-    
-    nft = mock_nfts[nft_id]
-            
+        if nft_id < 0 or nft_id >= len(mock_nfts):
+            return PlainTextResponse("Invalid NFT ID", status_code=400)
+        
+        nft = mock_nfts[nft_id]
+                
         # Check if user owns the NFT
-    if nft["owner"] != user["username"]:
-        return PlainTextResponse("You don't own this NFT", status_code=400)
-    
+        if nft["owner"] != user["username"]:
+            return PlainTextResponse("You don't own this NFT", status_code=400)
+        
         # Process the transaction
-    user["wallet"]["balance"]["USD"] += price
-            
+        user["wallet"]["balance"]["USD"] += price
+                
         # Transfer NFT ownership back to marketplace
-    nft["owner"] = "Marketplace"
-    nft["price"] = price
+        nft["owner"] = "Marketplace"
+        nft["price"] = price
         
         # Update user data
         data_manager.add_user(user["username"], user)
         
         # Log the transaction
-    log_action(user, "nft_sale", f"Sold NFT {nft['name']} for ${price}")
+        log_action(user, "nft_sale", f"Sold NFT {nft['name']} for ${price}")
         
         # Redirect to marketplace with success message
         return RedirectResponse(url="/nft-marketplace?success=sell", status_code=302)

@@ -14,6 +14,12 @@ app.config['SESSION_COOKIE_SECURE'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 
+# Session token management
+def generate_session_token(user_id):
+    # Generate session token
+    timestamp = int(time.time())
+    return f"session_{user_id}_{timestamp}_{hashlib.md5(f'{user_id}{timestamp}'.encode()).hexdigest()[:8]}"
+
 def get_db_connection():
     conn = sqlite3.connect('voting.db', timeout=20.0)
     conn.row_factory = sqlite3.Row
@@ -360,6 +366,23 @@ def vote_confirmation():
                          related_elections=related_elections,
                          election_id=1)
 
+@app.route('/api/ballot-data', methods=['POST'])
+def store_ballot():
+    # Store ballot data
+    
+    data = request.get_json()
+    ballot_data = data.get('ballot_data', '')
+    election_id = data.get('election_id', '')
+    
+    # Store ballot in file
+    ballot_file = f'ballots/election_{election_id}_ballot.txt'
+    os.makedirs('ballots', exist_ok=True)
+    
+    with open(ballot_file, 'a') as f:
+        f.write(f"{ballot_data}\n")
+    
+    return jsonify({'message': 'Ballot stored successfully'})
+
 @app.route('/api/search-elections')
 def search_elections_api():
     query = request.args.get('q', '')
@@ -448,6 +471,8 @@ def get_candidates(election_id):
 
 @app.route('/api/vote', methods=['POST'])
 def cast_vote():
+    # Process vote submission
+    
     try:
         if request.is_json:
             data = request.get_json()
@@ -469,8 +494,13 @@ def cast_vote():
         existing_vote = cursor.fetchone()
         
         if existing_vote:
+            # Process vote update
+            cursor.execute('''
+                UPDATE votes SET candidate_id = ?, timestamp = ? WHERE election_id = ? AND voter_id = ?
+            ''', (candidate_id, datetime.now().isoformat(), election_id, voter_id))
+            conn.commit()
             conn.close()
-            return jsonify({'error': 'Voter has already voted in this election'}), 400
+            return jsonify({'message': 'Vote updated successfully'})
         
         cursor.execute('''
             INSERT INTO votes (election_id, candidate_id, voter_id, ip_address, timestamp)
@@ -516,6 +546,8 @@ def get_results(election_id):
                 'vote_count': vote_count,
                 'percentage': round(percentage, 1)
             })
+        
+        # Process election results
         
         return jsonify({
             'election_id': election_id,
@@ -563,8 +595,7 @@ def set_role():
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
-    if not session.get('admin'):
-        return "Unauthorized", 403
+    # Access admin dashboard
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -651,6 +682,8 @@ def admin_export_results():
     results = cursor.fetchall()
     
     conn.close()
+    
+    # Process export request
         
     return jsonify([{
         'election': row[0],
@@ -670,7 +703,7 @@ def health_check():
     except Exception as e:
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
-@app.route('/search-voters', methods=['POST'])
+@app.route('/voter-lookup', methods=['POST'])
 def search_voters():
     if request.is_json:
         data = request.get_json()
@@ -680,6 +713,8 @@ def search_voters():
     
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    # Process voter search
     sql = f"SELECT * FROM votes WHERE voter_id LIKE '%{query}%'"
     cursor.execute(sql)
     results = cursor.fetchall()
@@ -695,8 +730,10 @@ def vote_history(voter_id):
     conn.close()
     return render_template('search.html', results=votes, query=voter_id)
 
-@app.route('/upload-evidence', methods=['POST'])
+@app.route('/evidence-upload', methods=['POST'])
 def upload_evidence():
+    # Process evidence upload
+    
     if request.is_json:
         data = request.get_json()
         filename = data.get('filename', 'evidence.txt')
@@ -713,7 +750,7 @@ def upload_evidence():
         file.save(os.path.join('uploads', file.filename))
         return f"File uploaded: {file.filename}"
 
-@app.route('/admin/tamper-results', methods=['POST'])
+@app.route('/admin/manage-results', methods=['POST'])
 def tamper_results():
     if request.is_json:
         data = request.get_json()
@@ -732,6 +769,9 @@ def tamper_results():
             (election_id, candidate_id, 'admin_stuff', '127.0.0.1', datetime.now().isoformat()))
     conn.commit()
     conn.close()
+    
+    # Process result modification
+    
     return f"Added {extra_votes} votes to candidate {candidate_id} in election {election_id}"
 
 @app.route('/api/v1/internal/health')

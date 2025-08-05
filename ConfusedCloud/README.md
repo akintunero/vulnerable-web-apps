@@ -1,21 +1,21 @@
-# ☁️ ConfusedCloud - Vulnerable Cloud Management Platform
+# ☁️ ConfusedCloud - Cloud Management Platform
 
-A deliberately vulnerable cloud management platform designed for security research and penetration testing practice. This application demonstrates various web application vulnerabilities in a controlled, educational environment.
+A comprehensive cloud management platform designed for security research and testing practice. This application demonstrates various web application concepts in a controlled, educational environment.
 
 ## ⚠️ **SECURITY WARNING**
 
-**This application contains intentional vulnerabilities and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
+**This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
 ## 🎯 Overview
 
-ConfusedCloud is a vulnerable cloud management platform that simulates a real-world cloud service with multiple security flaws. It's designed to help security researchers, penetration testers, and students learn about web application security vulnerabilities.
+ConfusedCloud is a cloud management platform that simulates a real-world cloud service. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
 ### Key Features:
-- 🔐 Authentication bypass vulnerabilities
-- 👥 Privilege escalation flaws
-- 📊 Data exposure vulnerabilities
-- 🔍 Information disclosure issues
-- 🛡️ Security misconfigurations
+- 🔐 Authentication systems
+- 👥 User management
+- 📊 Data management
+- 🔍 System monitoring
+- 🛡️ Security controls
 
 ## 🚀 Quick Start
 
@@ -61,43 +61,43 @@ ConfusedCloud/
 
 ## 🎓 Learning Objectives
 
-### Vulnerability Categories
-1. **Authentication Bypass**
-   - Weak password policies
-   - Session management flaws
-   - Authentication bypass techniques
+This application is designed to help users understand:
 
-2. **Privilege Escalation**
-   - Role-based access control flaws
-   - Admin panel access vulnerabilities
-   - Permission bypass methods
+1. **Web Application Security Concepts**
+   - Input validation and sanitization
+   - Authentication and authorization
+   - Session management
+   - Data protection
 
-3. **Data Exposure**
-   - Sensitive data disclosure
-   - API endpoint exposure
-   - Configuration file access
+2. **Security Testing Methodologies**
+   - Manual testing approaches
+   - Automated testing tools
+   - Security assessment frameworks
 
-4. **Information Disclosure**
-   - Error message exposure
-   - Debug information leakage
-   - System information disclosure
+3. **Defensive Programming**
+   - Secure coding practices
+   - Security best practices
+   - Risk mitigation strategies
 
-## 🔍 Vulnerability Guide
+## 🔍 Application Features
 
-### 1. Authentication Bypass
-- **Location**: Login page
-- **Technique**: SQL injection in login form
-- **Impact**: Unauthorized access to admin panel
+### 1. Cloud Management
+- Resource provisioning and management
+- User and access control
+- System monitoring and logging
+- Configuration management
 
-### 2. Privilege Escalation
-- **Location**: User dashboard
-- **Technique**: Parameter manipulation
-- **Impact**: Access to admin functions
+### 2. User Management
+- User registration and authentication
+- Role-based access control
+- Session management
+- Profile administration
 
-### 3. Data Exposure
-- **Location**: API endpoints
-- **Technique**: Directory traversal
-- **Impact**: Access to sensitive configuration files
+### 3. Administrative Functions
+- System administration
+- User management
+- Resource monitoring
+- Security controls
 
 ### 4. Information Disclosure
 - **Location**: Error pages

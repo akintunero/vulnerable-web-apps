@@ -1,5 +1,5 @@
 
-# 🛡️ Vulnerable Web Applications Collection
+# 🛡️ Web Application Security Training Platform
 
 > **⚠️ SECURITY WARNING**: This repository contains intentionally vulnerable applications for **educational and testing purposes only**. **DO NOT** expose any app to the internet or use in production environments.
 
@@ -17,14 +17,14 @@
   - [ConfusedCloud](#confusedcloud)
   - [CyberMart](#cybermart)
   - [FakeCrypto](#fakecrypto)
-  - [HRLeaks](#hrleaks)
+  - [EnterpriseHR](#enterprisehr)
   - [SkyHack](#skyhack)
   - [VoteVault](#votevault)
 - [Getting Started](#getting-started)
   - [Docker Setup (Recommended)](#docker-setup-recommended)
   - [Manual Setup (Python)](#manual-setup-python)
 - [Usage](#usage)
-- [Security Features](#security-features)
+- [Security Training](#security-training)
 - [Contribution Guide](#contribution-guide)
 - [Support](#support)
 - [License](#license)
@@ -34,22 +34,22 @@
 
 ## 🧠 Overview
 
-This repository contains a curated set of **intentionally vulnerable web applications** designed for:
+This repository contains a curated set of **web applications** designed for:
 
-- Ethical Hacking Practice
+- Security Research and Testing
 - Capture The Flag (CTF) Events
 - Security Training Workshops
 - Red Team Labs & Student Labs
 
-Each app targets real-world vulnerabilities in a controlled, isolated environment.
+Each application provides a controlled environment for learning web application security concepts.
 
 ---
 
 ## 🎓 Educational Value
 
-- 🔐 Learn common web app security flaws
-- 🧪 Practice hands-on penetration testing
-- 🎯 Train for bug bounty & CTFs
+- 🔐 Learn web application security concepts
+- 🧪 Practice hands-on security testing
+- 🎯 Train for security assessments
 - 👩🏽‍🏫 Deliver instructor-led workshops
 - 🛠️ Understand defensive best practices
 
@@ -57,42 +57,42 @@ Each app targets real-world vulnerabilities in a controlled, isolated environmen
 
 ## 🚀 Projects
 
-> ✅ Each app is self-contained and Docker-ready.
+> ✅ Each application is self-contained and Docker-ready.
 
 ### 🔧 ConfusedCloud
 - **Type**: Cloud Management Panel  
-- **Vulnerabilities**: SQLi, XSS, CSRF, Auth Bypass  
-- **Stack**: Flask, SQLite, Docker  
+- **Technology**: Flask, SQLite, Docker  
+- **Purpose**: Cloud infrastructure management simulation
 - **[View App →](./ConfusedCloud/)**
 
 ### 🛒 CyberMart
 - **Type**: E-commerce Store  
-- **Vulnerabilities**: NoSQLi, Command Injection, Unsafe Deserialization  
-- **Stack**: Flask, MongoDB, Docker  
+- **Technology**: Flask, MongoDB, Docker  
+- **Purpose**: Online retail platform simulation
 - **[View App →](./CyberMart/)**
 
 ### 💰 FakeCrypto
 - **Type**: Cryptocurrency Exchange  
-- **Vulnerabilities**: SSRF, XXE, Session Hijacking, Log Injection  
-- **Stack**: Flask, SQLite, Web3  
+- **Technology**: Flask, SQLite, Web3  
+- **Purpose**: Digital asset trading simulation
 - **[View App →](./FakeCrypto/)**
 
-### 👥 HRLeaks
+### 👥 EnterpriseHR
 - **Type**: HR Management System  
-- **Vulnerabilities**: Insecure Direct Object Reference (IDOR), Data Exposure  
-- **Stack**: Flask, SQLite, File Uploads  
-- **[View App →](./HRLeaks/)**
+- **Technology**: Flask, SQLite, File Uploads  
+- **Purpose**: Human resources management simulation
+- **[View App →](./EnterpriseHR/)**
 
 ### ✈️ SkyHack
 - **Type**: Airline Booking Portal  
-- **Vulnerabilities**: JWT Tampering, API Abuse, Authorization Bypass  
-- **Stack**: Flask, SQLite, JWT Auth  
+- **Technology**: Flask, SQLite, JWT Auth  
+- **Purpose**: Travel booking system simulation
 - **[View App →](./SkyHack/)**
 
 ### 🗳️ VoteVault
 - **Type**: Voting System  
-- **Vulnerabilities**: Vote Manipulation, Auth Flaws, Blockchain Integrity  
-- **Stack**: Flask, SQLite, Blockchain Concepts  
+- **Technology**: Flask, SQLite, Blockchain Concepts  
+- **Purpose**: Digital voting platform simulation
 - **[View App →](./VoteVault/)**
 
 ---
@@ -122,10 +122,19 @@ Then visit `http://localhost:5000` (or as specified).
 
 ---
 
+### 🐍 Manual Setup (Python)
+
+```bash
+git clone https://github.com/akintunero/vulnerable-web-apps.git
+cd vulnerable-web-apps/ConfusedCloud   # Replace with desired project
+
+pip install -r requirements.txt
+python app.py
+```
+
+---
 
 ## 🎮 Usage
-
-You can run apps independently. Default ports:
 
 Each project can be run independently using the provided `start.sh` scripts:
 
@@ -145,8 +154,8 @@ cd FakeCrypto
 ./start.sh
 # Access at http://localhost:7004
 
-# HRLeaks
-cd HRLeaks
+# EnterpriseHR
+cd EnterpriseHR
 ./start.sh
 # Access at http://localhost:8000
 
@@ -165,6 +174,18 @@ cd VoteVault
 - Use `docker-compose up -d` directly in each project directory
 - CyberMart also has `./run.sh` for advanced management features
 
+---
+
+## 🔒 Security Training
+
+These applications are designed for educational purposes and contain various security concepts for learning. Users are encouraged to:
+
+- Practice in isolated environments
+- Follow responsible disclosure practices
+- Use only for authorized testing
+- Respect the educational nature of these applications
+
+---
 
 ## 🤝 Contribution Guide
 
@@ -177,9 +198,9 @@ We welcome contributions! Follow the steps:
 
 ### 🧷 Guidelines
 
-- Keep vulnerabilities educational, not destructive
+- Keep applications educational and professional
 - Include proper documentation
-- Add test cases or proof-of-concept
+- Add test cases where appropriate
 - Use clean and readable code
 
 ### 🤖 Code of Conduct
@@ -210,8 +231,8 @@ Thanks to:
 
 - The open-source security community
 - Educators and security trainers
-- Contributors and bug hunters
-- Tools and libraries powering these apps
+- Contributors and researchers
+- Tools and libraries powering these applications
 
 ---
 
