@@ -9,7 +9,7 @@
 
 ---
 
-## 📚 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Educational Value](#educational-value)
@@ -32,7 +32,7 @@
 
 ---
 
-## 🧠 Overview
+## Overview
 
 This repository contains a curated set of **web applications** designed for:
 
@@ -45,7 +45,7 @@ Each application provides a controlled environment for learning web application 
 
 ---
 
-## 🎓 Educational Value
+## Educational Value
 
 - 🔐 Learn web application security concepts
 - 🧪 Practice hands-on security testing
@@ -55,7 +55,7 @@ Each application provides a controlled environment for learning web application 
 
 ---
 
-## 🚀 Projects
+## Projects
 
 > ✅ Each application is self-contained and Docker-ready.
 
@@ -97,7 +97,7 @@ Each application provides a controlled environment for learning web application 
 
 ---
 
-## ⚙️ Getting Started
+## Getting Started
 
 ### ✅ Prerequisites
 
@@ -122,7 +122,12 @@ Then visit `http://localhost:5000` (or as specified).
 
 ---
 
-### 🐍 Manual Setup (Python)
+### Manual Setup (Python)
+
+> **⚠️ WARNING:**  
+> Running this application in manual (Python) mode is NOT recommended.  
+> This may expose your computer to vulnerabilities and could allow the app to escape to the internet.  
+> **Always use Docker for safe, isolated testing.**
 
 ```bash
 git clone https://github.com/akintunero/vulnerable-web-apps.git
@@ -134,7 +139,7 @@ python app.py
 
 ---
 
-## 🎮 Usage
+## Usage
 
 Each project can be run independently using the provided `start.sh` scripts:
 
@@ -176,7 +181,7 @@ cd VoteVault
 
 ---
 
-## 🔒 Security Training
+## Security Training
 
 These applications are designed for educational purposes and contain various security concepts for learning. Users are encouraged to:
 
@@ -187,7 +192,7 @@ These applications are designed for educational purposes and contain various sec
 
 ---
 
-## 🤝 Contribution Guide
+## Contribution Guide
 
 We welcome contributions! Follow the steps:
 
@@ -209,7 +214,7 @@ We follow the [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ---
 
-## 🆘 Support
+## Support
 
 - 📖 **Docs**: See individual app README files
 - 🐞 **Issues**: [Submit an Issue](https://github.com/akintunero/vulnerable-web-apps/issues)
@@ -218,14 +223,14 @@ We follow the [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.  
 See [LICENSE](./LICENSE) for full details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Thanks to:
 

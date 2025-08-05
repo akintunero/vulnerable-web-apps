@@ -26,11 +26,11 @@ A comprehensive airline booking system built with Flask to demonstrate web appli
 
 ---
 
-## 🛩️ SkyHack Airlines - Web Application
+## SkyHack Airlines - Web Application
 
 A comprehensive airline booking system built with Flask to demonstrate web application concepts and security training.
 
-## 🎯 Features
+## Features
 
 ### ✈️ Core Systems
 - **Flight Booking System** - Complete booking functionality
@@ -66,7 +66,7 @@ A comprehensive airline booking system built with Flask to demonstrate web appli
 - System monitoring
 - Data management
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -86,7 +86,7 @@ docker-compose up -d
 # URL: http://localhost:8080
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript
@@ -108,7 +108,7 @@ SkyHack/
 └── requirements.txt   # Python dependencies
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -128,7 +128,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. Flight Booking
 - Flight search and filtering
@@ -153,9 +153,15 @@ This application is designed to help users understand:
 - External service integration
 - Data exchange protocols
 
-## 🛠️ Development
+## Development
 
 ### Local Development
+
+> **⚠️ WARNING:**  
+> Running this application in manual (Python) mode is NOT recommended.  
+> This may expose your computer to vulnerabilities and could allow the app to escape to the internet.  
+> **Always use Docker for safe, isolated testing.**
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -170,7 +176,7 @@ python app.py
 docker-compose up --build
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -182,7 +188,7 @@ PORT=8080
 UPLOAD_FOLDER=uploads/
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /login` - User authentication
@@ -218,18 +224,18 @@ UPLOAD_FOLDER=uploads/
 - `GET /admin/bookings` - Booking management
 - `GET /admin/users` - User management
 
-## 📚 Documentation
+## Documentation
 
 For detailed information about the application structure and features, refer to the inline code documentation and comments.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our contributing guidelines and ensure all changes maintain the educational nature of this application.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This application is for educational purposes only. The developers are not responsible for any misuse of this software. 

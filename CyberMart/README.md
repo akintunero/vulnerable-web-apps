@@ -6,7 +6,7 @@ A comprehensive e-commerce platform designed for security research and testing p
 
 **This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## 🎯 Overview
+## Overview
 
 CyberMart is an e-commerce platform that simulates a real-world online store. It's designed to help security researchers, penetration testers, and students learn about web application security concepts in an e-commerce context.
 
@@ -23,7 +23,7 @@ CyberMart is an e-commerce platform that simulates a real-world online store. It
 - ⭐ Product reviews and ratings
 - 🔧 Admin panel for management
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -43,7 +43,7 @@ cd vulnerable-web-apps/CyberMart
 # URL: http://localhost:5002
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap
@@ -65,7 +65,7 @@ CyberMart/
 └── start.sh            # Startup script
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -85,7 +85,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. E-commerce Functionality
 - Product catalog and search
@@ -111,7 +111,7 @@ This application is designed to help users understand:
 - Invoice generation
 - Financial data handling
 
-## 📊 Features
+## Features
 
 ### E-commerce Functionality
 - **Product Catalog**: Categories, search, filtering
@@ -131,7 +131,7 @@ This application is designed to help users understand:
 - **Educational Value**: Clear learning objectives
 - **Testing Support**: Compatible with security testing tools
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -149,7 +149,7 @@ PORT=5002
 python3 -c "from app import init_db; init_db()"
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /login` - User authentication
@@ -185,7 +185,7 @@ python3 -c "from app import init_db; init_db()"
 - `GET /admin/orders` - Order management
 - `GET /admin/users` - User management
 
-## 📝 Usage
+## Usage
 
 ### Starting the Application
 ```bash
@@ -202,7 +202,7 @@ python3 -c "from app import init_db; init_db()"
 - Admin panel access management
 - Role-based access control
 
-## 🛡️ Security Notes
+## Security Notes
 
 - Designed for educational purposes
 - No real payment processing
@@ -210,14 +210,14 @@ python3 -c "from app import init_db; init_db()"
 - Isolated Docker environment
 - Educational purposes only
 
-## 📚 Educational Resources
+## Educational Resources
 
 - OWASP Top 10
 - Web Application Security Testing
 - E-commerce Security Best Practices
 - Vulnerability Assessment Methodologies
 
-## 🤝 Contributing
+## Contributing
 
 This project is designed for educational purposes. Contributions should focus on:
 - Adding new vulnerability types
@@ -225,7 +225,7 @@ This project is designed for educational purposes. Contributions should focus on
 - Enhancing testing scenarios
 - Documentation improvements
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 

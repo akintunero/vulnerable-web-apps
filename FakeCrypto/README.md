@@ -6,7 +6,7 @@ A cryptocurrency trading platform designed for security research and testing pra
 
 **This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## 🎯 Overview
+## Overview
 
 FakeCrypto is a cryptocurrency trading platform that simulates a real-world crypto exchange. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
@@ -17,7 +17,7 @@ FakeCrypto is a cryptocurrency trading platform that simulates a real-world cryp
 - 📊 Data management
 - 🎨 NFT marketplace
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -37,7 +37,7 @@ docker-compose up -d
 # URL: http://localhost:7004
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript with Tailwind CSS
@@ -59,7 +59,7 @@ FakeCrypto/
 └── requirements.txt   # Python dependencies
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -79,7 +79,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. User Management
 - User registration and authentication
@@ -101,9 +101,15 @@ This application is designed to help users understand:
 - Transaction records
 - System logs
 
-## 🛠️ Development
+## Development
 
 ### Local Development
+
+> **⚠️ WARNING:**  
+> Running this application in manual (Python) mode is NOT recommended.  
+> This may expose your computer to vulnerabilities and could allow the app to escape to the internet.  
+> **Always use Docker for safe, isolated testing.**
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -118,7 +124,7 @@ python app.py
 docker-compose up --build
 ```
 
-## 📚 Documentation
+## Documentation
 
 For detailed information about the application structure and features, refer to the inline code documentation and comments.
 
@@ -172,14 +178,14 @@ ALLOWED_EXTENSIONS=jpg,jpeg,png,gif
 SESSION_TIMEOUT=3600
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our contributing guidelines and ensure all changes maintain the educational nature of this application.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This application is for educational purposes only. The developers are not responsible for any misuse of this software. 

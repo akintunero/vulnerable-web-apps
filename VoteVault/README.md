@@ -6,7 +6,7 @@ A comprehensive digital voting system designed for security research and testing
 
 **This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## 🎯 Overview
+## Overview
 
 VoteVault is a digital voting system that simulates a real-world electronic voting platform. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
@@ -17,7 +17,7 @@ VoteVault is a digital voting system that simulates a real-world electronic voti
 - 🔐 Authentication systems
 - 📈 Data management
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -37,7 +37,7 @@ docker-compose up -d
 # URL: http://localhost:5003
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap
@@ -58,7 +58,7 @@ VoteVault/
 └── requirements.txt    # Python dependencies
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -78,7 +78,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. Voting System
 - Ballot creation and management
@@ -113,7 +113,7 @@ This application is designed to help users understand:
 - **Technique**: Error message analysis
 - **Impact**: System information leakage
 
-## 🛠️ Development
+## Development
 
 ### Local Development
 ```bash
@@ -136,7 +136,7 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## 📊 Features
+## Features
 
 ### Voting System
 - Voter registration
@@ -162,7 +162,7 @@ docker-compose down
 - Vote submission
 - Result viewing
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -174,7 +174,7 @@ PORT=5003
 UPLOAD_FOLDER=uploads/
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /login` - Voter authentication
@@ -217,7 +217,7 @@ services:
       - FLASK_ENV=development
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Security Research
 - Study voting system vulnerabilities
@@ -234,7 +234,7 @@ services:
 - Vulnerability scanner validation
 - Security assessment practice
 
-## 📈 Voting Features
+## Voting Features
 
 ### Election Management
 - Election creation
@@ -260,7 +260,7 @@ services:
 - Result integrity
 - Access control
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -269,11 +269,11 @@ services:
 5. Update documentation
 6. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 📞 Contact
+## Contact
 
 **Author:** Olúmáyòwá Akinkuehinmi  
 **Email:** akintunero101@gmail.com  

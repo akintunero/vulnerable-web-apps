@@ -6,7 +6,7 @@ A comprehensive cloud management platform designed for security research and tes
 
 **This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## 🎯 Overview
+## Overview
 
 ConfusedCloud is a cloud management platform that simulates a real-world cloud service. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
@@ -17,7 +17,7 @@ ConfusedCloud is a cloud management platform that simulates a real-world cloud s
 - 🔍 System monitoring
 - 🛡️ Security controls
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -37,7 +37,7 @@ docker-compose up -d
 # URL: http://localhost:8001
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap
@@ -59,7 +59,7 @@ ConfusedCloud/
 └── requirements.txt    # Python dependencies
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -79,7 +79,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. Cloud Management
 - Resource provisioning and management
@@ -104,7 +104,7 @@ This application is designed to help users understand:
 - **Technique**: Error message analysis
 - **Impact**: System information leakage
 
-## 🛠️ Development
+## Development
 
 ### Local Development
 ```bash
@@ -127,7 +127,7 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## 📊 API Endpoints
+## API Endpoints
 
 ### Public Endpoints
 - `GET /` - Home page
@@ -145,7 +145,7 @@ docker-compose down
 - `GET /api/v1/settings` - System settings
 - `POST /api/v1/admin` - Admin operations
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -169,7 +169,7 @@ services:
       - FLASK_ENV=development
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Security Research
 - Study vulnerability patterns
@@ -186,7 +186,7 @@ services:
 - Vulnerability scanner validation
 - Security assessment practice
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -195,11 +195,11 @@ services:
 5. Update documentation
 6. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 📞 Contact
+## Contact
 
 **Author:** Olúmáyòwá Akinkuehinmi  
 **Email:** akintunero101@gmail.com  

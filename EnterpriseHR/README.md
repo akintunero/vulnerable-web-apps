@@ -6,7 +6,7 @@ A comprehensive human resources management system designed for security research
 
 **This application is designed for educational purposes and should ONLY be run in isolated Docker containers. Never deploy to production or expose to public networks.**
 
-## 🎯 Overview
+## Overview
 
 EnterpriseHR is an HR management system that simulates a real-world human resources platform. It's designed to help security researchers, penetration testers, and students learn about web application security concepts.
 
@@ -17,7 +17,7 @@ EnterpriseHR is an HR management system that simulates a real-world human resour
 - 🔐 Authentication systems
 - 📈 Data management
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker
@@ -37,7 +37,7 @@ docker-compose up -d
 # URL: http://localhost:8000
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Components
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap
@@ -58,7 +58,7 @@ HRLeaks/
 └── requirements.txt    # Python dependencies
 ```
 
-## 🎓 Learning Objectives
+## Learning Objectives
 
 This application is designed to help users understand:
 
@@ -78,7 +78,7 @@ This application is designed to help users understand:
    - Security best practices
    - Risk mitigation strategies
 
-## 🔍 Application Features
+## Application Features
 
 ### 1. HR Management
 - Employee directory and profiles
@@ -113,7 +113,7 @@ This application is designed to help users understand:
 - **Technique**: Error message analysis
 - **Impact**: System information leakage
 
-## 🛠️ Development
+## Development
 
 ### Local Development
 ```bash
@@ -136,7 +136,7 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## 📊 Features
+## Features
 
 ### Employee Management
 - Employee profiles
@@ -162,7 +162,7 @@ docker-compose down
 - Leave management
 - Policy administration
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -174,7 +174,7 @@ UPLOAD_FOLDER=./uploads
 PORT=8000
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /login` - Employee authentication
@@ -224,7 +224,7 @@ services:
       - FLASK_ENV=development
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Security Research
 - Study HR system vulnerabilities
@@ -241,7 +241,7 @@ services:
 - Vulnerability scanner validation
 - Security assessment practice
 
-## 📈 HR Features
+## HR Features
 
 ### Employee Management
 - Employee profiles
@@ -267,7 +267,7 @@ services:
 - Audit logging
 - Security settings
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -276,11 +276,11 @@ services:
 5. Update documentation
 6. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 📞 Contact
+## Contact
 
 **Author:** Olúmáyòwá Akinkuehinmi  
 **Email:** akintunero101@gmail.com  
