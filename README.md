@@ -122,7 +122,7 @@ Then visit `http://localhost:5000` (or as specified).
 
 ---
 
-### 🐍 Manual Setup (Python)
+### 🐍 Manual Setup (Python) - (Not Recommended)
 
 ```bash
 git clone https://github.com/akintunero/vulnerable-web-apps.git
